@@ -2,7 +2,7 @@
 
 // Website related settings
 const settings = {
-  isSplash: true, // Change this to false if you don't want Splash screen.
+  isSplash: false, // Change this to false if you don't want Splash screen.
 };
 
 //SEO Related settings
@@ -13,7 +13,7 @@ const seo = {
   og: {
     title: "Amrit Bhattarai Portfolio",
     type: "website",
-    url: "http://amritb.com.np",
+    url: "http://amrit.cloud",
   },
 };
 
@@ -21,7 +21,7 @@ const seo = {
 const greeting = {
   title: "Amrit Bhattarai",
   logo_name: "AmritBhattarai",
-  nickname: "be-amrit",
+  //nickname: "be-amrit",
   subTitle:
     "A passionate individual who always thrives to work on end to end products which develop sustainable and scalable social and technical systems to create impact.",
   resumeLink:
@@ -37,7 +37,7 @@ const socialMediaLinks = [
   // gmail: "amrit.bhattarai990@gmail.com",
   // gitlab: "https://gitlab.com/amritbh",
   // facebook: "https://www.facebook.com/amrit.bhattarai90/",
-  // twitter: "https://twitter.com/amrit.bh",
+  // twitter: "https://twitter.com/amrit_bh",
   // instagram: "https://www.instagram.com/amrit.bh/"
 
   {
@@ -54,7 +54,7 @@ const socialMediaLinks = [
   },
   {
     name: "YouTube",
-    link: "https://youtube.com/c/iambamrit",
+    link: "https://youtube.com/c/iamritb",
     fontAwesomeIcon: "fa-youtube", // Reference https://fontawesome.com/icons/youtube?style=brands
     backgroundColor: "#FF0000", // Reference https://simpleicons.org/?q=youtube
   },
@@ -66,7 +66,7 @@ const socialMediaLinks = [
   },
   {
     name: "X-Twitter",
-    link: "https://twitter.com/amrit.bh",
+    link: "https://twitter.com/amrit_bh",
     fontAwesomeIcon: "fa-x-twitter", // Reference https://fontawesome.com/icons/x-twitter?f=brands&s=solid
     backgroundColor: "#000000", // Reference https://simpleicons.org/?q=x
   },
@@ -364,7 +364,7 @@ const competitiveSites = {
       style: {
         color: "#323754",
       },
-      profileLink: "https://www.hackerearth.com/@ashutosh391",
+      profileLink: "https://www.hackerearth.com/@Amrit391",
     },
     {
       siteName: "Kaggle",
@@ -380,30 +380,30 @@ const competitiveSites = {
 const degrees = {
   degrees: [
     {
-      title: "Indian Institute of Information Technology Kurnool",
-      subtitle: "B.Tech. in Computer Engineering",
-      logo_path: "iiitk_logo.png",
-      alt_name: "IIITDM Kurnool",
-      duration: "2016 - 2020",
+      title: "Maharishi International University",
+      subtitle: "Master of Science in Computer Science",
+      logo_path: "miu_banner.png",
+      alt_name: "MIU",
+      duration: "Present",
       descriptions: [
-        "⚡ I have studied basic software engineering subjects like DS, Algorithms, DBMS, OS, CA, AI etc.",
-        "⚡ Apart from this, I have done courses on Deep Learning, Data Science, Cloud Computing and Full Stack Development.",
-        "⚡ I was selected for Merit cum Means Scholarship which is given to top 10% of students in college. I have received award from respected director for consistently best performance in academics.",
+        "⚡ I am currently completing a master's degree in Computer Science with key courses in Enterprise Architecture, Web Application Architecture, Cloud Computing, Software Architecture, and Algorithms.",
+        "⚡ My studies include extensive work in programming, automation, and cloud computing, preparing me for advanced roles in the industry.",
+        "⚡ The program emphasizes both theoretical knowledge and practical skills, enabling me to design and implement complex systems efficiently.",
       ],
-      website_link: "http://iiitk.ac.in",
+      website_link: "https://www.miu.edu/",
     },
     {
-      title: "Indiana University Bloomington",
-      subtitle: "M.S. in Computer Science",
-      logo_path: "iu_logo.png",
-      alt_name: "Indiana University Bloomington",
-      duration: "2021 - 2023",
+      title: "London Metropolitan University, Islington College",
+      subtitle: "BSc IT(Hons.) in Computer Networking & IT Security",
+      logo_path: "lmu_logo.png",
+      alt_name: "London Metropolitan University",
+      duration: "2011 - 2015",
       descriptions: [
-        "⚡ I have taken varity of courses related to Artificial Intelligence which correspond to Explainable AI, Graph Machine Learning, Computer Vision etc.",
-        "⚡ Apart from this, I have also done research assistantship. As part of it, I have worked on creating new algorithms in Graph ML and Network Science.",
-        "⚡ During my time at university, I was also associated with multimedia department. As part of it, I have worked on some documentry films and interviews.",
+        "⚡ I have studied core subjects such as Data Structures, Algorithms, Database Management Systems, Operating Systems, Computer Architecture, and Artificial Intelligence.",
+        "⚡ Additionally, I completed courses on Network Security, Ethical Hacking, and IT Infrastructure Management.",
+        "⚡ My academic performance was consistently excellent, earning me a place among the top students in my cohort.",
       ],
-      website_link: "https://www.indiana.edu/",
+      website_link: "https://www.londonmet.ac.uk/",
     },
   ],
 };
@@ -411,112 +411,36 @@ const degrees = {
 const certifications = {
   certifications: [
     {
-      title: "Machine Learning",
-      subtitle: "- Andrew Ng",
-      logo_path: "stanford_logo.png",
-      certificate_link:
-        "https://www.coursera.org/account/accomplishments/verify/22MTSSC5WDTM",
-      alt_name: "Stanford University",
-      color_code: "#8C151599",
+      title: "AWS Solution Architect Associate",
+      subtitle: "Completed Udemy Course",
+      logo_path: "aws_logo.jpeg",
+      certificate_link: "https://www.udemy.com/certificate/ABC123",
+      alt_name: "AWS",
+      color_code: "#FF9900",
     },
     {
-      title: "Deep Learning",
-      subtitle: "- Andrew Ng",
-      logo_path: "deeplearning_ai_logo.png",
-      certificate_link:
-        "https://www.coursera.org/account/accomplishments/specialization/H8CPSFXAJD2G",
-      alt_name: "deeplearning.ai",
-      color_code: "#00000099",
+      title: "CCNA",
+      subtitle: "Academically Completed",
+      logo_path: "cisco_logo.jpeg",
+      certificate_link: "https://www.cisco.com/certificates/XYZ456",
+      alt_name: "Cisco",
+      color_code: "#1BA0D7",
     },
     {
-      title: "ML on GCP",
-      subtitle: "- GCP Training",
-      logo_path: "google_logo.png",
-      certificate_link:
-        "https://www.coursera.org/account/accomplishments/specialization/EB4VJARK8647",
-      alt_name: "Google",
-      color_code: "#0C9D5899",
+      title: "Certified Kubernetes Administrator (CKA)",
+      subtitle: "Completed KodeKloud Online Course",
+      logo_path: "cka_logo.png",
+      certificate_link: "https://www.kodekloud.com/certificates/DEF789",
+      alt_name: "CNCF",
+      color_code: "#326CE5",
     },
     {
-      title: "Data Science",
-      subtitle: "- Alex Aklson",
-      logo_path: "ibm_logo.png",
-      certificate_link:
-        "https://www.coursera.org/account/accomplishments/specialization/PLEAPCSJBZT5",
-      alt_name: "IBM",
-      color_code: "#1F70C199",
-    },
-    {
-      title: "Big Data",
-      subtitle: "- Kim Akers",
-      logo_path: "microsoft_logo.png",
-      certificate_link:
-        "https://drive.google.com/file/d/164zKCFOsI4vGqokc-Qj-e_D00kLDHIrG/view",
-      alt_name: "Microsoft",
-      color_code: "#D83B0199",
-    },
-    {
-      title: "Advanced Data Science",
-      subtitle: "- Romeo Kienzler",
-      logo_path: "ibm_logo.png",
-      certificate_link:
-        "https://www.coursera.org/account/accomplishments/verify/BH2T9BRU87BH",
-      alt_name: "IBM",
-      color_code: "#1F70C199",
-    },
-    {
-      title: "Advanced ML on GCP",
-      subtitle: "- GCP Training",
-      logo_path: "google_logo.png",
-      certificate_link:
-        "https://www.coursera.org/account/accomplishments/verify/5JZZM7TNQ2AV",
-      alt_name: "Google",
-      color_code: "#0C9D5899",
-    },
-    {
-      title: "DL on Tensorflow",
-      subtitle: "- Laurence Moroney",
-      logo_path: "deeplearning_ai_logo.png",
-      certificate_link:
-        "https://www.coursera.org/account/accomplishments/verify/6T4DCUGNK8J8",
-      alt_name: "deeplearning.ai",
-      color_code: "#00000099",
-    },
-    {
-      title: "Fullstack Development",
-      subtitle: "- Jogesh Muppala",
-      logo_path: "coursera_logo.png",
-      certificate_link:
-        "https://www.coursera.org/account/accomplishments/certificate/NRANJA66Y2YA",
-      alt_name: "Coursera",
-      color_code: "#2A73CC",
-    },
-    {
-      title: "Kuberenetes on GCP",
-      subtitle: "- Qwiklabs",
-      logo_path: "gcp_logo.png",
-      certificate_link:
-        "https://google.qwiklabs.com/public_profiles/e4d5a92b-faf6-4679-a70b-a9047c0cd750",
-      alt_name: "GCP",
-      color_code: "#4285F499",
-    },
-    {
-      title: "Cryptography",
-      subtitle: "- Saurabh Mukhopadhyay",
-      logo_path: "nptel_logo.png",
-      certificate_link:
-        "https://drive.google.com/open?id=1z5ExD_QJVdU0slLkp8CBqSF3-C3g-ro_",
-      alt_name: "NPTEL",
-      color_code: "#FFBB0099",
-    },
-    {
-      title: "Cloud Architecture",
-      subtitle: "- Qwiklabs",
-      logo_path: "gcp_logo.png",
-      certificate_link:
-        "https://google.qwiklabs.com/public_profiles/5fab4b2d-be6f-408c-8dcb-6d3b58ecb4a2",
-      alt_name: "GCP",
-      color_code: "#4285F499",
+      title: "Azure Administrator",
+      subtitle: "Completed Udemy Course",
+      logo_path: "azure_logo.jpeg",
+      certificate_link: "https://www.udemy.com/certificate/XYZ123",
+      alt_name: "Azure",
+      color_code: "#0078D4",
     },
   ],
 };
@@ -526,7 +450,7 @@ const experience = {
   title: "Experience",
   subtitle: "Work, Internship and Volunteership",
   description:
-    "I have worked with many evolving startups as ML and DL Developer, Designer and Software Architect. I have also worked with some well established companies mostly as AI Developer. I love organising events and that is why I am also involved with many opensource communities as a representative.",
+    "I have a diverse and comprehensive background as a DevOps and Cloud Engineer, with extensive experience in both emerging startups and well-established companies. My roles have ranged from software development and cloud infrastructure engineering to network administration and site reliability engineering. I am adept at designing and managing robust DevOps workflows, multi-cloud infrastructures, and Linux system administration. I have also been actively involved in the open-source community, contributing to various projects and collaborating with industry professionals to drive technological advancements.",
   header_image_path: "experience.svg",
   sections: [
     {
@@ -534,151 +458,59 @@ const experience = {
       work: true,
       experiences: [
         {
-          title: "Machine Learning Engineer",
-          company: "TikTok Inc.",
-          company_url: "https://www.tiktok.com/en/",
-          logo_path: "tiktok_logo.png",
-          duration: "June 2023 - Present",
-          location: "San Jose, CA, USA",
+          title: "DevOps and Cloud Engineer",
+          company: "PB Group Pvt. Ltd.",
+          company_url: "https://pbg.com.np/",
+          logo_path: "pbg_logo.png",
+          duration: "August 2022 - Present",
+          location: "Kathmandu, Bagmati, Nepal",
           description:
-            "Improving ads ranking models on the core TikTok product. Experience working on modeling two-tower architectures like DeepFM, Wide & deep learning, etc. Working on Large Language Models (LLM) pretraining and Large Multi-modal Model (LMM) finetuning strategies.",
+            "Developed job automation and created CI/CD pipelines in GitLab, streamlining development and deployment processes to AWS EKS cluster, reducing manual effort by 40%. Utilized Helm Charts package manager for Kubernetes applications. Implemented Terraform and Ansible for VM provisioning and bootstrapping, enabling rapid and consistent infrastructure setup with an average reduction of about 70% in deployment time. Configured Prometheus and Grafana for monitoring Kubernetes clusters, designing and implementing custom dashboards for comprehensive visualization of cluster performance and application metrics. Managed and maintained Kubernetes clusters in production environments, ensuring high availability and scalability. Integrated industry-leading security tools such as Snyk, OWASP, and SonarQube into CI/CD pipelines, ensuring comprehensive security checks.",
           color: "#000000",
         },
         {
-          title: "Associate AI Engineer",
-          company: "Legato Health Technology",
-          company_url: "https://legatohealthtech.com/",
-          logo_path: "legato_logo.png",
-          duration: "June 2020 - Aug 2021",
-          location: "Hyderabad, Telangana",
+          title: "Network Administrator (DevOps and Cloud Infrastructure)",
+          company: "Worldlink Communications Ltd.",
+          company_url: "https://worldlink.com.np/",
+          logo_path: "worldlink_logo.png",
+          duration: "January 2018 - June 2022",
+          location: "Kathmandu, Bagmati, Nepal",
           description:
-            "I am working on automating healthcare products. The projects involve automation for process improvements and for significantly enhancing the profits. I am currently working on Cancer Survival and Reoccurence Prediction. Our goal is to make AI system which scales and removes doctor dependency as much as possible.",
-          color: "#0879bf",
+            "Managed, monitored, and administered ISP on-premises and AWS cloud network. Created infrastructure for deploying IPTV product in AWS achieving successful implementation and operation. Demonstrated expertise in configuring, implementing, and troubleshooting AWS services such as VPC, Security Groups, ALB, NLB, Firewall, Route 53, Direct Connect, Transit Gateway, and Private Link. Collaborated with the Developers and Operations teams to establish a Continuous Integration and Continuous Deployment pipeline using Jenkins. Deployed applications in an AWS EKS Cluster utilizing Infrastructure as Code (IaC) tools such as Terraform and ArgoCD, adopting a GitOps approach. Automated the provisioning and management of network infrastructure components using tools like Ansible and Terraform. Deployed and managed Istio service mesh to enhance microservices communication, providing advanced traffic management, load balancing, and observability. Designed and implemented robust SLOs, SLAs, RPOs, and RTOs frameworks to ensure reliability and resilience of critical systems.",
+          color: "#000000",
         },
         {
-          title: "Android and ML Developer",
-          company: "Muffito Incorporation",
-          company_url: "https://www.linkedin.com/company/muffito-inc/about/",
-          logo_path: "muffito_logo.png",
-          duration: "May 2018 - Oct 2018",
-          location: "Pune, Maharashtra",
+          title: "Software and DevOps Engineer",
+          company: "Worldlink Communications Ltd.",
+          company_url: "https://worldlink.com.np/",
+          logo_path: "worldlink_logo.png",
+          duration: "April 2016 - January 2018",
+          location: "Kathmandu, Bagmati, Nepal",
           description:
-            "I have created complete Android Application for locating Pub, Bar and beverage shops around you. I have also worked on implementation of algorithms for Face Detection, Text extraction from Image. I was involved in a team for creating complete software architecure of mobile and web application as well as admin panel for company.",
-          color: "#9b1578",
+            "Responsible for designing, deploying, and maintaining the IT/Software Development infrastructure. Developed an Infra Monitoring System to monitor National and International Network and System devices using Java and Python. Worked as a backend Java developer (Spring Boot, Hibernate, MySQL) on the Task Ticket Management System. Performed performance tuning, hardware upgrades, and resource optimization, maintaining data center environmental and monitoring equipment. Efficiently managed cloud infrastructures and conducted in-depth analysis of billings, resulting in cost optimization and savings of up to 50%.",
+          color: "#000000",
         },
         {
-          title: "Android Developer",
-          company: "FreeCopy Pvt. Ltd.",
-          company_url: "https://www.linkedin.com/company/freecopy/about/",
-          logo_path: "freecopy_logo.png",
-          duration: "Nov 2017 - Dec 2017",
-          location: "Ahmedabad, Gujarat",
+          title: "IT Engineer",
+          company: "Islington College",
+          company_url: "https://www.islington.edu.np/",
+          logo_path: "islington_logo.png",
+          duration: "January 2015 - April 2016",
+          location: "Kathmandu, Nepal",
           description:
-            "FreeCopy is the Start up from Indian Institute of Management, Ahmedabad. I have changed the integration of the whole app from Google to Firebase. I learnt the efﬁcient ways of Data communications like Retroﬁt, Eventbus etc. I experienced the real time start up. I learnt the Design thinking of UI on perspective of People.",
+            "Managed Linux-based systems including hardware, software, LVM (Logical Volume Manager), networking, and storage. Knowledgeable in VMware vSphere ESXi BareMetal hypervisor. Efficiently managed cloud infrastructures and conducted in-depth analysis of billings, resulting in cost optimization. Identified and resolved connectivity, performance, and security issues to ensure uninterrupted network and server operations.",
           color: "#fc1f20",
         },
       ],
     },
-    {
-      title: "Internships",
-      experiences: [
-        {
-          title: "Machine Learning Intern",
-          company: "TikTok Inc.",
-          company_url: "https://www.tiktok.com/en/",
-          logo_path: "tiktok_logo.png",
-          duration: "May 2022 - Aug 2022",
-          location: "San Francisco, USA",
-          description:
-            "Building new features on the backend recommendation system, specifically ranking algorithms for Ads that touch hundreds of millions of people around the world. Improving online and offline content ranking algorithms by performing hard sample data replays for training steps.",
-          color: "#000000",
-        },
-        {
-          title: "Data Science Research Intern",
-          company: "Delhivery Pvt. Ltd.",
-          company_url: "https://www.delhivery.com/",
-          logo_path: "delhivery_logo.png",
-          duration: "May 2019 - Sept 2019",
-          location: "Gurgaon, Haryana",
-          description:
-            "I have worked on project of predicting freight rates based on previous data. There were two objectives: (1) To build a forecasting engine to predict daily freight rates. (2) To embed feature in the model which can explain the seasonal major changes in freight rate based on regions and locations. I have closely worked with deep learning models in combination with statistical methods to create solution for this. At the end of internship, I had created model deployed on AWS EC2 with the use of Kafka stream jobs, ElasticSearch and PostgreSQL.",
-          color: "#ee3c26",
-        },
-        {
-          title: "Data Science Intern",
-          company: "Intel Indexer LLC",
-          company_url:
-            "https://opencorporates.com/companies/us_dc/EXTUID_4170286",
-          logo_path: "intel_logo.jpg",
-          duration: "Nov 2018 - Dec 2018",
-          location: "Work From Home",
-          description:
-            "This is financial Solution Company. I have made Supervised Learning model for the company which can perform time series analysis on Stock price data for 32 companies. I have built LSTM Neural Networks Model and trained the data of 32 companies for last 2 years. This model is also used for forecasting.",
-          color: "#0071C5",
-        },
-      ],
-    },
-    {
-      title: "Volunteerships",
-      experiences: [
-        {
-          title: "Google Explore ML Facilitator",
-          company: "Google",
-          company_url: "https://about.google/",
-          logo_path: "google_logo.png",
-          duration: "June 2019 - April 2020",
-          location: "Hyderabad, Telangana",
-          description:
-            "Explore Machine Learning (ML) is a Google-sponsored program for university students to get started with Machine Learning. The curriculum offers 3 tracks of ML Content (Beginner, Intermediate, Advanced) and relies on university student facilitators to train other students on campus and to build opensource projects under this program.",
-          color: "#4285F4",
-        },
-        {
-          title: "Microsoft Student Partner",
-          company: "Microsoft",
-          company_url: "https://www.microsoft.com/",
-          logo_path: "microsoft_logo.png",
-          duration: "Aug 2019 - May 2020",
-          location: "Hyderabad, Telangana",
-          description:
-            "Microsoft Student Partner is a program for university students to lead the awareness and use of Cloud especially Azure tools in the development of their projects and startups. Under this program, I have organised hands on workshops and seminars to teach Cloud Computing concepts to students.",
-          color: "#D83B01",
-        },
-        {
-          title: "Mozilla Campus Captain",
-          company: "Mozilla",
-          company_url: "https://www.mozilla.org/",
-          logo_path: "mozilla_logo.png",
-          duration: "Oct 2019 - May 2020",
-          location: "Kurnool, Andhra Pradesh",
-          description:
-            "My responsibility for this program was to create opensource environment in college and in the city. We have organised multiple hackathons on the problems collected by ordinary people from Kurnool city. We have build opensource community of our own college. The community is available at dsc_iiitdmk on github.",
-          color: "#000000",
-        },
-        {
-          title: "Developer Students Club Member",
-          company: "DSC IIITDM Kurnool",
-          company_url:
-            "https://www.linkedin.com/company/developer-students-club-iiitdm-kurnool",
-          logo_path: "dsc_logo.png",
-          duration: "Jan 2018 - May 2020",
-          location: "Kurnool, Andhra Pradesh",
-          description:
-            "We have well established developer club in college which is directly associated with Google Developers. We have developed many interdisciplinary projects under the membership of this club. We have organised workshops and activities on Android Application Development, Flutter and React JS.",
-          color: "#0C9D58",
-        },
-        {
-          title: "Developer Program Member",
-          company: "Github",
-          company_url: "https://github.com/",
-          logo_path: "github_logo.png",
-          duration: "July 2019 - PRESENT",
-          location: "Work From Home",
-          description:
-            "I am actively contributing to many opensource projects. I have contributed to projects of organisations like Tensorflow, Uber, Facebook, Google, Scikit-learn, Kiwix, Sympy, Python, NVLabs, Fossasia, Netrack, Keras etc. These contributions include bug fixes, feature requests and formulating proper documentation for project.",
-          color: "#181717",
-        },
-      ],
-    },
+    // {
+    //   title: "Internships",
+
+    // },
+    // {
+    //   title: "Volunteerships",
+
+    // },
   ],
 };
 
@@ -699,25 +531,40 @@ const publicationsHeader = {
 const publications = {
   data: [
     {
-      id: "neuro-symbolic-sudoku-solver",
-      name: "Neuro-Symbolic Sudoku Solver",
-      createdAt: "2023-07-02T00:00:00Z",
-      description: "Paper published in KDD KiML 2023",
-      url: "https://arxiv.org/abs/2307.00653",
+      id: "deploy-portfolio-website-on-aws",
+      name:
+        "How to Deploy Your Portfolio Website on AWS Using Serverless Services",
+      createdAt: "2024-04-15T00:00:00Z",
+      description:
+        "Blog published on Medium about deploying a portfolio website on AWS using serverless services",
+      url:
+        "https://medium.com/@amrit.bhattarai990/how-to-deploy-your-portfolio-website-on-aws-using-serverless-services-40b1a00ea2e5",
     },
     {
-      id: "mdp-diffusion",
-      name: "MDP-Diffusion",
-      createdAt: "2023-09-19T00:00:00Z",
-      description: "Blog published in Paperspace",
-      url: "https://blog.paperspace.com/mdp-diffusion/",
+      id: "devops-best-practices",
+      name: "DevOps Best Practices",
+      createdAt: "2023-01-15T00:00:00Z",
+      description:
+        "Blog published on Medium discussing best practices in DevOps",
+      url: "https://medium.com/@amrit.bhattarai990/devops-best-practices",
     },
     {
-      id: "consistency-models",
-      name: "Consistency Models",
-      createdAt: "2023-10-12T00:00:00Z",
-      description: "Blog published in Paperspace",
-      url: "https://blog.paperspace.com/consistency-models/",
+      id: "kubernetes-deployment-strategies",
+      name: "Kubernetes Deployment Strategies",
+      createdAt: "2023-03-10T00:00:00Z",
+      description:
+        "Blog published on Medium about various deployment strategies in Kubernetes",
+      url:
+        "https://medium.com/@amrit.bhattarai990/kubernetes-deployment-strategies",
+    },
+    {
+      id: "cloud-automation-with-terraform",
+      name: "Cloud Automation with Terraform",
+      createdAt: "2023-05-20T00:00:00Z",
+      description:
+        "Blog published on Medium about automating cloud infrastructure using Terraform",
+      url:
+        "https://medium.com/@amrit.bhattarai990/cloud-automation-with-terraform",
     },
   ],
 };
@@ -726,9 +573,9 @@ const publications = {
 const contactPageData = {
   contactSection: {
     title: "Contact Me",
-    profile_image_path: "animated_ashutosh.png",
+    profile_image_path: "animated_amrit.jpeg",
     description:
-      "I am available on almost every social media. You can message me, I will reply within 24 hours. I can help you with ML, AI, React, Android, Cloud and Opensource Development.",
+      "I am available on almost every social media. You can message me, I will reply within 24 hours. I can help you with Network & System Administration, Infra Automation, AI, DevOps, Automation, Cloud and Opensource Development.",
   },
   blogSection: {
     title: "Blogs",
@@ -740,14 +587,14 @@ const contactPageData = {
   },
   addressSection: {
     title: "Address",
-    subtitle: "Saratoga Ave, San Jose, CA, USA 95129",
-    locality: "San Jose",
+    subtitle: "Irving, Texas, USA 75038",
+    locality: "Irving",
     country: "USA",
-    region: "California",
-    postalCode: "95129",
-    streetAddress: "Saratoga Avenue",
+    region: "Texas",
+    postalCode: "75038",
+    streetAddress: "Irving, Texas",
     avatar_image_path: "address_image.svg",
-    location_map_link: "https://maps.app.goo.gl/NvYZqa34Wye4tpS17",
+    location_map_link: "https://maps.app.goo.gl/YyExnoLxRsC2jKoJA",
   },
   phoneSection: {
     title: "",

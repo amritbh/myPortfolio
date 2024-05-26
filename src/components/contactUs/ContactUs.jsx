@@ -24,6 +24,7 @@ export const ContactUs = () => {
   const [phone, setPhone] = useState('');
   const [messageTitle, setMessageTitle] = useState('');
   const [formErrors, setFormErrors] = useState({
+    //{ username, email, messageTitle, message, phone }
     username: '',
     email: '',
     phone: '',
