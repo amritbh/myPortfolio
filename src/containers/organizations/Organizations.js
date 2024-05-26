@@ -12,7 +12,8 @@ class Organizations extends Component {
         <div className="organizations-header-div">
           <Fade bottom duration={2000} distance="20px">
             <h1 className="organizations-header" style={{ color: theme.text }}>
-              Contributed Organizations
+              Interested in OpenSource Projects, tools and technologies for
+              devops, software development and SRE
             </h1>
           </Fade>
         </div>
