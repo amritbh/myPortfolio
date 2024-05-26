@@ -87,32 +87,45 @@ const socialMediaLinks = [
 const skills = {
   data: [
     {
-      title: "Data Science & AI",
+      title: "DevOps and Cloud",
       fileName: "DataScienceImg",
       skills: [
-        "⚡ Developing highly scalable production ready models for various deeplearning and statistical use cases",
-        "⚡ Experience of working with Computer Vision and NLP projects",
-        "⚡ Complex quantitative modelling for dynamic forecasting and time series analysis",
+        "⚡ Experience in building CI/CD pipelines for code deployment",
+        "⚡ Working with various cloud platforms such as AWS, Azure, Google Cloud",
+        "⚡ Experience in automating infrastructure using Terraform, Ansible",
+        "⚡ Monitoring and maintaining Kubernetes clusters using Prometheus, Grafana",
+        "⚡ Experience in setting up logging and monitoring using ELK stack",
+        "⚡ Managing and maintaining Jenkins for CI/CD pipelines",
+        "⚡ Experience in setting up and managing Docker containers",
       ],
       softwareSkills: [
         {
-          skillName: "Tensorflow",
-          fontAwesomeClassname: "logos-tensorflow",
+          skillName: "Jenkins",
+          fontAwesomeClassname: "logos-jenkins",
+          style: {
+            backgroundColor: "transparent",
+          },
+        },
+        //argocd
+
+        {
+          skillName: "Terraform",
+          fontAwesomeClassname: "logos-terraform",
           style: {
             backgroundColor: "transparent",
           },
         },
         {
-          skillName: "Keras",
-          fontAwesomeClassname: "simple-icons:keras",
+          skillName: "Docker",
+          fontAwesomeClassname: "simple-icons:docker",
           style: {
             backgroundColor: "white",
             color: "#D00000",
           },
         },
         {
-          skillName: "PyTorch",
-          fontAwesomeClassname: "logos-pytorch",
+          skillName: "Ansible",
+          fontAwesomeClassname: "logos-ansible",
           style: {
             backgroundColor: "transparent",
           },
@@ -126,89 +139,141 @@ const skills = {
           },
         },
         {
-          skillName: "Deeplearning",
-          imageSrc: "deeplearning_ai_logo.png",
+          skillName: "AWS",
+          fontAwesomeClassname: "logos-aws",
+          style: {
+            backgroundColor: "transparent",
+          },
+        },
+        {
+          skillName: "GCP",
+          fontAwesomeClassname: "simple-icons:googlecloud",
+          style: {
+            backgroundColor: "transparent",
+          },
+        },
+        {
+          skillName: "Azure",
+          fontAwesomeClassname: "simple-icons:microsoftazure",
+          style: {
+            backgroundColor: "transparent",
+          },
+        },
+        {
+          skillName: "Kubernetes",
+          fontAwesomeClassname: "simple-icons:kubernetes",
+          style: {
+            backgroundColor: "transparent",
+          },
+        },
+        {
+          skillName: "Prometheus",
+          fontAwesomeClassname: "logos-prometheus",
+          style: {
+            backgroundColor: "transparent",
+          },
+        },
+        {
+          skillName: "Grafana",
+          fontAwesomeClassname: "logos-grafana",
+          style: {
+            backgroundColor: "transparent",
+          },
+        },
+        {
+          skillName: "Elasticsearch",
+          fontAwesomeClassname: "simple-icons:elasticsearch",
+          style: {
+            backgroundColor: "transparent",
+          },
+        },
+        {
+          skillName: "Logstash",
+          fontAwesomeClassname: "simple-icons:logstash",
+          style: {
+            backgroundColor: "transparent",
+          },
+        },
+        {
+          skillName: "Kibana",
+          fontAwesomeClassname: "simple-icons:kibana",
+          style: {
+            backgroundColor: "transparent",
+          },
         },
       ],
     },
     {
-      title: "Full Stack Development",
+      title: "Site Reliability Engineering",
       fileName: "FullStackImg",
       skills: [
-        "⚡ Building responsive website front end using React-Redux",
-        "⚡ Developing mobile applications using Flutter, React Native and solo android apps using Kotlin",
-        "⚡ Creating application backend in Node, Express & Flask",
+        "⚡ Experience in setting up and maintaining monitoring systems",
+        "⚡ Working with various logging and monitoring tools",
+        "⚡ Experience in setting up and maintaining Kubernetes clusters",
+        "⚡ Experience in setting up and maintaining service mesh using istio",
+        "⚡ Creating application backend in Java, Springboot & Hibernate",
+        "⚡ Experience in setting up and maintaining databases",
+        "⚡ worked for maintaining SLA, SLO and SLI",
       ],
       softwareSkills: [
         {
-          skillName: "HTML5",
-          fontAwesomeClassname: "simple-icons:html5",
+          skillName: "Istio",
+          fontAwesomeClassname: "simple-icons:istio",
+          style: {
+            color: "#E34F26",
+          },
+        },
+        //splunk
+        {
+          skillName: "Splunk",
+          fontAwesomeClassname: "simple-icons:splunk",
+          style: {
+            color: "#000000",
+          },
+        },
+        //prometheus and grafana
+        {
+          skillName: "Prometheus",
+          fontAwesomeClassname: "logos-prometheus",
           style: {
             color: "#E34F26",
           },
         },
         {
-          skillName: "CSS3",
-          fontAwesomeClassname: "fa-css3",
+          skillName: "Grafana",
+          fontAwesomeClassname: "logos-grafana",
           style: {
-            color: "#1572B6",
+            color: "#F46800",
+          },
+        },
+        //elk stack
+        {
+          skillName: "Elasticsearch",
+          fontAwesomeClassname: "simple-icons:elasticsearch",
+          style: {
+            color: "#005571",
           },
         },
         {
-          skillName: "Sass",
-          fontAwesomeClassname: "simple-icons:sass",
+          skillName: "Logstash",
+          fontAwesomeClassname: "simple-icons:logstash",
           style: {
-            color: "#CC6699",
+            color: "#005571",
           },
         },
         {
-          skillName: "JavaScript",
-          fontAwesomeClassname: "simple-icons:javascript",
+          skillName: "Kibana",
+          fontAwesomeClassname: "simple-icons:kibana",
           style: {
-            backgroundColor: "#000000",
-            color: "#F7DF1E",
+            color: "#005571",
           },
         },
+        //load testing
         {
-          skillName: "ReactJS",
-          fontAwesomeClassname: "simple-icons:react",
+          skillName: "JMeter",
+          fontAwesomeClassname: "simple-icons:apachejmeter",
           style: {
-            color: "#61DAFB",
-          },
-        },
-        {
-          skillName: "NodeJS",
-          fontAwesomeClassname: "devicon-plain:nodejs-wordmark",
-          style: {
-            color: "#339933",
-          },
-        },
-        {
-          skillName: "NPM",
-          fontAwesomeClassname: "simple-icons:npm",
-          style: {
-            color: "#CB3837",
-          },
-        },
-        {
-          skillName: "Yarn",
-          fontAwesomeClassname: "simple-icons:yarn",
-          style: {
-            color: "#2C8EBB",
-          },
-        },
-        {
-          skillName: "Gatsby",
-          fontAwesomeClassname: "simple-icons:gatsby",
-          style: {
-            color: "#663399",
-          },
-        },
-        {
-          skillName: "Flutter",
-          fontAwesomeClassname: "simple-icons:flutter",
-          style: {
-            color: "#02569B",
+            color: "#000000",
           },
         },
       ],
@@ -220,7 +285,11 @@ const skills = {
         "⚡ Experience working on multiple cloud platforms",
         "⚡ Hosting and maintaining websites on virtual machine instances along with integration of databases",
         "⚡ Deploying deep learning models on cloud to use on mobile devices",
-        "⚡ Setting up streaming jobs from DB to Server or vice-versa on GCP and AWS",
+        "⚡ Setting up streaming jobs from DB to Server or vice-versa on Azure, GCP and AWS",
+        //terraform
+        "⚡ Experience in automating infrastructure using Terraform, Ansible",
+        //kubernetes eks and aks
+        "⚡ Experience in setting up and maintaining Kubernetes clusters",
       ],
       softwareSkills: [
         {
@@ -279,15 +348,39 @@ const skills = {
             color: "#326CE5",
           },
         },
+        //terraform
+        {
+          skillName: "Terraform",
+          fontAwesomeClassname: "logos-terraform",
+          style: {
+            backgroundColor: "transparent",
+          },
+        },
+        //ansible
+        {
+          skillName: "Ansible",
+          fontAwesomeClassname: "logos-ansible",
+          style: {
+            backgroundColor: "transparent",
+          },
+        },
       ],
     },
     {
-      title: "UI/UX Design",
+      title: "Network and System Administration",
       fileName: "DesignImg",
       skills: [
-        "⚡ Designing highly attractive user interface for mobile and web applications",
-        "⚡ Customizing logo designs and building logos from scratch",
-        "⚡ Creating the flow of application functionalities to optimize user experience",
+        "⚡ Experience in setting up and maintaining network infrastructure",
+        //settig up virtual network in aws and azure
+        "⚡ Setting up virtual networks in AWS and Azure",
+        //network security
+        "⚡ Experience in network security",
+        //firewall
+        "⚡ Setting up and maintaining firewalls",
+        //linux and windows server adminstration
+        "⚡ Experience in Linux and Windows Server Administration",
+        //network monitoring
+        "⚡ Experience in network monitoring using Nagios and SolarWinds",
       ],
       softwareSkills: [
         {
@@ -297,23 +390,59 @@ const skills = {
             color: "#FF2BC2",
           },
         },
+        //aws
         {
-          skillName: "Figma",
-          fontAwesomeClassname: "simple-icons:figma",
+          skillName: "AWS",
+          fontAwesomeClassname: "simple-icons:amazonaws",
           style: {
-            color: "#F24E1E",
+            color: "#FF9900",
           },
         },
+        //azure
         {
-          skillName: "Adobe Illustrator",
-          fontAwesomeClassname: "simple-icons:adobeillustrator",
+          skillName: "Azure",
+          fontAwesomeClassname: "simple-icons:microsoftazure",
           style: {
-            color: "#FF7C00",
+            color: "#0089D6",
           },
         },
+
+        //solarwinds
         {
-          skillName: "Inkscape",
-          fontAwesomeClassname: "simple-icons:inkscape",
+          skillName: "SolarWinds",
+          fontAwesomeClassname: "logos:solarwinds",
+          style: {
+            color: "#000000",
+          },
+        },
+        //linux
+        {
+          skillName: "Linux",
+          fontAwesomeClassname: "simple-icons:linux",
+          style: {
+            color: "#000000",
+          },
+        },
+        //windows
+        {
+          skillName: "Windows",
+          fontAwesomeClassname: "simple-icons:windows",
+          style: {
+            color: "#000000",
+          },
+        },
+        //vmware
+        {
+          skillName: "VMware",
+          fontAwesomeClassname: "simple-icons:vmware",
+          style: {
+            color: "#000000",
+          },
+        },
+        //cisco
+        {
+          skillName: "Cisco",
+          fontAwesomeClassname: "simple-icons:cisco",
           style: {
             color: "#000000",
           },
