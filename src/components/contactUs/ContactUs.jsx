@@ -144,7 +144,7 @@ export const ContactUs = () => {
     if (validateForm()) {
       axios
         .post(
-          'https://vg270aahel.execute-api.us-east-1.amazonaws.com/v1/portfolio',
+          'https://bprdz8u9nd.execute-api.us-east-1.amazonaws.com/v1/portfolio',
           userData,
           {headers: {'Accept': 'application/json'}}
         )
