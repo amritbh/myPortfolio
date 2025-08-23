@@ -87,6 +87,110 @@ const socialMediaLinks = [
 const skills = {
   data: [
     {
+      title: "Full Stack Software Engineer",
+      fileName: "SoftwareImg",
+      skills: [
+        "⚡ Strong experience building backend applications using Java and Spring Boot",
+        "⚡ Experience developing RESTful APIs and microservices",
+        "⚡ Proficient in Python for scripting and backend development",
+        "⚡ Building responsive frontend UIs with React",
+        "⚡ Familiar with unit/integration testing, CI/CD and containerization using Docker",
+      ],
+      softwareSkills: [
+        {
+          skillName: "Java",
+          fontAwesomeClassname: "simple-icons:java",
+          style: {
+            color: "#5382a1",
+          },
+        },
+        {
+          skillName: "Spring Boot",
+          fontAwesomeClassname: "simple-icons:springboot",
+          style: {
+            color: "#6DB33F",
+          },
+        },
+        {
+          skillName: "Python",
+          fontAwesomeClassname: "ion-logo-python",
+          style: {
+            color: "#3776AB",
+          },
+        },
+        {
+          skillName: "React",
+          fontAwesomeClassname: "ion-logo-react",
+          style: {
+            color: "#61DAFB",
+          },
+        },
+        {
+          skillName: "Docker",
+          fontAwesomeClassname: "simple-icons:docker",
+          style: {
+            backgroundColor: "transparent",
+          },
+        },
+        {
+          skillName: "Hibernate",
+          fontAwesomeClassname: "simple-icons:hibernate",
+          style: {
+            color: "#59666C",
+          },
+        },
+        {
+          skillName: "MySQL",
+          fontAwesomeClassname: "simple-icons:mysql",
+          style: {
+            color: "#4479A1",
+          },
+        },
+        {
+          skillName: "PostgreSQL",
+          fontAwesomeClassname: "simple-icons:postgresql",
+          style: {
+            color: "#336791",
+          },
+        },
+        {
+          skillName: "JUnit",
+          fontAwesomeClassname: "simple-icons:junit",
+          style: {
+            color: "#25A162",
+          },
+        },
+        {
+          skillName: "Maven",
+          fontAwesomeClassname: "simple-icons:apachemaven",
+          style: {
+            color: "#C71A36",
+          },
+        },
+        {
+          skillName: "Kafka",
+          fontAwesomeClassname: "simple-icons:apachekafka",
+          style: {
+            color: "#E64A19",
+          },
+        },
+        {
+          skillName: "Redis",
+          fontAwesomeClassname: "simple-icons:redis",
+          style: {
+            color: "#D82C20",
+          },
+        },
+        {
+          skillName: "Microservices",
+          fontAwesomeClassname: "simple-icons:microservices",
+          style: {
+            color: "#0B69B4",
+          },
+        },
+      ],
+    },
+    {
       title: "DevOps and Cloud",
       fileName: "DataScienceImg",
       skills: [
