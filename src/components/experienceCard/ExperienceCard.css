@@ -196,6 +196,14 @@
   font-family: "Google Sans Regular";
 }
 
+/* Make experience description text larger and more readable */
+.experience-card-description,
+.experience-card p,
+.experience-card li {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
 .experience-card-company > a {
   position: relative;
   color: #000;
@@ -314,23 +322,7 @@
     margin-right: auto;
   }
 
-  .experience-card-title {
-    /* text-align: center; */
-  }
-
-  .experience-card-company {
-    /* text-align: center; */
-  }
-
-  .experience-card-duration {
-    /* margin-top: 2px; */
-    /* text-align: center; */
-  }
-
-  .experience-card-location {
-    /* text-align: left; */
-    /* text-align: center; */
-  }
+  /* Removed empty rule blocks to avoid linter warnings */
 
   .experience-card-header-div {
     flex-direction: column;
@@ -340,5 +332,7 @@
     margin-left: 14px;
     margin-right: 14px;
     text-align: justify;
+    font-size: 15px;
+    line-height: 1.5;
   }
 }
