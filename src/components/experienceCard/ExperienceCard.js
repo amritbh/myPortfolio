@@ -15,11 +15,33 @@ class ExperienceCard extends Component {
       >
         <Fade left duration={2000} distance="40px">
           <div className="experience-card-logo-div">
-            <img
-              className="experience-card-logo"
-              src={require(`../../assests/images/${experience["logo_path"]}`)}
-              alt=""
-            />
+            {(() => {
+              // safe require with fallback to avoid runtime crash when image is missing
+              try {
+                const img = require(`../../assests/images/${experience["logo_path"]}`);
+                return (
+                  <img
+                    className="experience-card-logo"
+                    src={img}
+                    alt={experience["company"]}
+                  />
+                );
+              } catch (err) {
+                // fallback image bundled in the repo
+                try {
+                  const fallback = require(`../../assests/images/projects_image.svg`);
+                  return (
+                    <img
+                      className="experience-card-logo"
+                      src={fallback}
+                      alt={experience["company"]}
+                    />
+                  );
+                } catch (err2) {
+                  return null;
+                }
+              }
+            })()}
           </div>
         </Fade>
         <div className="experience-card-stepper">
@@ -106,7 +128,55 @@ class ExperienceCard extends Component {
                 }}
               >
                 <div className="repo-description" />
-                {experience["description"]}
+                <div style={{ color: theme.secondaryText }}>
+                  {
+                    // Description can be either an array of strings or a long string
+                    Array.isArray(experience["description"]) ? (
+                      <ul style={{ marginTop: 0 }}>
+                        {experience["description"].map((item, idx) => (
+                          <li key={idx} style={{ marginBottom: 6 }}>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      // parse string: split into paragraphs or bullet lists
+                      (() => {
+                        const text = experience["description"] || "";
+                        const sections = text.split(/\n\n+/).filter(Boolean);
+                        return (
+                          <div>
+                            {sections.map((sec, sidx) => {
+                              const lines = sec.split(/\n+/).filter(Boolean);
+                              const isBullet = lines.every((l) =>
+                                l.trim().startsWith("•")
+                              );
+                              if (isBullet) {
+                                return (
+                                  <ul key={sidx} style={{ marginTop: 0 }}>
+                                    {lines.map((l, lidx) => (
+                                      <li
+                                        key={lidx}
+                                        style={{ marginBottom: 6 }}
+                                      >
+                                        {l.replace(/^•\s*/, "")}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                );
+                              }
+                              return (
+                                <p key={sidx} style={{ marginBottom: 8 }}>
+                                  {lines.join(" ")}
+                                </p>
+                              );
+                            })}
+                          </div>
+                        );
+                      })()
+                    )
+                  }
+                </div>
               </div>
             </div>
           </div>

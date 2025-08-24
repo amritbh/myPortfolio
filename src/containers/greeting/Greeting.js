@@ -4,7 +4,9 @@ import SocialMedia from "../../components/socialMedia/SocialMedia";
 import Button from "../../components/button/Button";
 import { greeting } from "../../portfolio";
 import { Fade } from "react-reveal";
+// ...existing imports...
 import FeelingProud from "./FeelingProud";
+import heroImage from "../../assests/images/amrit_pic.jpeg";
 
 export default function Greeting(props) {
   const theme = props.theme;
@@ -45,11 +47,9 @@ export default function Greeting(props) {
             </div>
           </div>
           <div className="greeting-image-div">
-            {/* <img
-							alt="saad sitting on table"
-							src={require("../../assests/images/feelingProud.svg")}
-						></img> */}
-            <FeelingProud theme={theme} />
+            <img className="greeting-image" alt="user photo" src={heroImage} />
+            {/* Keeping the inline SVG component available if needed
+                <FeelingProud theme={theme} /> */}
           </div>
         </div>
       </div>
