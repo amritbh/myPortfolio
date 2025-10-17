@@ -103,7 +103,8 @@
 }
 
 .header .menu-btn:checked ~ .menu {
-  max-height: 370px;
+  /* allow the menu to expand fully on small screens so all items (including Contact) are visible */
+  max-height: 100vh;
 }
 
 .header .menu-btn:checked ~ .menu-icon .navicon {
