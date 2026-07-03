@@ -1065,32 +1065,6 @@
       }
     },
     {
-      "id": "MDU6SXNzdWU1OTMyNjQ3NTg=",
-      "closed": true,
-      "title": "Adding config to override prettier (if set) in any code editor",
-      "createdAt": "2020-04-03T09:59:05Z",
-      "url": "https://github.com/saadpasta/developerFolio/issues/77",
-      "number": 77,
-      "assignees": {
-        "nodes": [
-          {
-            "avatarUrl": "https://avatars.githubusercontent.com/u/48270786?u=dab5f6dc64923f646b354f47f52af65f44fd9e7e&v=4",
-            "name": "Kartik Choudhary",
-            "url": "https://github.com/kartikcho"
-          }
-        ]
-      },
-      "repository": {
-        "name": "developerFolio",
-        "url": "https://github.com/saadpasta/developerFolio",
-        "owner": {
-          "login": "saadpasta",
-          "avatarUrl": "https://avatars.githubusercontent.com/u/23307811?u=eab46b153eef3f5183930e61898b462447af9219&v=4",
-          "url": "https://github.com/saadpasta"
-        }
-      }
-    },
-    {
       "id": "MDU6SXNzdWU1OTE2NjAzNTE=",
       "closed": true,
       "title": "Add Animations to Pinned Projects ",
