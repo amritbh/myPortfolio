@@ -537,52 +537,6 @@
       }
     },
     {
-      "id": "MDExOlB1bGxSZXF1ZXN0Mzk4MDc0NjYy",
-      "title": "Added Basic Reveal Fade animations",
-      "url": "https://github.com/saadpasta/developerFolio/pull/76",
-      "state": "MERGED",
-      "mergedBy": {
-        "avatarUrl": "https://avatars.githubusercontent.com/u/48270786?u=dab5f6dc64923f646b354f47f52af65f44fd9e7e&v=4",
-        "url": "https://github.com/kartikcho",
-        "login": "kartikcho"
-      },
-      "createdAt": "2020-04-03T09:52:10Z",
-      "number": 76,
-      "changedFiles": 15,
-      "additions": 45,
-      "deletions": 0,
-      "baseRepository": {
-        "name": "developerFolio",
-        "url": "https://github.com/saadpasta/developerFolio",
-        "owner": {
-          "avatarUrl": "https://avatars.githubusercontent.com/u/23307811?u=eab46b153eef3f5183930e61898b462447af9219&v=4",
-          "login": "saadpasta",
-          "url": "https://github.com/saadpasta"
-        }
-      }
-    },
-    {
-      "id": "MDExOlB1bGxSZXF1ZXN0Mzk3OTQzMTk3",
-      "title": "Added basic animations",
-      "url": "https://github.com/saadpasta/developerFolio/pull/74",
-      "state": "CLOSED",
-      "mergedBy": null,
-      "createdAt": "2020-04-03T05:21:40Z",
-      "number": 74,
-      "changedFiles": 18,
-      "additions": 463,
-      "deletions": 295,
-      "baseRepository": {
-        "name": "developerFolio",
-        "url": "https://github.com/saadpasta/developerFolio",
-        "owner": {
-          "avatarUrl": "https://avatars.githubusercontent.com/u/23307811?u=eab46b153eef3f5183930e61898b462447af9219&v=4",
-          "login": "saadpasta",
-          "url": "https://github.com/saadpasta"
-        }
-      }
-    },
-    {
       "id": "MDExOlB1bGxSZXF1ZXN0Mzk3NDkxODM2",
       "title": "Added doc for absolute import from gatsby eslint rules or other tools",
       "url": "https://github.com/gatsbyjs/gatsby/pull/22750",
