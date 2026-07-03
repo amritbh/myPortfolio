@@ -1,0 +1,91 @@
+name: Build and upload artifact to S3 on PR merge
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-upload:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    env:
+      BUCKET: amrit.cloud
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build production bundle
+        run: npm run build --if-present
+
+      - name: Prepare amrit.cloud folder and zip its contents
+        run: |
+          set -e
+          rm -f amrit.cloud.zip build.zip || true
+          # ensure build exists
+          if [ ! -d build ]; then
+            echo "Error: build/ directory not found. Did the build step fail?"
+            ls -la
+            exit 1
+          fi
+          # create a clean amrit.cloud directory and copy only build's contents into it
+          rm -rf amrit.cloud
+          mkdir amrit.cloud
+          cp -R build/. amrit.cloud/
+          # create zip from the amrit.cloud directory
+          ZIP_NAME="amrit.cloud-${{ github.event.pull_request.number }}-${{ github.sha }}-$(date -u +'%Y%m%dT%H%M%SZ').zip"
+          zip -r "$ZIP_NAME" amrit.cloud
+          echo "$ZIP_NAME" > .last_zip
+
+      - name: Show checksum of artifact
+        run: |
+          ZIP_NAME=$(cat .last_zip)
+          echo "Artifact size and checksum:"
+          ls -lh "$ZIP_NAME"
+          if command -v sha256sum >/dev/null 2>&1; then
+            sha256sum "$ZIP_NAME"
+          else
+            shasum -a 256 "$ZIP_NAME"
+          fi
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Sync build/ contents to S3 bucket
+        env:
+          BUCKET: ${{ env.BUCKET }}
+        run: |
+          set -e
+          # upload the timestamped artifact as backup, if it exists
+          if [ -f .last_zip ]; then
+            ZIP_NAME=$(cat .last_zip)
+            PR_NUMBER=${{ github.event.pull_request.number }}
+            SHA=${{ github.sha }}
+            TIMESTAMP=$(date -u +"%Y%m%dT%H%M%SZ")
+            DEST="s3://$BUCKET/amrit.cloud-${PR_NUMBER}-${SHA}-${TIMESTAMP}.zip"
+            echo "Uploading artifact $ZIP_NAME to $DEST"
+            aws s3 cp "$ZIP_NAME" "$DEST"
+          fi
+
+          # now sync the build/ directory contents to the bucket. --delete makes the bucket mirror build/
+          echo "Syncing build/ -> s3://$BUCKET/ (this will delete remote files not present locally)"
+          aws s3 sync build/ "s3://$BUCKET/" --delete
+
+      - name: List recently uploaded objects in bucket
+        run: |
+          aws s3 ls "s3://$BUCKET/" --recursive | tail -n 20 || true
