@@ -5,7 +5,6 @@ import Button from "../../components/button/Button";
 import { greeting } from "../../portfolio";
 import { Fade } from "react-reveal";
 // ...existing imports...
-import FeelingProud from "./FeelingProud";
 import heroImage from "../../assests/images/amrit_pic.jpeg";
 
 export default function Greeting(props) {
@@ -47,7 +46,11 @@ export default function Greeting(props) {
             </div>
           </div>
           <div className="greeting-image-div">
-            <img className="greeting-image" alt="user photo" src={heroImage} />
+            <img
+              className="greeting-image"
+              alt="user profile"
+              src={heroImage}
+            />
             {/* Keeping the inline SVG component available if needed
                 <FeelingProud theme={theme} /> */}
           </div>
