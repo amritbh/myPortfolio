@@ -1,3 +1,7 @@
+include "root" {
+  path = "common.hcl"
+}
+
 terraform {
   source = "../../modules/backend"
 }
