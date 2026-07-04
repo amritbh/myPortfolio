@@ -15,6 +15,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
+      TERRAGRUNT_NON_INTERACTIVE: true
 
     steps:
       - name: Checkout repository
@@ -35,8 +36,8 @@ jobs:
 
       - name: Terragrunt Plan (Backend)
         working-directory: infra/live/prod
-        run: terragrunt plan -out=tfplan
+        run: terragrunt plan --terragrunt-non-interactive -out=tfplan
 
       - name: Terragrunt Plan (Frontend)
         working-directory: infra/live/prod/frontend
-        run: terragrunt plan -out=tfplan
+        run: terragrunt plan --terragrunt-non-interactive -out=tfplan
