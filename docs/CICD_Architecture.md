@@ -13,10 +13,12 @@ This workflow automatically deploys the React frontend application to the AWS S3
 - **Trigger**: Runs automatically whenever a commit is pushed or merged to the `main` branch.
 - **Process**:
   1. Checks out the repository.
-  2. Sets up Node.js v18 and installs dependencies (`npm ci`).
-  3. Builds the production React bundle (`npm run build`).
-  4. Authenticates with AWS using standard GitHub Secrets (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`).
-  5. Syncs the `build/` directory directly to the S3 bucket (`s3://amrit.cloud`).
+  2. Authenticates with AWS using standard GitHub Secrets (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`).
+  3. Sets up Terraform and Terragrunt on the runner.
+  4. Sets up Node.js v18 and installs dependencies (`npm ci`).
+  5. Extracts the dynamically generated backend API URL by running `terragrunt output -raw api_endpoint` inside `infra/live/prod`.
+  6. Injects the API URL as `REACT_APP_CUSTOM_API_URL` and builds the production React bundle (`npm run build`).
+  7. Syncs the `build/` directory directly to the S3 bucket (`s3://amrit.cloud`).
 
 ---
 
