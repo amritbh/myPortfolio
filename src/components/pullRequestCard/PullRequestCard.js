@@ -111,6 +111,8 @@ class PullRequestCard extends Component {
                 <a
                   style={{ color: iconPR.style.color }}
                   href={pullRequest["baseRepository"]["url"]}
+                  target="_blank"
+                  rel="noreferrer noopener"
                 >
                   {pullRequest["baseRepository"]["owner"]["login"]}/
                   {pullRequest["baseRepository"]["name"]}

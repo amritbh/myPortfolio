@@ -102,6 +102,8 @@ class IssueCard extends Component {
                 <a
                   style={{ color: iconPR.style.color }}
                   href={issue["repository"]["url"]}
+                  target="_blank"
+                  rel="noreferrer noopener"
                 >
                   {issue["repository"]["owner"]["login"]}/
                   {issue["repository"]["name"]}
