@@ -66,3 +66,21 @@ The repository originally started as a fork of `saadpasta/developerFolio`. Sever
 - **README.md Replacement**: The entire README was rewritten to serve as a clean, professional introduction to Amrit Bhattarai's portfolio, removing all traces of the original author, badges, and contributors table.
 - **Removed Irrelevant Files**: Deleted `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md` as this is a personal portfolio, not an open-source community project.
 - **Data Sanitization**: Cleaned up the local JSON files (`issues.json` and `pull_requests.json`) within `src/shared/opensource/` to remove the original author's open-source history, ensuring the Open Source page only displays relevant data.
+- **Removed Docker Files**: Deleted obsolete `Dockerfile` and `docker-compose.yaml` files, as the architecture is entirely Serverless (S3/Lambda) and does not utilize containerization.
+
+---
+
+## 5. OWASP ZAP Baseline Scan (DAST) Artifact API Conflict
+
+During the integration of the OWASP ZAP Baseline Scanner (`zaproxy/action-baseline`) into the CI/CD pipeline, a critical failure occurred during the artifact upload phase:
+
+`Create Artifact Container failed: The artifact name zapreport is not valid.`
+
+**The Root Cause:**
+The CI/CD pipeline runs on modern GitHub Actions runners (`ubuntu-latest` defaulting to Node 20+). However, older versions of the ZAP Action (`v0.12.0`) relied on a deprecated version of the `@actions/artifact` library (v3). This older library is incompatible with GitHub's new v4 Artifact API infrastructure, causing the platform to outright reject the artifact upload.
+
+**The Fix Implemented:**
+To resolve this without disabling artifact generation:
+
+1. **Action Upgrade**: Upgraded `zaproxy/action-baseline` from `v0.12.0` to `v0.15.0`, which natively supports the modern GitHub Actions v4 artifact infrastructure.
+2. **Permissions**: Explicitly granted `actions: write` and `issues: write` permissions to the `deploy-to-s3.yml` workflow, allowing ZAP to upload the HTML report and automatically generate GitHub Issues for discovered vulnerabilities.

@@ -23,7 +23,7 @@ The frontend application code lives in the root directory (Create React App). It
   - Verifies the deployment by listing the objects in the S3 bucket.
   - Runs a Dynamic Application Security Test (**DAST**) using the **OWASP ZAP Baseline Scanner** (`zaproxy/action-baseline`) against the newly deployed live production site.
 
-> **Security Note:** The ZAP Baseline scanner will automatically open a GitHub Issue in this repository if it detects high-level security vulnerabilities. To support this, the workflow explicitly requests the `issues: write` permission.
+> **Security Note:** The ZAP Baseline scanner will automatically open a GitHub Issue in this repository if it detects high-level security vulnerabilities, and it uploads a detailed HTML report as a workflow artifact. To support this, the workflow explicitly requests the `issues: write` and `actions: write` permissions.
 
 ## Security & Quality Gates (`sonar.yml`)
 
