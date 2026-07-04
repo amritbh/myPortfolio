@@ -23,7 +23,7 @@ export default function socialMedia(props) {
             href={media.link}
             className={`icon-button`}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noreferrer noopener"
           >
             <IconWrapper {...media} {...props}>
               <i className={`fab ${media.fontAwesomeIcon}`}></i>

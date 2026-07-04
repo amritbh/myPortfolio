@@ -86,12 +86,12 @@ function Contact(props) {
       message,
     };
 
+    const apiUrl =
+      process.env.REACT_APP_API_URL ||
+      "https://bprdz8u9nd.execute-api.us-east-1.amazonaws.com/v1/portfolio";
+
     axios
-      .post(
-        "https://bprdz8u9nd.execute-api.us-east-1.amazonaws.com/v1/portfolio",
-        userData,
-        { headers: { Accept: "application/json" } }
-      )
+      .post(apiUrl, userData, { headers: { Accept: "application/json" } })
       .then(() => {
         setAlert({ type: "success", text: "Message sent successfully!" });
         setUserName("");
@@ -200,7 +200,7 @@ function Contact(props) {
               <a
                 href={addressSection.location_map_link}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noreferrer noopener"
                 className="contact-info-item"
                 style={{ color: theme.text }}
               >
