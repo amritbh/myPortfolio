@@ -1,8 +1,9 @@
 # Route 53 Records pointing to CloudFront
 resource "aws_route53_record" "root_a" {
-  zone_id = aws_route53_zone.main.zone_id
-  name    = var.domain_name
-  type    = "A"
+  zone_id         = aws_route53_zone.main.zone_id
+  name            = var.domain_name
+  type            = "A"
+  allow_overwrite = true
   
   alias {
     name                   = aws_cloudfront_distribution.cdn.domain_name
@@ -12,9 +13,10 @@ resource "aws_route53_record" "root_a" {
 }
 
 resource "aws_route53_record" "www_a" {
-  zone_id = aws_route53_zone.main.zone_id
-  name    = "www.${var.domain_name}"
-  type    = "A"
+  zone_id         = aws_route53_zone.main.zone_id
+  name            = "www.${var.domain_name}"
+  type            = "A"
+  allow_overwrite = true
   
   alias {
     name                   = aws_cloudfront_distribution.cdn.domain_name
