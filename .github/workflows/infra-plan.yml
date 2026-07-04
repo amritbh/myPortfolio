@@ -52,16 +52,26 @@ jobs:
           working_directory: infra
           soft_fail: true
 
+      - name: Run Trivy vulnerability scanner in fs mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '0'
+          severity: 'HIGH,CRITICAL'
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
-      - name: Run Backend Application Tests (pytest)
+      - name: Run Backend Application Tests & Coverage (pytest & bandit)
         working-directory: infra/modules/backend/src
         run: |
           pip install -r requirements-test.txt
-          python -m pytest test_app.py
+          python -m pytest --cov=. --cov-report=xml test_app.py
+          bandit -r app.py
 
       - name: Run Terraform Tests (Backend Module)
         working-directory: infra/modules/backend

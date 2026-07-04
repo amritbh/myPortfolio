@@ -154,3 +154,21 @@ cors_configuration {
   }
 }
 ```
+
+---
+
+## 7. Testing & Quality Assurance
+
+The backend logic (`app.py`) is thoroughly tested locally using a suite of automated unit tests.
+
+### Framework Highlights
+
+- **Location**: Test files live alongside the application code in `infra/modules/backend/src/test_app.py`.
+- **Framework**: We use **Pytest** for its clean syntax, automatic test discovery, and powerful fixture system.
+- **AWS Mocking (`moto`)**: To ensure tests are fast, deterministic, and don't require actual AWS credentials or resources, we use the `moto` library. It intercepts `boto3` calls (like DynamoDB requests) and routes them to a local, in-memory mock version of the AWS API.
+- **Code Coverage**: We run `python -m pytest --cov=. --cov-report=xml` to calculate test coverage. This verifies that our tests hit all logic branches (like error handling and unauthorized access attempts).
+
+### Example Tests
+
+1. **`test_get_all_blogs`**: Mocks the DynamoDB table, seeds it with dummy data, and verifies the Lambda function correctly fetches and sorts the blogs by publish date.
+2. **`test_create_blog_unauthorized`**: Verifies that passing an incorrect `ADMIN_PASSWORD` in the headers correctly returns a 401 Unauthorized status, preventing unwanted database writes.
