@@ -56,7 +56,7 @@ def setup_dynamodb(dynamodb_client):
     table.put_item(Item={'slug': 'test-blog-2', 'title': 'Test Blog 2', 'publishDate': '2026-01-02'})
     yield
 
-def test_password_hashing():
+def test_password_hashing(setup_dynamodb):
     import app
     h1, s1 = app.hash_password("Password123!")
     assert app.verify_password("Password123!", h1, s1) is True
