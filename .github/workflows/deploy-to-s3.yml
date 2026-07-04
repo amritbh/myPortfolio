@@ -46,6 +46,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run Frontend Tests
+        run: CI=true npm run test
+
       - name: Fetch API URL and Build production bundle
         run: |
           export REACT_APP_CUSTOM_API_URL=$(cd infra/live/prod && terragrunt output -raw api_endpoint)

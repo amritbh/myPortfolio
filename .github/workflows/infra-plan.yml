@@ -52,6 +52,17 @@ jobs:
           working_directory: infra
           soft_fail: true
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Run Backend Application Tests (pytest)
+        working-directory: infra/modules/backend/src
+        run: |
+          pip install -r requirements-test.txt
+          python -m pytest test_app.py
+
       - name: Run Terraform Tests (Backend Module)
         working-directory: infra/modules/backend
         run: terraform init && terraform test
