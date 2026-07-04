@@ -23,3 +23,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.terragrunt-cache/
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate*
