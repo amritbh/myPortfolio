@@ -3,7 +3,7 @@ resource "aws_dynamodb_table" "blogs_table" {
   name         = "${var.project_name}-${var.environment}-blogs"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "slug"
-  
+
   deletion_protection_enabled = true
 
   attribute {
