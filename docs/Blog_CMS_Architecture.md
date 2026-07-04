@@ -56,6 +56,7 @@ graph TD
 ### Users Table (`amrit-cloud-prod-users`)
 
 - **Primary Key**: `username` (String)
+- **Data Protection**: Deletion Protection is **ENABLED** to prevent accidental loss of admin accounts.
 
 ```json
 {
@@ -72,6 +73,7 @@ graph TD
 
 - **Primary Key**: `slug` (String)
 - **Global Secondary Index**: `PublishDateIndex` (hash_key: `publishDate`)
+- **Data Protection**: Deletion Protection is **ENABLED** to prevent accidental loss of published blogs.
 
 ```json
 {
