@@ -34,6 +34,24 @@ jobs:
           sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
           terragrunt --version
 
+      - name: Terraform Format Check
+        working-directory: infra
+        run: terraform fmt -check -recursive
+
+      - name: Terragrunt Format Check
+        working-directory: infra
+        run: terragrunt hclfmt --terragrunt-check
+
+      - name: Terragrunt Validate
+        working-directory: infra/live
+        run: terragrunt run-all validate --terragrunt-non-interactive
+
+      - name: Run tfsec Security Scanner
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          working_directory: infra
+          soft_fail: true
+
       - name: Run Terraform Tests (Backend Module)
         working-directory: infra/modules/backend
         run: terraform init && terraform test

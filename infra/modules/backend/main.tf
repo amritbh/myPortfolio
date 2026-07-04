@@ -1,23 +1,23 @@
 # DynamoDB Table
 resource "aws_dynamodb_table" "blogs_table" {
-  name           = "${var.project_name}-${var.environment}-blogs"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "slug"
-  
+  name         = "${var.project_name}-${var.environment}-blogs"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "slug"
+
   attribute {
     name = "slug"
     type = "S"
   }
-  
+
   attribute {
     name = "publishDate"
     type = "S"
   }
-  
+
   global_secondary_index {
-    name               = "PublishDateIndex"
-    hash_key           = "publishDate"
-    projection_type    = "ALL"
+    name            = "PublishDateIndex"
+    hash_key        = "publishDate"
+    projection_type = "ALL"
   }
 }
 
