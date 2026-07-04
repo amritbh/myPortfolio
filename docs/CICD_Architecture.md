@@ -44,6 +44,17 @@ The AWS infrastructure (API Gateway, DynamoDB, Lambda, CloudFront, Route53) is m
 
 To ensure that Terraform can safely execute in an ephemeral GitHub Actions runner without losing its state, the CI/CD pipeline uses a **Remote State Backend**.
 
-- **Storage**: The state file (`terraform.tfstate`) is securely stored in an AWS S3 Bucket (`amrit-portfolio-terraform-state-prod`).
-- **Locking**: An AWS DynamoDB table (`amrit-portfolio-terraform-locks`) acts as a locking mechanism. This ensures that if two CI/CD jobs run concurrently, one will gracefully wait for the other to finish, preventing state corruption.
+- **Storage**: The state file (`terraform.tfstate`) is securely stored in an AWS S3 Bucket (`amrit-portfolio-terraform-state-prod-amrit990`).
+- **Locking**: An AWS DynamoDB table (`amrit-portfolio-terraform-locks-amrit990`) acts as a locking mechanism. This ensures that if two CI/CD jobs run concurrently, one will gracefully wait for the other to finish, preventing state corruption.
 - **Dynamic Configuration**: Terragrunt dynamically generates this `backend.tf` configuration in both the Frontend and Backend modules via a shared `common.hcl` root configuration file.
+
+### Multi-Account State & Orphaned Resource Cleanup
+
+Because the project enforces a strict separation between environments (Backend in default account, Frontend in `amrit990`), the CI/CD pipeline executes using the `amrit990` credentials securely injected via GitHub Secrets.
+
+Consequently, both the Backend and Frontend state files are centralized inside the `amrit990` S3 State Bucket.
+
+**Handling CI/CD State Loss:**
+If a CI/CD job crashes during its initial run (before establishing a remote state connection), it may leave behind physical "orphaned" resources (e.g., empty DynamoDB tables or Lambda roles) in the AWS account that are not tracked in the `terraform.tfstate`.
+
+If the CI/CD pipeline reruns and encounters these untracked resources, it will throw a `ResourceInUseException` (e.g., `Table already exists`). To resolve this and unblock the pipeline, these untracked/orphaned resources must be manually cleared from the AWS account using the AWS CLI, allowing the GitHub Actions runner to cleanly rebuild the state from scratch.
