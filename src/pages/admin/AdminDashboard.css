@@ -4,37 +4,104 @@
   flex-direction: column;
 }
 
-/* Login Screen */
+/* Auth Tabs & Screen */
 .admin-login-container {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 40px 20px;
 }
 
 .admin-login-card {
   padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  max-width: 400px;
+  border-radius: 16px;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: left;
+  max-width: 440px;
   width: 100%;
 }
 
-.admin-login-card h2 {
-  margin-bottom: 10px;
+.admin-auth-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+  padding-bottom: 12px;
 }
 
-.admin-login-card p {
-  margin-bottom: 25px;
+.admin-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.admin-tab:hover {
+  opacity: 0.85;
+}
+
+.admin-login-header h2 {
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.admin-login-header p {
+  margin-bottom: 24px;
   font-size: 0.95rem;
+  line-height: 1.5;
 }
 
-.admin-login-card form {
+.admin-login-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 18px;
+}
+
+.admin-alert-error {
+  background-color: rgba(231, 76, 60, 0.12);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.4);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* CMS Header & Logout */
+.admin-cms-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.admin-logout-btn {
+  background: transparent;
+  border: 1px solid;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.admin-logout-btn:hover {
+  opacity: 0.8;
+  transform: translateY(-1px);
 }
 
 /* Dashboard Forms */
@@ -47,8 +114,8 @@
 }
 
 .admin-title {
-  margin-bottom: 30px;
-  font-size: 2.5rem;
+  font-size: 2.2rem;
+  font-weight: 700;
 }
 
 .admin-status {
@@ -145,7 +212,7 @@
   color: white;
   padding: 12px 24px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -154,12 +221,13 @@
 
 .admin-btn:hover,
 .admin-publish-btn:hover {
-  background-color: #8c52ea;
+  filter: brightness(1.1);
   transform: translateY(-2px);
 }
 
+.admin-btn:disabled,
 .admin-publish-btn:disabled {
-  background-color: rgba(160, 102, 251, 0.5);
+  opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }

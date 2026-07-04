@@ -2,14 +2,28 @@ import React, { Component } from "react";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import TopButton from "../../components/topButton/TopButton";
-import { createBlog } from "../../utils/apiClient";
+import {
+  createBlog,
+  loginAdmin,
+  signupAdmin,
+  getStoredToken,
+  getStoredUser,
+  clearSession,
+} from "../../utils/apiClient";
 import { marked } from "marked";
 import "./AdminDashboard.css";
 
 class AdminDashboard extends Component {
   state = {
     isAuthenticated: false,
+    authMode: "signin", // 'signin' | 'signup'
+    username: "",
+    email: "",
     password: "",
+    confirmPassword: "",
+    user: null,
+    isSubmitting: false,
+    authError: "",
     formData: {
       title: "",
       slug: "",
@@ -25,11 +39,93 @@ class AdminDashboard extends Component {
     isPublishing: false,
   };
 
-  handleLogin = (e) => {
-    e.preventDefault();
-    if (this.state.password.trim() !== "") {
-      this.setState({ isAuthenticated: true, statusMessage: "" });
+  componentDidMount() {
+    const token = getStoredToken();
+    const user = getStoredUser();
+    if (token) {
+      this.setState({
+        isAuthenticated: true,
+        user: user || { username: "admin", role: "admin" },
+      });
     }
+  }
+
+  switchAuthMode = (mode) => {
+    this.setState({
+      authMode: mode,
+      authError: "",
+      password: "",
+      confirmPassword: "",
+    });
+  };
+
+  handleAuthSubmit = async (e) => {
+    e.preventDefault();
+    const { authMode, username, email, password, confirmPassword } = this.state;
+
+    if (!username || username.trim().length < 3) {
+      this.setState({
+        authError: "Username must be at least 3 characters long",
+      });
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      this.setState({
+        authError: "Password must be at least 6 characters long",
+      });
+      return;
+    }
+
+    if (authMode === "signup") {
+      if (!email || !email.includes("@")) {
+        this.setState({ authError: "Valid email address is required" });
+        return;
+      }
+      if (password !== confirmPassword) {
+        this.setState({ authError: "Passwords do not match" });
+        return;
+      }
+    }
+
+    this.setState({ isSubmitting: true, authError: "" });
+
+    let response;
+    if (authMode === "signup") {
+      response = await signupAdmin(username.trim(), email.trim(), password);
+    } else {
+      response = await loginAdmin(username.trim(), password);
+    }
+
+    if (response.success) {
+      this.setState({
+        isAuthenticated: true,
+        user: response.user,
+        isSubmitting: false,
+        authError: "",
+        password: "",
+        confirmPassword: "",
+      });
+    } else {
+      this.setState({
+        authError: response.error || "Authentication failed",
+        isSubmitting: false,
+      });
+    }
+  };
+
+  handleLogout = () => {
+    clearSession();
+    this.setState({
+      isAuthenticated: false,
+      user: null,
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      authError: "",
+      statusMessage: "",
+    });
   };
 
   handleInputChange = (e) => {
@@ -41,7 +137,6 @@ class AdminDashboard extends Component {
       },
     }));
 
-    // Auto-generate slug from title if slug is empty
     if (name === "title" && !this.state.formData.slug) {
       const autoSlug = value
         .toLowerCase()
@@ -57,9 +152,9 @@ class AdminDashboard extends Component {
     e.preventDefault();
     this.setState({ isPublishing: true, statusMessage: "Publishing..." });
 
-    const { formData, password } = this.state;
+    const { formData } = this.state;
+    const token = getStoredToken();
 
-    // Format payload for backend
     const payload = {
       slug: formData.slug,
       title: formData.title,
@@ -78,7 +173,7 @@ class AdminDashboard extends Component {
       },
     };
 
-    const response = await createBlog(payload, password);
+    const response = await createBlog(payload, token);
 
     if (response.success) {
       this.setState({
@@ -93,6 +188,9 @@ class AdminDashboard extends Component {
         },
       });
     } else {
+      if (response.error && response.error.includes("expired")) {
+        this.handleLogout();
+      }
       this.setState({
         statusMessage: `Error: ${response.error}`,
         isPublishing: false,
@@ -100,29 +198,155 @@ class AdminDashboard extends Component {
     }
   };
 
-  renderLogin() {
+  renderAuthCard() {
     const { theme } = this.props;
+    const {
+      authMode,
+      username,
+      email,
+      password,
+      confirmPassword,
+      isSubmitting,
+      authError,
+    } = this.state;
+
     return (
       <div className="admin-login-container">
         <div
           className="admin-login-card"
-          style={{ backgroundColor: theme.imageDark }}
+          style={{
+            backgroundColor: theme.highlight + "44",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+          }}
         >
-          <h2 style={{ color: theme.text }}>Admin Access</h2>
-          <p style={{ color: theme.secondaryText }}>
-            Please enter the admin password to access the CMS.
-          </p>
-          <form onSubmit={this.handleLogin}>
-            <input
-              type="password"
-              placeholder="Password"
-              value={this.state.password}
-              onChange={(e) => this.setState({ password: e.target.value })}
-              className="admin-input"
-              style={{ backgroundColor: theme.body, color: theme.text }}
-            />
-            <button type="submit" className="admin-btn">
-              Login
+          {/* Tab Navigation */}
+          <div className="admin-auth-tabs">
+            <button
+              type="button"
+              className={`admin-tab ${authMode === "signin" ? "active" : ""}`}
+              onClick={() => this.switchAuthMode("signin")}
+              style={{
+                color:
+                  authMode === "signin"
+                    ? theme.imageHighlight
+                    : theme.secondaryText,
+                borderColor:
+                  authMode === "signin" ? theme.imageHighlight : "transparent",
+              }}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              className={`admin-tab ${authMode === "signup" ? "active" : ""}`}
+              onClick={() => this.switchAuthMode("signup")}
+              style={{
+                color:
+                  authMode === "signup"
+                    ? theme.imageHighlight
+                    : theme.secondaryText,
+                borderColor:
+                  authMode === "signup" ? theme.imageHighlight : "transparent",
+              }}
+            >
+              Sign Up
+            </button>
+          </div>
+
+          <div className="admin-login-header">
+            <h2 style={{ color: theme.text }}>
+              {authMode === "signup" ? "Create Admin Account" : "Admin Access"}
+            </h2>
+            <p style={{ color: theme.secondaryText }}>
+              {authMode === "signup"
+                ? "Register a new admin user to manage portfolio blog posts."
+                : "Sign in with your admin credentials to manage portfolio blog posts."}
+            </p>
+          </div>
+
+          {authError && (
+            <div className="admin-alert-error" role="alert">
+              ✕ {authError}
+            </div>
+          )}
+
+          <form onSubmit={this.handleAuthSubmit} className="admin-login-form">
+            <div className="admin-input-group">
+              <label style={{ color: theme.secondaryText }}>Username *</label>
+              <input
+                type="text"
+                placeholder="Username (e.g. amrit)"
+                value={username}
+                onChange={(e) => this.setState({ username: e.target.value })}
+                className="admin-input"
+                style={{ backgroundColor: theme.body, color: theme.text }}
+                required
+              />
+            </div>
+
+            {authMode === "signup" && (
+              <div className="admin-input-group">
+                <label style={{ color: theme.secondaryText }}>
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => this.setState({ email: e.target.value })}
+                  className="admin-input"
+                  style={{ backgroundColor: theme.body, color: theme.text }}
+                  required
+                />
+              </div>
+            )}
+
+            <div className="admin-input-group">
+              <label style={{ color: theme.secondaryText }}>Password *</label>
+              <input
+                type="password"
+                placeholder="Admin Password"
+                value={password}
+                onChange={(e) => this.setState({ password: e.target.value })}
+                className="admin-input"
+                style={{ backgroundColor: theme.body, color: theme.text }}
+                required
+              />
+            </div>
+
+            {authMode === "signup" && (
+              <div className="admin-input-group">
+                <label style={{ color: theme.secondaryText }}>
+                  Confirm Password *
+                </label>
+                <input
+                  type="password"
+                  placeholder="Re-enter Password"
+                  value={confirmPassword}
+                  onChange={(e) =>
+                    this.setState({ confirmPassword: e.target.value })
+                  }
+                  className="admin-input"
+                  style={{ backgroundColor: theme.body, color: theme.text }}
+                  required
+                />
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="admin-btn"
+              style={{
+                backgroundColor: theme.imageHighlight,
+                color: "#ffffff",
+              }}
+            >
+              {isSubmitting
+                ? "Processing..."
+                : authMode === "signup"
+                ? "Create Account"
+                : "Sign In to CMS"}
             </button>
           </form>
         </div>
@@ -132,16 +356,33 @@ class AdminDashboard extends Component {
 
   renderDashboard() {
     const { theme } = this.props;
-    const { formData, statusMessage, isPublishing } = this.state;
+    const { formData, statusMessage, isPublishing, user } = this.state;
     const htmlPreview = marked(
       formData.content || "*Preview your markdown here...*"
     );
 
     return (
       <div className="admin-dashboard-container">
-        <h1 className="admin-title" style={{ color: theme.text }}>
-          Write a New Post
-        </h1>
+        <div className="admin-cms-header">
+          <div>
+            <h1 className="admin-title" style={{ color: theme.text }}>
+              Write a New Post
+            </h1>
+            <p style={{ color: theme.secondaryText, margin: 0 }}>
+              Logged in as <strong>{user?.username || "admin"}</strong>
+            </p>
+          </div>
+          <button
+            onClick={this.handleLogout}
+            className="admin-logout-btn"
+            style={{
+              borderColor: theme.text,
+              color: theme.text,
+            }}
+          >
+            Logout
+          </button>
+        </div>
 
         {statusMessage && (
           <div
@@ -271,7 +512,7 @@ class AdminDashboard extends Component {
         <Header theme={theme} />
         {this.state.isAuthenticated
           ? this.renderDashboard()
-          : this.renderLogin()}
+          : this.renderAuthCard()}
         <Footer theme={theme} onToggle={this.props.onToggle} />
         <TopButton theme={theme} />
       </div>

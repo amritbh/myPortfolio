@@ -36,7 +36,8 @@ resource "aws_iam_role_policy" "dynamodb_read_policy" {
         Effect = "Allow"
         Resource = [
           aws_dynamodb_table.blogs_table.arn,
-          "${aws_dynamodb_table.blogs_table.arn}/index/*"
+          "${aws_dynamodb_table.blogs_table.arn}/index/*",
+          aws_dynamodb_table.users_table.arn
         ]
       }
     ]
