@@ -58,7 +58,7 @@ class DegreeCard extends Component {
                 <a
                   href={degree.website_link}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noreferrer noopener"
                 >
                   <div
                     className="visit-btn"
