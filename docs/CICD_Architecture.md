@@ -39,8 +39,9 @@ The AWS infrastructure (API Gateway, DynamoDB, Lambda, CloudFront, Route53, S3, 
   - Performs syntax formatting checks (`terraform fmt` and `terragrunt hclfmt`).
   - Validates the overall configuration (`terragrunt validate`).
   - Runs a static security analysis using `tfsec` (currently set to soft-fail mode to report warnings).
-  - Runs automated unit tests on the backend module using `terraform test`.
-  - Runs automated unit tests on the frontend module using `terraform test`.
+  - Installs Python 3.9 and runs Backend Application tests using `pytest` and `moto` to verify Lambda business logic.
+  - Runs automated infrastructure unit tests on the backend module using `terraform test`.
+  - Runs automated infrastructure unit tests on the frontend module using `terraform test`.
   - Navigates to both the backend and frontend modules.
   - Executes `terragrunt plan --terragrunt-non-interactive` to verify the syntax and output exactly which AWS resources will be created, modified, or destroyed.
 - **Safety**: This step is purely dry-run and strictly read-only. It allows developers to safely review infrastructure changes and verify module code logic via tests before approving the PR.
@@ -52,8 +53,9 @@ The AWS infrastructure (API Gateway, DynamoDB, Lambda, CloudFront, Route53, S3, 
   - Re-authenticates with AWS and re-installs Terraform (v1.8.0)/Terragrunt.
   - Runs formatting and validation checks (`terraform fmt`, `terragrunt hclfmt`, `terragrunt validate`).
   - Scans infrastructure code for security vulnerabilities using `tfsec`.
-  - Executes unit tests on the backend module (`terraform test`).
-  - Executes unit tests on the frontend module (`terraform test`).
+  - Installs Python 3.9 and runs Backend Application tests using `pytest` and `moto` to verify Lambda business logic.
+  - Executes infrastructure unit tests on the backend module (`terraform test`).
+  - Executes infrastructure unit tests on the frontend module (`terraform test`).
   - Executes `terragrunt apply --terragrunt-non-interactive -auto-approve` for the Backend architecture.
   - Executes `terragrunt apply --terragrunt-non-interactive -auto-approve` for the Frontend architecture.
 - **Automation**: Instantly tests and provisions or updates the live AWS cloud resources without any manual intervention from the developer's local terminal.

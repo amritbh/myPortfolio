@@ -36,9 +36,13 @@
     "styletron-react": "^5.2.7"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^12.1.5",
+    "@testing-library/user-event": "^13.5.0",
     "dotenv": "^6.2.0",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
+    "mutationobserver-shim": "^0.3.7",
     "prettier": "2.0.5"
   },
   "browserslist": {
