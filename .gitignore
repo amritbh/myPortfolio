@@ -27,3 +27,4 @@ yarn-error.log*
 .terraform/
 .terraform.lock.hcl
 terraform.tfstate*
+lambda_function.zip
