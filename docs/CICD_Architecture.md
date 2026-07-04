@@ -39,3 +39,11 @@ The AWS infrastructure (API Gateway, DynamoDB, Lambda, CloudFront, Route53) is m
   - Executes `terragrunt apply -auto-approve` for the Backend architecture.
   - Executes `terragrunt apply -auto-approve` for the Frontend architecture.
 - **Automation**: Instantly provisions or updates the live AWS cloud resources without any manual intervention from the developer's local terminal.
+
+## 3. Remote State Backend (S3)
+
+To ensure that Terraform can safely execute in an ephemeral GitHub Actions runner without losing its state, the CI/CD pipeline uses a **Remote State Backend**.
+
+- **Storage**: The state file (`terraform.tfstate`) is securely stored in an AWS S3 Bucket (`amrit-portfolio-terraform-state-prod`).
+- **Locking**: An AWS DynamoDB table (`amrit-portfolio-terraform-locks`) acts as a locking mechanism. This ensures that if two CI/CD jobs run concurrently, one will gracefully wait for the other to finish, preventing state corruption.
+- **Dynamic Configuration**: Terragrunt dynamically generates this `backend.tf` configuration in both the Frontend and Backend modules via a shared `common.hcl` root configuration file.

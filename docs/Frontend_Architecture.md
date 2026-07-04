@@ -70,3 +70,22 @@ To replace the authoring capabilities of Contentful, a bespoke `/admin` Dashboar
 - **POST Route**: The API Gateway was updated via Terraform to route `POST /blogs` to the `create_blog()` handler.
 - **Security Check**: The Lambda function validates the incoming `Authorization` header against the `ADMIN_PASSWORD` injected by Terraform.
 - **Direct Insertion**: Once authorized and validated, the Lambda uses `boto3` to inject the JSON item directly into DynamoDB, instantly making the post live on the frontend grid.
+
+---
+
+## 4. Frontend Infrastructure (Terraform)
+
+The frontend hosting architecture is fully managed via Terraform (`infra/modules/frontend`), completely eliminating manual AWS Console configuration.
+
+### Fully Automated SSL (ACM & Route53)
+
+The custom domain (`amrit.cloud`) is fully automated:
+
+- **`aws_acm_certificate`**: Automates the provisioning of a free SSL Certificate.
+- **`aws_route53_record`**: Automatically injects the DNS validation records into the Route53 Hosted Zone.
+- **`aws_acm_certificate_validation`**: Halts Terraform execution until the domain is verified, automatically attaching it to CloudFront.
+
+### Hosting (S3 & CloudFront)
+
+- **Origin Access Control (OAC)**: Replaces legacy OAI. S3 blocks all public access and only permits traffic signed by the CloudFront distribution's OAC.
+- **SPA Routing**: CloudFront natively intercepts 403 and 404 errors (caused by React Router paths) and rewrites them to return `200 OK` with `/index.html`.
