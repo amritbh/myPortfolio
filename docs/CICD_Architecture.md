@@ -12,6 +12,7 @@ The frontend application code lives in the root directory (Create React App). It
 
 - **Trigger**: Runs automatically whenever code is merged into the `main` branch.
 - **Process**:
+
   - Checks out the repository and configures AWS credentials using `aws-actions/configure-aws-credentials`.
   - Installs Node.js dependencies (`npm ci`).
   - Runs React frontend tests and collects **Code Coverage** (`CI=true npm run test -- --coverage`).
@@ -21,6 +22,8 @@ The frontend application code lives in the root directory (Create React App). It
   - Automates CloudFront cache invalidation to ensure users receive the latest version of the application immediately.
   - Verifies the deployment by listing the objects in the S3 bucket.
   - Runs a Dynamic Application Security Test (**DAST**) using the **OWASP ZAP Baseline Scanner** (`zaproxy/action-baseline`) against the newly deployed live production site.
+
+> **Security Note:** The ZAP Baseline scanner will automatically open a GitHub Issue in this repository if it detects high-level security vulnerabilities. To support this, the workflow explicitly requests the `issues: write` permission.
 
 ## Security & Quality Gates (`sonar.yml`)
 
