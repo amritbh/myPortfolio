@@ -88,3 +88,4 @@ jobs:
         with:
           target: 'https://amrit.cloud'
           fail_action: false
+          cmd_options: '-a'
