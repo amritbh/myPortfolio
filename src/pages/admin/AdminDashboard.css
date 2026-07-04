@@ -173,7 +173,8 @@
   grid-template-columns: 1fr 1fr;
   gap: 30px;
   margin-bottom: 40px;
-  height: 600px;
+  min-height: 600px;
+  height: auto;
 }
 
 .admin-editor-pane,
@@ -192,7 +193,8 @@
 
 .admin-textarea {
   flex: 1;
-  resize: none;
+  resize: vertical;
+  min-height: 500px;
   font-family: "Fira Code", monospace;
   font-size: 0.95rem;
   line-height: 1.6;
@@ -204,25 +206,38 @@
   padding: 20px;
   overflow-y: auto;
   border: 1px solid rgba(128, 128, 128, 0.2);
+  min-height: 500px;
 }
 
 .admin-btn,
 .admin-publish-btn {
   background-color: #a066fb;
   color: white;
-  padding: 12px 24px;
+  padding: 14px 28px;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(160, 102, 251, 0.4);
+}
+
+.admin-publish-btn {
+  position: sticky;
+  bottom: 30px;
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  z-index: 100;
 }
 
 .admin-btn:hover,
 .admin-publish-btn:hover {
   filter: brightness(1.1);
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(160, 102, 251, 0.6);
 }
 
 .admin-btn:disabled,
@@ -230,6 +245,7 @@
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 @media (max-width: 900px) {
