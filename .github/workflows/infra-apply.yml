@@ -15,6 +15,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
+      TERRAGRUNT_NON_INTERACTIVE: true
 
     steps:
       - name: Checkout repository
@@ -35,8 +36,8 @@ jobs:
 
       - name: Terragrunt Apply (Backend)
         working-directory: infra/live/prod
-        run: terragrunt apply -auto-approve
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt Apply (Frontend)
         working-directory: infra/live/prod/frontend
-        run: terragrunt apply -auto-approve
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve

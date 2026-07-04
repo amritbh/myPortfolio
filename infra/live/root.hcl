@@ -1,0 +1,17 @@
+# Root Terragrunt configuration
+# All child terragrunt.hcl files inherit this via find_in_parent_folders("root.hcl")
+
+remote_state {
+  backend = "s3"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+  config = {
+    bucket         = "amrit-portfolio-terraform-state-prod-amrit990"
+    key            = "${path_relative_to_include()}/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "amrit-portfolio-terraform-locks-amrit990"
+  }
+}

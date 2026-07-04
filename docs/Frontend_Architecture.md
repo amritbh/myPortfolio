@@ -70,3 +70,64 @@ To replace the authoring capabilities of Contentful, a bespoke `/admin` Dashboar
 - **POST Route**: The API Gateway was updated via Terraform to route `POST /blogs` to the `create_blog()` handler.
 - **Security Check**: The Lambda function validates the incoming `Authorization` header against the `ADMIN_PASSWORD` injected by Terraform.
 - **Direct Insertion**: Once authorized and validated, the Lambda uses `boto3` to inject the JSON item directly into DynamoDB, instantly making the post live on the frontend grid.
+
+---
+
+## 4. Frontend Infrastructure (Terraform)
+
+The frontend hosting architecture is fully managed via Terraform (`infra/modules/frontend`), completely eliminating manual AWS Console configuration.
+
+### Fully Automated SSL (ACM & Route53)
+
+The custom domain (`amrit.cloud`) is fully automated:
+
+- **`aws_acm_certificate`**: Automates the provisioning of a free SSL Certificate.
+- **`aws_route53_record`**: Automatically injects the DNS validation records into the Route53 Hosted Zone.
+- **`aws_acm_certificate_validation`**: Halts Terraform execution until the domain is verified, automatically attaching it to CloudFront.
+
+### Hosting (S3 & CloudFront)
+
+- **Origin Access Control (OAC)**: Replaces legacy OAI. S3 blocks all public access and only permits traffic signed by the CloudFront distribution's OAC.
+- **SPA Routing**: CloudFront natively intercepts 403 and 404 errors (caused by React Router paths) and rewrites them to return `200 OK` with `/index.html`.
+
+---
+
+## 5. Multi-Account GitOps & State Import
+
+The infrastructure was consolidated from a multi-account split into a single-account deployment in `amrit990` (Account ID: `767397976993`).
+
+### Account Consolidation
+
+Previously, backend resources lived in the `jay` account and frontend resources in the `amrit990` account. This split was eliminated — all portfolio resources (both backend and frontend) now reside exclusively in the `amrit990` account. The `jay` account was fully cleaned of all portfolio-related resources.
+
+### Safe Resource Adoption (`imports.tf`)
+
+To bring the pre-existing frontend infrastructure in the `amrit990` account strictly under Terraform's GitOps control (eliminating ClickOps), we utilized Terraform 1.5+ native `import` blocks (`infra/modules/frontend/imports.tf`).
+
+Instead of destroying and recreating critical production infrastructure, Terraform safely "adopts" the exact AWS Resource IDs into its state map:
+
+| Resource                | Terraform Address                                       | AWS ID                                                                                |
+| ----------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Route53 Hosted Zone     | `aws_route53_zone.main`                                 | `Z005277622XOKOCOMUSV2`                                                               |
+| S3 Bucket               | `aws_s3_bucket.frontend_bucket`                         | `amrit.cloud`                                                                         |
+| S3 Public Access Block  | `aws_s3_bucket_public_access_block.frontend_bucket_pab` | `amrit.cloud`                                                                         |
+| CloudFront OAC          | `aws_cloudfront_origin_access_control.default`          | `E1NWVKWK4KTVFK`                                                                      |
+| CloudFront Distribution | `aws_cloudfront_distribution.cdn`                       | `E16Z465ZCRUYRV`                                                                      |
+| ACM Certificate         | `aws_acm_certificate.cert`                              | `arn:aws:acm:us-east-1:767397976993:certificate/f327e882-69b0-44d8-8bff-237b29b39855` |
+
+### Critical ACM Integrity Fix
+
+During the import dry-run (`terragrunt plan`), Terraform flagged a dangerous destructive action: **replacing the existing ACM Certificate**. This would have taken down HTTPS for `amrit.cloud`.
+
+**The Cause**: The physical AWS certificate had `www.amrit.cloud` as the primary `DomainName` and `amrit.cloud` as a Subject Alternative Name (SAN). The original Terraform module had these inverted (`domain_name = "amrit.cloud"`), causing Terraform to see a mismatch and schedule a force-replacement.
+
+**The GitOps Fix**: The `aws_acm_certificate` block in `acm.tf` was refactored to exactly match the live AWS configuration:
+
+```hcl
+resource "aws_acm_certificate" "cert" {
+  domain_name               = "www.${var.domain_name}"    # Primary: www.amrit.cloud
+  subject_alternative_names = [var.domain_name]           # SAN: amrit.cloud
+}
+```
+
+This ensured a `0 to destroy` plan, validating the safe adoption of the live production certificate.
