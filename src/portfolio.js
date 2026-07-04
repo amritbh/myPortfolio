@@ -70,18 +70,6 @@ const socialMediaLinks = [
     fontAwesomeIcon: "fa-x-twitter", // Reference https://fontawesome.com/icons/x-twitter?f=brands&s=solid
     backgroundColor: "#000000", // Reference https://simpleicons.org/?q=x
   },
-  {
-    name: "Facebook",
-    link: "https://www.facebook.com/bhattarai.amrit90/",
-    fontAwesomeIcon: "fa-facebook-f", // Reference https://fontawesome.com/icons/facebook-f?style=brands
-    backgroundColor: "#1877F2", // Reference https://simpleicons.org/?q=facebook
-  },
-  {
-    name: "Instagram",
-    link: "https://www.instagram.com/amrit.bh/",
-    fontAwesomeIcon: "fa-instagram", // Reference https://fontawesome.com/icons/instagram?style=brands
-    backgroundColor: "#E4405F", // Reference https://simpleicons.org/?q=instagram
-  },
 ];
 
 const skills = {
@@ -870,15 +858,14 @@ const contactPageData = {
   },
   addressSection: {
     title: "Address",
-    subtitle: "Bentonville, Arkansas, USA 72713",
-    locality: "Bentonville",
+    subtitle: "960 SW Washington Ave, Apt 234A, Box 65, Corvallis, OR 97333",
+    locality: "Corvallis",
     country: "USA",
-    region: "Arkansas",
-    postalCode: "72713",
-    streetAddress: "Bentonville, Arkansas",
+    region: "Oregon",
+    postalCode: "97333",
+    streetAddress: "960 SW Washington Ave, Apt 234A, Box 65",
     avatar_image_path: "address_image.svg",
-    location_map_link:
-      "https://www.google.com/maps/place/Bentonville,+AR+72713",
+    location_map_link: "https://www.google.com/maps/place/Corvallis,+OR+97333",
   },
   phoneSection: {
     title: "",
