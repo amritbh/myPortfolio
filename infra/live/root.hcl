@@ -1,3 +1,6 @@
+# Root Terragrunt configuration
+# All child terragrunt.hcl files inherit this via find_in_parent_folders("root.hcl")
+
 remote_state {
   backend = "s3"
   generate = {

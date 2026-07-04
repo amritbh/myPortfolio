@@ -89,11 +89,15 @@ Terragrunt uses `path_relative_to_include()` to generate unique state keys per m
 | Backend (Lambda, DynamoDB, API GW)      | `./terraform.tfstate`        |
 | Frontend (S3, CloudFront, Route53, ACM) | `frontend/terraform.tfstate` |
 
-### Dynamic Configuration (`common.hcl`)
+### Dynamic Configuration (`root.hcl`)
 
-The file `infra/live/prod/common.hcl` is the shared remote state configuration. Both the backend and frontend `terragrunt.hcl` files include it:
+The file `infra/live/root.hcl` is the shared remote state configuration. Both the backend and frontend `terragrunt.hcl` files include it:
 
 ```hcl
+include "root" {
+  path = find_in_parent_folders("root.hcl")
+}
+
 remote_state {
   backend = "s3"
   generate = {
@@ -203,7 +207,7 @@ Error: creating IAM Role (amrit-portfolio-prod-lambda-role): EntityAlreadyExists
 
 ## 6. Terraform Resource Inventory
 
-### Backend Module (`infra/modules/backend/main.tf`)
+### Backend Module (`infra/modules/backend/`)
 
 All backend resources are **freshly created** by Terraform on the first successful `apply`:
 
@@ -222,7 +226,7 @@ All backend resources are **freshly created** by Terraform on the first successf
 | API GW Stage                     | `aws_apigatewayv2_stage.default`                        | `$default` (auto-deploy)           |
 | Lambda Permission                | `aws_lambda_permission.api_gw`                          | API Gateway invoke permission      |
 
-### Frontend Module (`infra/modules/frontend/main.tf`)
+### Frontend Module (`infra/modules/frontend/`)
 
 Frontend resources are **imported** from pre-existing AWS infrastructure using `import` blocks in `infra/modules/frontend/imports.tf`:
 

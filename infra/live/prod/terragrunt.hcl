@@ -1,5 +1,5 @@
 include "root" {
-  path = "common.hcl"
+  path = find_in_parent_folders("root.hcl")
 }
 
 terraform {

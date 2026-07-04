@@ -121,7 +121,7 @@ During the import dry-run (`terragrunt plan`), Terraform flagged a dangerous des
 
 **The Cause**: The physical AWS certificate had `www.amrit.cloud` as the primary `DomainName` and `amrit.cloud` as a Subject Alternative Name (SAN). The original Terraform module had these inverted (`domain_name = "amrit.cloud"`), causing Terraform to see a mismatch and schedule a force-replacement.
 
-**The GitOps Fix**: The `aws_acm_certificate` block in `main.tf` was refactored to exactly match the live AWS configuration:
+**The GitOps Fix**: The `aws_acm_certificate` block in `acm.tf` was refactored to exactly match the live AWS configuration:
 
 ```hcl
 resource "aws_acm_certificate" "cert" {

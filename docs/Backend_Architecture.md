@@ -6,7 +6,7 @@ This document details the serverless backend architecture powering the portfolio
 
 ## 1. Architecture Overview
 
-The backend is a fully serverless Python application deployed to AWS Lambda, fronted by API Gateway v2 (HTTP API), with DynamoDB as the data store. All resources are provisioned and managed via Terraform (`infra/modules/backend/main.tf`).
+The backend is a fully serverless Python application deployed to AWS Lambda, fronted by API Gateway v2 (HTTP API), with DynamoDB as the data store. All resources are provisioned and managed via Terraform (`infra/modules/backend/`).
 
 ### Request Flow
 
@@ -21,7 +21,7 @@ Client (React App)
 
 ## 2. Terraform-Managed Resources
 
-Every backend resource is defined in `infra/modules/backend/main.tf` and created fresh by Terraform on the first `apply`:
+Every backend resource is defined in `infra/modules/backend/` and created fresh by Terraform on the first `apply`:
 
 ### Compute & Storage
 
