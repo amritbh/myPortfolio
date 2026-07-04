@@ -3,6 +3,8 @@ resource "aws_dynamodb_table" "blogs_table" {
   name         = "${var.project_name}-${var.environment}-blogs"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "slug"
+  
+  deletion_protection_enabled = true
 
   attribute {
     name = "slug"
@@ -26,6 +28,8 @@ resource "aws_dynamodb_table" "users_table" {
   name         = "${var.project_name}-${var.environment}-users"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "username"
+
+  deletion_protection_enabled = true
 
   attribute {
     name = "username"
