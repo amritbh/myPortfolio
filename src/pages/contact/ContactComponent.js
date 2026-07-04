@@ -77,8 +77,15 @@ function Contact(props) {
     e.preventDefault();
     if (!validateForm()) return;
 
+    const randomArray = new Uint32Array(1);
+    if (typeof window !== "undefined" && window.crypto) {
+      window.crypto.getRandomValues(randomArray);
+    } else {
+      randomArray[0] = Date.now();
+    }
+
     const userData = {
-      id: `${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      id: `${Date.now()}-${randomArray[0]}`,
       username,
       email,
       phone,
