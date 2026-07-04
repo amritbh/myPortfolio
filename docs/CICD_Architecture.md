@@ -6,22 +6,30 @@ This document outlines the Continuous Integration and Continuous Deployment (CI/
 
 ## 1. Frontend CI/CD (React & S3)
 
-**Workflow File:** `.github/workflows/deploy-to-s3.yml`
+**Workflow File:** ## Application Code Deployment (`deploy-to-s3.yml`)
 
-This workflow automatically deploys the React frontend application to the AWS S3 Bucket.
+The frontend application code lives in the root directory (Create React App). Its deployment is completely decoupled from the Terraform infrastructure to allow fast, iterative frontend updates without running Terraform.
 
-- **Trigger**: Runs automatically whenever a commit is pushed or merged to the `main` branch.
+- **Trigger**: Runs automatically whenever code is merged into the `main` branch.
 - **Process**:
-  1. Checks out the repository.
-  2. Authenticates with AWS using standard GitHub Secrets (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`).
-  3. Sets up Terraform (v1.8.0) and Terragrunt on the runner.
-  4. Runs unit tests on the backend module using `terraform test`.
-  5. Runs unit tests on the frontend module using `terraform test`.
-  6. Sets up Node.js v18 and installs dependencies (`npm ci`).
-  7. Extracts the dynamically generated backend API URL by running `terragrunt output -raw api_endpoint` inside `infra/live/prod`.
-  8. Injects the API URL as `REACT_APP_CUSTOM_API_URL` and builds the production React bundle (`npm run build`).
-  9. Syncs the `build/` directory directly to the S3 bucket (`s3://amrit.cloud`).
-  10. **Invalidates the CloudFront cache** to ensure the new deployment is served to users immediately, bypassing the edge cache TTL.
+  - Checks out the repository and configures AWS credentials using `aws-actions/configure-aws-credentials`.
+  - Installs Node.js dependencies (`npm ci`).
+  - Runs React frontend tests and collects **Code Coverage** (`CI=true npm run test -- --coverage`).
+  - Extracts the dynamic `api_endpoint` URL from the live Terraform state (`terragrunt output -raw api_endpoint`) to link the frontend to the backend.
+  - Builds the React production bundle (`npm run build`).
+  - Syncs the build folder to the S3 bucket using the AWS CLI.
+  - Automates CloudFront cache invalidation to ensure users receive the latest version of the application immediately.
+  - Verifies the deployment by listing the objects in the S3 bucket.
+  - Runs a Dynamic Application Security Test (**DAST**) using the **OWASP ZAP Baseline Scanner** (`zaproxy/action-baseline`) against the newly deployed live production site.
+
+## Security & Quality Gates (`sonar.yml`)
+
+We run a dedicated, parallel pipeline on all Pull Requests and pushes to `main` that integrates with **SonarCloud**.
+
+- **Process**:
+  - Runs frontend Jest tests with coverage.
+  - Runs backend Pytest tests with coverage.
+  - Uploads all coverage reports, code smells, and SAST vulnerabilities to the SonarCloud dashboard for unified visibility.
 
 ---
 
@@ -39,7 +47,8 @@ The AWS infrastructure (API Gateway, DynamoDB, Lambda, CloudFront, Route53, S3, 
   - Performs syntax formatting checks (`terraform fmt` and `terragrunt hclfmt`).
   - Validates the overall configuration (`terragrunt validate`).
   - Runs a static security analysis using `tfsec` (currently set to soft-fail mode to report warnings).
-  - Installs Python 3.9 and runs Backend Application tests using `pytest` and `moto` to verify Lambda business logic.
+  - Runs a filesystem vulnerability scan across the entire repository using **Trivy** (`aquasecurity/trivy-action`).
+  - Installs Python 3.9 and runs Backend Application tests with **Coverage** (`pytest-cov`) and Python SAST scanning using **Bandit**.
   - Runs automated infrastructure unit tests on the backend module using `terraform test`.
   - Runs automated infrastructure unit tests on the frontend module using `terraform test`.
   - Navigates to both the backend and frontend modules.
@@ -53,7 +62,8 @@ The AWS infrastructure (API Gateway, DynamoDB, Lambda, CloudFront, Route53, S3, 
   - Re-authenticates with AWS and re-installs Terraform (v1.8.0)/Terragrunt.
   - Runs formatting and validation checks (`terraform fmt`, `terragrunt hclfmt`, `terragrunt validate`).
   - Scans infrastructure code for security vulnerabilities using `tfsec`.
-  - Installs Python 3.9 and runs Backend Application tests using `pytest` and `moto` to verify Lambda business logic.
+  - Runs a filesystem vulnerability scan across the entire repository using **Trivy**.
+  - Installs Python 3.9 and runs Backend Application tests with **Coverage** (`pytest-cov`) and Python SAST scanning using **Bandit**.
   - Executes infrastructure unit tests on the backend module (`terraform test`).
   - Executes infrastructure unit tests on the frontend module (`terraform test`).
   - Executes `terragrunt apply --terragrunt-non-interactive -auto-approve` for the Backend architecture.
