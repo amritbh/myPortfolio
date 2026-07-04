@@ -54,10 +54,53 @@ def get_blog_by_slug(slug):
             'body': json.dumps({'error': 'Internal server error'})
         }
 
+def create_blog(event):
+    try:
+        headers = event.get('headers', {})
+        auth_header = headers.get('authorization', headers.get('Authorization', ''))
+        
+        # Verify Password
+        admin_password = os.environ.get('ADMIN_PASSWORD', 'amrit123')
+        if auth_header != f"Bearer {admin_password}":
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Unauthorized'})
+            }
+            
+        body = json.loads(event.get('body', '{}'))
+        
+        # Validate required fields
+        if not body.get('slug') or not body.get('title'):
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Missing slug or title'})
+            }
+            
+        # Insert into DynamoDB
+        table.put_item(Item=body)
+        
+        return {
+            'statusCode': 201,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': 'Blog created successfully!', 'item': body})
+        }
+    except Exception as e:
+        print(e)
+        return {
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Internal server error'})
+        }
+
 def lambda_handler(event, context):
     path = event.get('rawPath', '')
+    method = event.get('requestContext', {}).get('http', {}).get('method', 'GET')
     
     if path == '/blogs':
+        if method == 'POST':
+            return create_blog(event)
         return get_all_blogs()
         
     elif path.startswith('/blogs/'):

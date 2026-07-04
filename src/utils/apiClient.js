@@ -92,3 +92,35 @@ export const fetchBlogBySlug = async (slug) => {
     return mockBlogs.find((blog) => blog.slug === slug);
   }
 };
+
+export const createBlog = async (blogData, password) => {
+  if (!API_URL) {
+    console.error("API URL not configured, cannot create blog.");
+    return { success: false, error: "API URL not configured" };
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/blogs`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${password}`,
+      },
+      body: JSON.stringify(blogData),
+    });
+
+    if (response.status === 401) {
+      return { success: false, error: "Invalid Admin Password" };
+    }
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error) {
+    console.error("Error creating blog:", error);
+    return { success: false, error: error.message };
+  }
+};

@@ -63,7 +63,8 @@ resource "aws_iam_role_policy" "dynamodb_read_policy" {
         Action = [
           "dynamodb:Scan",
           "dynamodb:Query",
-          "dynamodb:GetItem"
+          "dynamodb:GetItem",
+          "dynamodb:PutItem"
         ]
         Effect   = "Allow"
         Resource = [
@@ -93,7 +94,8 @@ resource "aws_lambda_function" "api_lambda" {
 
   environment {
     variables = {
-      TABLE_NAME = aws_dynamodb_table.blogs_table.name
+      TABLE_NAME     = aws_dynamodb_table.blogs_table.name
+      ADMIN_PASSWORD = "amrit123" # Simple hardcoded default for now
     }
   }
 }
@@ -105,8 +107,8 @@ resource "aws_apigatewayv2_api" "http_api" {
   
   cors_configuration {
     allow_origins = ["*"] # In prod, restrict this to amrit.cloud
-    allow_methods = ["GET", "OPTIONS"]
-    allow_headers = ["content-type"]
+    allow_methods = ["GET", "POST", "OPTIONS"]
+    allow_headers = ["content-type", "authorization"]
   }
 }
 
@@ -120,6 +122,12 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
 resource "aws_apigatewayv2_route" "get_blogs" {
   api_id    = aws_apigatewayv2_api.http_api.id
   route_key = "GET /blogs"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "post_blogs" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "POST /blogs"
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
