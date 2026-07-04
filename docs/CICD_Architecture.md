@@ -19,6 +19,7 @@ This workflow automatically deploys the React frontend application to the AWS S3
   5. Extracts the dynamically generated backend API URL by running `terragrunt output -raw api_endpoint` inside `infra/live/prod`.
   6. Injects the API URL as `REACT_APP_CUSTOM_API_URL` and builds the production React bundle (`npm run build`).
   7. Syncs the `build/` directory directly to the S3 bucket (`s3://amrit.cloud`).
+  8. **Invalidates the CloudFront cache** to ensure the new deployment is served to users immediately, bypassing the edge cache TTL.
 
 ---
 
