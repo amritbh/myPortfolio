@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import TopButton from "../../components/topButton/TopButton";
@@ -190,7 +190,9 @@ function Contact(props) {
                     color: theme.imageHighlight,
                   }}
                 >
-                  ✉
+                  <span role="img" aria-label="email">
+                    ✉
+                  </span>
                 </div>
                 <div>
                   <p
@@ -219,7 +221,9 @@ function Contact(props) {
                     color: theme.imageHighlight,
                   }}
                 >
-                  📍
+                  <span role="img" aria-label="location">
+                    📍
+                  </span>
                 </div>
                 <div>
                   <p
