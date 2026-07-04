@@ -33,7 +33,7 @@ resource "aws_iam_role_policy" "dynamodb_read_policy" {
           "dynamodb:GetItem",
           "dynamodb:PutItem"
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Resource = [
           aws_dynamodb_table.blogs_table.arn,
           "${aws_dynamodb_table.blogs_table.arn}/index/*"

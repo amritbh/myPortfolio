@@ -36,6 +36,9 @@ The AWS infrastructure (API Gateway, DynamoDB, Lambda, CloudFront, Route53, S3, 
 - **Trigger**: Runs automatically whenever a Pull Request is opened or updated targeting the `main` branch (and modifies files in the `infra/` directory).
 - **Process**:
   - Automatically installs the correct versions of Terraform (v1.8.0) and Terragrunt (v0.53.8).
+  - Performs syntax formatting checks (`terraform fmt` and `terragrunt hclfmt`).
+  - Validates the overall configuration (`terragrunt validate`).
+  - Runs a static security analysis using `tfsec` (currently set to soft-fail mode to report warnings).
   - Runs automated unit tests on the backend module using `terraform test`.
   - Runs automated unit tests on the frontend module using `terraform test`.
   - Navigates to both the backend and frontend modules.
@@ -47,6 +50,8 @@ The AWS infrastructure (API Gateway, DynamoDB, Lambda, CloudFront, Route53, S3, 
 - **Trigger**: Runs automatically whenever code is successfully merged into the `main` branch.
 - **Process**:
   - Re-authenticates with AWS and re-installs Terraform (v1.8.0)/Terragrunt.
+  - Runs formatting and validation checks (`terraform fmt`, `terragrunt hclfmt`, `terragrunt validate`).
+  - Scans infrastructure code for security vulnerabilities using `tfsec`.
   - Executes unit tests on the backend module (`terraform test`).
   - Executes unit tests on the frontend module (`terraform test`).
   - Executes `terragrunt apply --terragrunt-non-interactive -auto-approve` for the Backend architecture.
