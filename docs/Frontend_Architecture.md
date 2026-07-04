@@ -54,6 +54,24 @@ The React components now expect the backend to return JSON items in the followin
 
 ---
 
+## 5. Testing & Quality Assurance
+
+To ensure the frontend is resilient and correctly interacts with the mock/live backend, we have implemented a robust testing framework using **Jest** and **React Testing Library (@testing-library/react)**.
+
+### Framework Highlights
+
+- **Location**: Test files are co-located next to their components (e.g., `src/pages/admin/AdminDashboard.test.js`).
+- **DOM Assertions**: Utilizing `@testing-library/jest-dom` for intuitive DOM matchers like `toBeInTheDocument()`.
+- **API Mocking**: Because the frontend relies on the backend `fetchBlogs()` API, we mock the `fetch` calls in tests using Jest `mockResolvedValue` or by overriding the exported functions in `apiClient.js` to ensure the tests run instantly without needing a real AWS backend.
+- **Code Coverage**: We generate comprehensive coverage metrics using `CI=true npm run test -- --coverage`. This checks line, branch, and function coverage across all React components.
+
+### Example Tests
+
+1. **AdminDashboard**: Verifies that the login form correctly authenticates the user, transitions state to the blogging dashboard, and automatically converts typed Titles into URL-friendly Slugs.
+2. **BlogList**: Verifies the UI loading states (spinners) and confirms that mocked API data successfully renders onto the page.
+
+---
+
 ## 3. Custom Admin CMS (Serverless Dashboard)
 
 To replace the authoring capabilities of Contentful, a bespoke `/admin` Dashboard was built directly into the React application, interfacing with the Python backend.
