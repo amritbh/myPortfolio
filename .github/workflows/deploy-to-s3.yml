@@ -33,7 +33,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.5.0
+          terraform_version: 1.8.0
           terraform_wrapper: false
 
       - name: Setup Terragrunt
@@ -57,6 +57,18 @@ jobs:
           echo "Syncing build/ → s3://$BUCKET/"
           aws s3 sync build/ "s3://$BUCKET/" --delete
           echo "✅ Deployment complete"
+
+      - name: Invalidate CloudFront Cache
+        run: |
+          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items!=null] | [?contains(Aliases.Items, '$BUCKET')].Id | [0]" --output text)
+          if [ "$DISTRIBUTION_ID" != "None" ] && [ -n "$DISTRIBUTION_ID" ]; then
+            echo "Invalidating CloudFront distribution: $DISTRIBUTION_ID"
+            aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
+            echo "✅ Cache invalidation triggered"
+          else
+            echo "⚠️ Could not find CloudFront distribution for $BUCKET"
+          fi
+
 
       - name: Verify deployment
         run: |
