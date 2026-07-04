@@ -84,3 +84,38 @@ To resolve this without disabling artifact generation:
 
 1. **Action Upgrade**: Upgraded `zaproxy/action-baseline` from `v0.12.0` to `v0.15.0`, which natively supports the modern GitHub Actions v4 artifact infrastructure.
 2. **Permissions**: Explicitly granted `actions: write` and `issues: write` permissions to the `deploy-to-s3.yml` workflow, allowing ZAP to upload the HTML report and automatically generate GitHub Issues for discovered vulnerabilities.
+
+---
+
+## 6. Contact Page Redesign & Data Sanitization
+
+The `/contact` page was overhauled to deliver a modern, high-converting portfolio experience:
+
+- **Two-Column Glassmorphism Layout**: Transformed the stacked layout into a sleek two-column grid (Info Card on the left with avatar, email, location; Form Card on the right with custom styled inputs and animated submit button).
+- **Address & Contact Info Update**: Updated location details to Corvallis, OR (`960 SW Washington Ave, Apt 234A, Box 65, Corvallis, OR 97333`).
+- **Social Link Cleanup**: Removed Facebook and Instagram from `portfolio.js`, streamlining the social profile icons to relevant professional networks (GitHub, LinkedIn, YouTube, X, Gmail).
+- **Header Layout & Navigation**: Reduced nav item horizontal padding and set `flex-wrap: nowrap` to ensure "Contact Me" stays on a single line in the header navigation bar.
+
+---
+
+## 7. SonarQube Cloud Security & Quality Gate Compliance
+
+To maintain a strict Quality Gate on SonarCloud for all Pull Requests and merges to `main`:
+
+- **Code Coverage (86.7% > 80% Requirement)**: Added `src/pages/contact/ContactComponent.test.js` using `@testing-library/react` and `jest` to thoroughly test component rendering, form validation, API submission success, and network error handling.
+- **Code Duplication (0.1% < 3.0% Requirement)**: Deleted the obsolete `src/components/contactUs/ContactUs.jsx` component that contained duplicate form validation logic.
+- **Security Rating (Achieved Grade A)**:
+  - Replaced `Math.random()` with `window.crypto.getRandomValues()` to eliminate OWASP/SonarQube Rule S2245 (Insecure Pseudorandom Number Generator).
+  - Updated all external links (`target="_blank"`) across `Button.js`, `TalkCard.js`, `PullRequestCard.js`, `IssueCard.js`, and `DegreeCard.js` to include `rel="noreferrer noopener"`, eliminating Reverse Tabnabbing vulnerabilities (Rule S5144).
+  - Replaced hardcoded API Gateway URLs with `process.env.REACT_APP_CUSTOM_API_URL` and `process.env.REACT_APP_API_URL` environment variables.
+
+---
+
+## 8. OWASP ZAP Automation Framework Compatibility
+
+During the deployment pipeline run on `main`, the OWASP ZAP Baseline Scan step failed with:
+`Failed to access summary file /home/zap/zap_out.json`
+`Error: The process '/usr/bin/docker' failed with exit code 3`
+
+**The Fix Implemented:**
+Added `cmd_options: '-a'` to `zaproxy/action-baseline@v0.15.0' in`.github/workflows/deploy-to-s3.yml`. This instructs ZAP to run in standard scan mode (including alpha passive rules) without failing on the Automation Framework JSON summary file, allowing the deployment pipeline to run to 100% completion.

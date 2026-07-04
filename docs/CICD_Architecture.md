@@ -21,7 +21,7 @@ The frontend application code lives in the root directory (Create React App). It
   - Syncs the build folder to the S3 bucket using the AWS CLI.
   - Automates CloudFront cache invalidation to ensure users receive the latest version of the application immediately.
   - Verifies the deployment by listing the objects in the S3 bucket.
-  - Runs a Dynamic Application Security Test (**DAST**) using the **OWASP ZAP Baseline Scanner** (`zaproxy/action-baseline`) against the newly deployed live production site.
+  - Runs a Dynamic Application Security Test (**DAST**) using the **OWASP ZAP Baseline Scanner** (`zaproxy/action-baseline`) with `cmd_options: '-a'` against the newly deployed live production site.
 
 > **Security Note:** The ZAP Baseline scanner will automatically open a GitHub Issue in this repository if it detects high-level security vulnerabilities, and it uploads a detailed HTML report as a workflow artifact. To support this, the workflow explicitly requests the `issues: write` and `actions: write` permissions.
 
@@ -30,8 +30,10 @@ The frontend application code lives in the root directory (Create React App). It
 We run a dedicated, parallel pipeline on all Pull Requests and pushes to `main` that integrates with **SonarCloud**.
 
 - **Process**:
-  - Runs frontend Jest tests with coverage.
+  - Runs frontend Jest tests with coverage (maintaining >80% code coverage requirement).
   - Runs backend Pytest tests with coverage.
+  - Enforces SonarQube **Security Rating A** by requiring cryptographically secure random number generators (`window.crypto`), `rel="noreferrer noopener"` on all external links, and zero hardcoded secret/API URL strings.
+  - Enforces **Code Duplication < 3.0%** across the repository.
   - Uploads all coverage reports, code smells, and SAST vulnerabilities to the SonarCloud dashboard for unified visibility.
 
 ---
