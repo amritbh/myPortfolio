@@ -84,8 +84,7 @@ jobs:
           echo "Total objects in bucket: $OBJECT_COUNT"
 
       - name: OWASP ZAP Baseline Scan (DAST)
-        uses: zaproxy/action-baseline@v0.12.0
+        uses: zaproxy/action-baseline@v0.15.0
         with:
           target: 'https://amrit.cloud'
           fail_action: false
-          artifact_name: 'zapreport'
