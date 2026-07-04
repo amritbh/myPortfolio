@@ -14,12 +14,14 @@ This workflow automatically deploys the React frontend application to the AWS S3
 - **Process**:
   1. Checks out the repository.
   2. Authenticates with AWS using standard GitHub Secrets (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`).
-  3. Sets up Terraform and Terragrunt on the runner.
-  4. Sets up Node.js v18 and installs dependencies (`npm ci`).
-  5. Extracts the dynamically generated backend API URL by running `terragrunt output -raw api_endpoint` inside `infra/live/prod`.
-  6. Injects the API URL as `REACT_APP_CUSTOM_API_URL` and builds the production React bundle (`npm run build`).
-  7. Syncs the `build/` directory directly to the S3 bucket (`s3://amrit.cloud`).
-  8. **Invalidates the CloudFront cache** to ensure the new deployment is served to users immediately, bypassing the edge cache TTL.
+  3. Sets up Terraform (v1.8.0) and Terragrunt on the runner.
+  4. Runs unit tests on the backend module using `terraform test`.
+  5. Runs unit tests on the frontend module using `terraform test`.
+  6. Sets up Node.js v18 and installs dependencies (`npm ci`).
+  7. Extracts the dynamically generated backend API URL by running `terragrunt output -raw api_endpoint` inside `infra/live/prod`.
+  8. Injects the API URL as `REACT_APP_CUSTOM_API_URL` and builds the production React bundle (`npm run build`).
+  9. Syncs the `build/` directory directly to the S3 bucket (`s3://amrit.cloud`).
+  10. **Invalidates the CloudFront cache** to ensure the new deployment is served to users immediately, bypassing the edge cache TTL.
 
 ---
 
@@ -33,19 +35,23 @@ The AWS infrastructure (API Gateway, DynamoDB, Lambda, CloudFront, Route53, S3, 
 
 - **Trigger**: Runs automatically whenever a Pull Request is opened or updated targeting the `main` branch (and modifies files in the `infra/` directory).
 - **Process**:
-  - Automatically installs the correct versions of Terraform (v1.5.0) and Terragrunt (v0.53.8).
+  - Automatically installs the correct versions of Terraform (v1.8.0) and Terragrunt (v0.53.8).
+  - Runs automated unit tests on the backend module using `terraform test`.
+  - Runs automated unit tests on the frontend module using `terraform test`.
   - Navigates to both the backend and frontend modules.
   - Executes `terragrunt plan --terragrunt-non-interactive` to verify the syntax and output exactly which AWS resources will be created, modified, or destroyed.
-- **Safety**: This step is purely dry-run and strictly read-only. It allows developers to safely review infrastructure changes before approving the PR.
+- **Safety**: This step is purely dry-run and strictly read-only. It allows developers to safely review infrastructure changes and verify module code logic via tests before approving the PR.
 
 ### The Merge Flow (Apply)
 
 - **Trigger**: Runs automatically whenever code is successfully merged into the `main` branch.
 - **Process**:
-  - Re-authenticates with AWS and re-installs Terraform/Terragrunt.
+  - Re-authenticates with AWS and re-installs Terraform (v1.8.0)/Terragrunt.
+  - Executes unit tests on the backend module (`terraform test`).
+  - Executes unit tests on the frontend module (`terraform test`).
   - Executes `terragrunt apply --terragrunt-non-interactive -auto-approve` for the Backend architecture.
   - Executes `terragrunt apply --terragrunt-non-interactive -auto-approve` for the Frontend architecture.
-- **Automation**: Instantly provisions or updates the live AWS cloud resources without any manual intervention from the developer's local terminal.
+- **Automation**: Instantly tests and provisions or updates the live AWS cloud resources without any manual intervention from the developer's local terminal.
 
 ### Non-Interactive Mode (`--terragrunt-non-interactive`)
 
