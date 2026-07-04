@@ -95,9 +95,14 @@ def create_blog(event):
         }
 
 def lambda_handler(event, context):
-    path = event.get('rawPath', '')
-    method = event.get('requestContext', {}).get('http', {}).get('method', 'GET')
+    print("EVENT:", json.dumps(event))
+    path = event.get('rawPath', event.get('path', ''))
+    method = event.get('requestContext', {}).get('http', {}).get('method', event.get('httpMethod', 'GET'))
     
+    # Normalize path (remove trailing slash)
+    if path.endswith('/') and len(path) > 1:
+        path = path[:-1]
+        
     if path == '/blogs':
         if method == 'POST':
             return create_blog(event)
@@ -110,5 +115,5 @@ def lambda_handler(event, context):
     return {
         'statusCode': 404,
         'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-        'body': json.dumps({'error': 'Not found'})
+        'body': json.dumps({'error': 'Not found', 'path': path, 'method': method})
     }
