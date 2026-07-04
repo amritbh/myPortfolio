@@ -78,7 +78,7 @@ describe("ContactComponent", () => {
 
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(
-        expect.stringContaining("execute-api.us-east-1.amazonaws.com"),
+        expect.any(String),
         expect.objectContaining({
           username: "John Doe",
           email: "john@example.com",

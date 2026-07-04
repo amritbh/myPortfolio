@@ -87,8 +87,9 @@ function Contact(props) {
     };
 
     const apiUrl =
+      process.env.REACT_APP_CUSTOM_API_URL ||
       process.env.REACT_APP_API_URL ||
-      "https://bprdz8u9nd.execute-api.us-east-1.amazonaws.com/v1/portfolio";
+      "/api/portfolio";
 
     axios
       .post(apiUrl, userData, { headers: { Accept: "application/json" } })

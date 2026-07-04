@@ -13,7 +13,7 @@ const seo = {
   og: {
     title: "Amrit Bhattarai Portfolio",
     type: "website",
-    url: "http://amrit.cloud",
+    url: "https://amrit.cloud",
   },
 };
 
@@ -577,7 +577,7 @@ const competitiveSites = {
       style: {
         color: "#1F8ACB",
       },
-      profileLink: "http://codeforces.com/profile/layman_brother",
+      profileLink: "https://codeforces.com/profile/layman_brother",
     },
     {
       siteName: "Hackerearth",
