@@ -8,6 +8,7 @@ import Opensource from "../pages/opensource/Opensource";
 import Contact from "../pages/contact/ContactComponent";
 import BlogList from "../pages/blog/BlogList";
 import BlogDetail from "../pages/blog/BlogDetail";
+import AdminDashboard from "../pages/admin/AdminDashboard";
 import Projects from "../pages/projects/Projects";
 import { settings } from "../portfolio.js";
 import Error404 from "../pages/errors/error404/Error";
@@ -49,6 +50,14 @@ export default class Main extends Component {
             path="/opensource"
             render={(props) => (
               <Opensource {...props} theme={this.props.theme} />
+            )}
+          />
+
+          <Route
+            path="/admin"
+            exact
+            render={(props) => (
+              <AdminDashboard {...props} theme={this.props.theme} />
             )}
           />
 

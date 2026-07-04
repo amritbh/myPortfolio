@@ -51,3 +51,22 @@ The React components now expect the backend to return JSON items in the followin
   }
 }
 ```
+
+---
+
+## 3. Custom Admin CMS (Serverless Dashboard)
+
+To replace the authoring capabilities of Contentful, a bespoke `/admin` Dashboard was built directly into the React application, interfacing with the Python backend.
+
+### Frontend Implementation (`AdminDashboard.js`)
+
+- **Authentication**: A simple password wall protects the CMS.
+- **Split-Pane Editor**: The UI features a split view with a raw text area for Markdown input on the left and a live HTML preview (parsed by `marked`) on the right.
+- **Auto-Slug**: The frontend automatically generates URL-friendly slugs based on the typed title.
+- **Payload Construction**: The React state formats all metadata and content into the expected JSON schema and dispatches it via `apiClient.createBlog()`.
+
+### Backend Implementation (`app.py` & DynamoDB)
+
+- **POST Route**: The API Gateway was updated via Terraform to route `POST /blogs` to the `create_blog()` handler.
+- **Security Check**: The Lambda function validates the incoming `Authorization` header against the `ADMIN_PASSWORD` injected by Terraform.
+- **Direct Insertion**: Once authorized and validated, the Lambda uses `boto3` to inject the JSON item directly into DynamoDB, instantly making the post live on the frontend grid.
