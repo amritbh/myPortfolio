@@ -58,8 +58,8 @@ resource "aws_s3_bucket_policy" "cloudfront_policy" {
 
 # ACM Certificate
 resource "aws_acm_certificate" "cert" {
-  domain_name               = var.domain_name
-  subject_alternative_names = ["www.${var.domain_name}"]
+  domain_name               = "www.${var.domain_name}"
+  subject_alternative_names = [var.domain_name]
   validation_method         = "DNS"
   provider                  = aws.us-east-1
 

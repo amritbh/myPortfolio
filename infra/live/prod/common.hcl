@@ -5,10 +5,10 @@ remote_state {
     if_exists = "overwrite_terragrunt"
   }
   config = {
-    bucket         = "amrit-portfolio-terraform-state-prod"
+    bucket         = "amrit-portfolio-terraform-state-prod-amrit990"
     key            = "${path_relative_to_include()}/terraform.tfstate"
     region         = "us-east-1"
     encrypt        = true
-    dynamodb_table = "amrit-portfolio-terraform-locks"
+    dynamodb_table = "amrit-portfolio-terraform-locks-amrit990"
   }
 }
