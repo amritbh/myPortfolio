@@ -50,7 +50,7 @@ class PullRequestCard extends Component {
           <a
             href={pullRequest["mergedBy"]["url"]}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noreferrer noopener"
           >
             <img
               className="merge-by-img"
@@ -86,7 +86,7 @@ class PullRequestCard extends Component {
                   <a
                     href={pullRequest["url"]}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noreferrer noopener"
                   >
                     {pullRequest["title"]}
                   </a>
@@ -111,6 +111,8 @@ class PullRequestCard extends Component {
                 <a
                   style={{ color: iconPR.style.color }}
                   href={pullRequest["baseRepository"]["url"]}
+                  target="_blank"
+                  rel="noreferrer noopener"
                 >
                   {pullRequest["baseRepository"]["owner"]["login"]}/
                   {pullRequest["baseRepository"]["name"]}
@@ -130,7 +132,7 @@ class PullRequestCard extends Component {
               <a
                 href={pullRequest["baseRepository"]["owner"]["url"]}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noreferrer noopener"
               >
                 <img
                   className="owner-img"

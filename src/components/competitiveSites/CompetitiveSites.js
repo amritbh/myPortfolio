@@ -23,7 +23,7 @@ class CompetitiveSites extends React.Component {
                   <a
                     href={logo.profileLink}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noreferrer noopener"
                   >
                     <span
                       className="iconify"

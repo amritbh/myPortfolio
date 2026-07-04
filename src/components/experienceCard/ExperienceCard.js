@@ -97,7 +97,7 @@ class ExperienceCard extends Component {
                     <a
                       href={experience["company_url"]}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noreferrer noopener"
                     >
                       {experience["company"]}
                     </a>

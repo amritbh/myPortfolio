@@ -41,7 +41,7 @@ class IssueCard extends Component {
           <a
             href={issue["assignees"]["nodes"][0]["url"]}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noreferrer noopener"
           >
             <img
               className="assigned-to-img"
@@ -77,7 +77,7 @@ class IssueCard extends Component {
                   <a
                     href={issue["url"]}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noreferrer noopener"
                   >
                     {issue["title"]}
                   </a>
@@ -102,6 +102,8 @@ class IssueCard extends Component {
                 <a
                   style={{ color: iconPR.style.color }}
                   href={issue["repository"]["url"]}
+                  target="_blank"
+                  rel="noreferrer noopener"
                 >
                   {issue["repository"]["owner"]["login"]}/
                   {issue["repository"]["name"]}
@@ -121,7 +123,7 @@ class IssueCard extends Component {
               <a
                 href={issue["repository"]["owner"]["url"]}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noreferrer noopener"
               >
                 <img
                   className="owner-img"
