@@ -89,3 +89,42 @@ The custom domain (`amrit.cloud`) is fully automated:
 
 - **Origin Access Control (OAC)**: Replaces legacy OAI. S3 blocks all public access and only permits traffic signed by the CloudFront distribution's OAC.
 - **SPA Routing**: CloudFront natively intercepts 403 and 404 errors (caused by React Router paths) and rewrites them to return `200 OK` with `/index.html`.
+
+---
+
+## 5. Multi-Account GitOps & State Import
+
+The infrastructure utilizes a multi-account deployment strategy mapped securely within the CI/CD pipeline.
+
+### Account Boundaries
+
+- **Backend Environment**: Lambda and DynamoDB resources are deployed to the default `terraformuser` account.
+- **Frontend Environment**: The core routing (Route53), caching (CloudFront), and storage (S3) for `amrit.cloud` physically reside in the isolated `amrit990` AWS account.
+
+### Safe Resource Adoption (`imports.tf`)
+
+To bring the pre-existing infrastructure in the `amrit990` account strictly under Terraform's GitOps control (eliminating ClickOps), we utilized Terraform 1.5+ native `import` blocks (`infra/modules/frontend/imports.tf`).
+
+Instead of destroying and recreating critical infrastructure, Terraform safely "adopts" the exact AWS Resource IDs into its state map:
+
+- Adopts the `Z005277622XOKOCOMUSV2` Hosted Zone.
+- Adopts the `amrit.cloud` S3 Bucket.
+- Adopts the `E16Z465ZCRUYRV` CloudFront Distribution.
+- Adopts the pre-existing `arn:aws:acm:...` TLS Certificate.
+
+### Critical ACM Integrity Fix
+
+During the import dry-run (`terragrunt plan`), Terraform flagged a dangerous destructive action: replacing the existing ACM Certificate.
+
+**The Cause**: The physical AWS certificate had `www.amrit.cloud` as the primary DomainName and `amrit.cloud` as a Subject Alternative Name (SAN). The original Terraform module had these inverted (`domain_name = "amrit.cloud"`).
+
+**The GitOps Fix**: To perfectly map the code to reality and avoid catastrophic certificate destruction, the `aws_acm_certificate` block in `main.tf` was refactored to exactly match the live AWS configuration:
+
+```hcl
+resource "aws_acm_certificate" "cert" {
+  domain_name               = "www.${var.domain_name}"
+  subject_alternative_names = [var.domain_name]
+}
+```
+
+This ensured a `0 to destroy` plan, validating the safe adoption of the live production certificate.
