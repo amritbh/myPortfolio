@@ -93,10 +93,11 @@ function Contact(props) {
       message,
     };
 
-    const apiUrl =
+    const baseApiUrl =
       process.env.REACT_APP_CUSTOM_API_URL ||
       process.env.REACT_APP_API_URL ||
-      "/api/portfolio";
+      "";
+    const apiUrl = `${baseApiUrl}/portfolio`;
 
     axios
       .post(apiUrl, userData, { headers: { Accept: "application/json" } })

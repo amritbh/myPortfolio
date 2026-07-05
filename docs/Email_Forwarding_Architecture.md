@@ -23,7 +23,7 @@ graph TD
 2. AWS SES receives the email, verifies MX and DKIM records via Route 53.
 3. An SES Receipt Rule Set is triggered.
 4. Action 1: The raw email is saved to an S3 bucket (`inbound-mail-amrit-cloud-*`).
-5. Action 2: An SNS event invokes the Lambda Forwarder function (`ses-email-forwarder`).
+5. Action 2: An SES event directly invokes the Lambda Forwarder function (`ses-email-forwarder`).
 6. The Python 3.9 Lambda reads the raw email from S3.
 7. The Lambda rewrites the `From`, `Reply-To`, and `To` headers to bypass SES Sandbox restrictions and preserve the original sender's address for replies.
 8. The Lambda uses `boto3` to send the modified email via SES to `iamamrit990@gmail.com`.
