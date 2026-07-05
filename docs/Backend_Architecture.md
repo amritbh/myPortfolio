@@ -45,6 +45,7 @@ Every backend resource is defined in `infra/modules/backend/` and created fresh 
 | Route: POST /auth/verify-email | `aws_apigatewayv2_route.post_auth_verify_email`    | Verifies an email address using a JWT token                  |
 | Route: POST /auth/forgot-...   | `aws_apigatewayv2_route.post_auth_forgot_password` | Sends a password reset link to the user's email              |
 | Route: POST /auth/reset-...    | `aws_apigatewayv2_route.post_auth_reset_password`  | Resets the password using a JWT token                        |
+| Route: POST /portfolio         | `aws_apigatewayv2_route.post_portfolio`            | Handles contact form submissions and sends via SES           |
 | Default Stage                  | `aws_apigatewayv2_stage.default`                   | `$default` stage with auto_deploy enabled                    |
 | Lambda Permission              | `aws_lambda_permission.api_gw`                     | Allows API Gateway to invoke the Lambda                      |
 
@@ -142,7 +143,8 @@ Since the Lambda is kept lightweight without external pip dependencies like `pyj
 
 AWS Simple Email Service (SES) is used to send transactional emails (verification, forgot password).
 
-- **Sandbox Limitation**: While in the SES sandbox, emails can only be sent _to_ and _from_ explicitly verified email addresses.
+- **Sandbox Limitation**: While in the SES sandbox, emails can only be sent _to_ and _from_ explicitly verified email addresses (like `amrit.cloud` and your verified personal Gmail).
+- **Contact Form Routing**: When users submit the `/portfolio` contact form on the frontend, the Lambda receives the JSON payload, formats it into an email, and sends it via SES directly to `amrit@amrit.cloud`.
 - **Dynamic Email Links**: The backend reads the `Origin` header from incoming HTTP requests to dynamically construct the frontend URLs inside emails. E.g., if a user signs up on `http://localhost:3000`, the email link will correctly point to `localhost:3000/admin?verifyToken=...`. If they sign up on production, it points to `amrit.cloud`.
 
 ---

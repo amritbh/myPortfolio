@@ -134,7 +134,12 @@ The most common point of failure is the Python Lambda Forwarder.
 **Error:** `InvalidParameterValue: Extra route-addr`
 
 - **Cause:** AWS SES strictly validates the `From` header format. If a forwarded email originally contained angle brackets (e.g., `Sender Name <sender@example.com>`), naively wrapping it in another set of angle brackets (e.g., `Sender Name <sender@example.com> <amrit@amrit.cloud>`) will cause SES to reject the email.
-- **Fix:** The `forwarder.py` script mitigates this by using Python's `email.utils.parseaddr` to extract only the human-readable name, discarding the original email's angle brackets before formatting the new `From` address.
+- **Fix:** The `forwarder.py` script mitigates this by replacing the original `From` header entirely with the verified custom domain address (e.g., `amrit@amrit.cloud`). It preserves the original sender's address in the `Reply-To` header so that replying in Gmail still works natively.
+
+**Error:** `InvalidParameterValue: Duplicate header 'DKIM-Signature'` (or similar SES duplicate headers)
+
+- **Cause:** When an email arrives via SES, AWS attaches tracking and DKIM security signatures. When the Lambda reads this raw email from S3 and attempts to send it _back_ through SES, SES throws an error because it's trying to attach _new_ signatures to an email that already has them.
+- **Fix:** The `forwarder.py` explicitly strips a hardcoded list of headers (e.g., `DKIM-Signature`, `X-SES-RECEIPT`, `Message-ID`, `Return-Path`) from the raw `email.Message` object before forwarding it.
 
 **Error:** `MessageRejected: Email address is not verified.`
 
