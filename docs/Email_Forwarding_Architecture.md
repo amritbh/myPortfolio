@@ -114,3 +114,29 @@ This setup is highly cost-effective and heavily leverages AWS Free Tiers.
 ### Total Estimated Cost: \$0.00 / month
 
 As long as your email volume stays under a few thousand per month, this entire email forwarding architecture will remain fully covered by the AWS Free Tier.
+
+---
+
+## 5. Troubleshooting & Known Issues
+
+If emails sent to your custom domain do not arrive in your personal Gmail, follow these steps:
+
+### 1. Check AWS CloudWatch Logs
+
+The most common point of failure is the Python Lambda Forwarder.
+
+1. Open the AWS Console and go to **CloudWatch > Log groups**.
+2. Search for the log group: `/aws/lambda/ses-email-forwarder`.
+3. Check the most recent log streams for any `[ERROR]` traces.
+
+### 2. Common Errors
+
+**Error:** `InvalidParameterValue: Extra route-addr`
+
+- **Cause:** AWS SES strictly validates the `From` header format. If a forwarded email originally contained angle brackets (e.g., `Sender Name <sender@example.com>`), naively wrapping it in another set of angle brackets (e.g., `Sender Name <sender@example.com> <amrit@amrit.cloud>`) will cause SES to reject the email.
+- **Fix:** The `forwarder.py` script mitigates this by using Python's `email.utils.parseaddr` to extract only the human-readable name, discarding the original email's angle brackets before formatting the new `From` address.
+
+**Error:** `MessageRejected: Email address is not verified.`
+
+- **Cause:** The AWS account is in the SES Sandbox and is trying to send an email _to_ an unverified destination address.
+- **Fix:** Ensure that the destination email (`iamamrit990@gmail.com`) has been verified via the link AWS sent to the inbox.

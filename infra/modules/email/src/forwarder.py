@@ -42,6 +42,9 @@ def lambda_handler(event, context):
         original_to = msg.get('To', '')
         original_subject = msg.get('Subject', '')
         
+        from email.utils import parseaddr, formataddr
+        from_name, from_email = parseaddr(original_from)
+        
         # Set Reply-To so when the user hits reply in Gmail, it replies to the original sender
         if not msg.get('Reply-To'):
             msg['Reply-To'] = original_from
@@ -52,7 +55,10 @@ def lambda_handler(event, context):
         send_from = mail_info['destination'][0]
         
         del msg['From']
-        msg['From'] = f"{original_from} <{send_from}>"
+        if from_name:
+            msg['From'] = formataddr((from_name, send_from))
+        else:
+            msg['From'] = send_from
         
         del msg['Return-Path']
         msg['Return-Path'] = send_from
