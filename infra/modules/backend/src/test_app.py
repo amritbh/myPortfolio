@@ -334,7 +334,7 @@ def test_contact_portfolio_success(mock_send_email, setup_dynamodb):
     assert 'Message sent successfully!' in json.loads(response['body'])['message']
     
     mock_send_email.assert_called_once_with(
-        app.SENDER_EMAIL, 
+        'amrit@amrit.cloud', 
         'Portfolio Contact: Inquiry', 
         'Name: Test User\nEmail: test@example.com\nPhone: 1234567890\n\nMessage:\nHello there!'
     )
