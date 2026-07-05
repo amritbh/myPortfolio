@@ -124,4 +124,63 @@ describe("AdminDashboard Component", () => {
 
     expect(screen.getByText(/Admin Access/i)).toBeInTheDocument();
   });
+
+  it("handles verifyToken from URL", async () => {
+    jest
+      .spyOn(apiClient, "verifyEmail")
+      .mockResolvedValueOnce({
+        success: true,
+        message: "Email verified successfully!",
+      });
+    window.history.pushState({}, "Verify", "/admin?verifyToken=test-token");
+    renderWithRouter(<AdminDashboard theme={mockTheme} />);
+
+    expect(
+      await screen.findByText(/Email verified successfully!/i)
+    ).toBeInTheDocument();
+  });
+
+  it("handles forgot password flow", async () => {
+    jest
+      .spyOn(apiClient, "requestPasswordReset")
+      .mockResolvedValueOnce({ success: true, message: "Reset link sent" });
+
+    renderWithRouter(<AdminDashboard theme={mockTheme} />);
+
+    // Click Forgot Password
+    fireEvent.click(screen.getByText("Forgot Password?"));
+
+    const emailInput = screen.getByPlaceholderText(/name@example.com/i);
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+
+    fireEvent.click(screen.getByRole("button", { name: /Send Reset Link/i }));
+
+    expect(await screen.findByText(/Reset link sent/i)).toBeInTheDocument();
+  });
+
+  it("handles resetToken from URL and submits new password", async () => {
+    jest
+      .spyOn(apiClient, "resetPassword")
+      .mockResolvedValueOnce({
+        success: true,
+        message: "Password reset successfully!",
+      });
+    window.history.pushState({}, "Reset", "/admin?resetToken=reset-token");
+
+    renderWithRouter(<AdminDashboard theme={mockTheme} />);
+
+    expect(screen.getByText(/Set New Password/i)).toBeInTheDocument();
+
+    const passInput = screen.getByPlaceholderText(/^New Password$/i);
+    const confirmInput = screen.getByPlaceholderText(/Re-enter Password/i);
+
+    fireEvent.change(passInput, { target: { value: "NewPass123!" } });
+    fireEvent.change(confirmInput, { target: { value: "NewPass123!" } });
+
+    fireEvent.click(screen.getByRole("button", { name: /Update Password/i }));
+
+    expect(
+      await screen.findByText(/Password reset successful! Please log in\./i)
+    ).toBeInTheDocument();
+  });
 });
