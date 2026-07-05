@@ -87,7 +87,11 @@ describe("AdminDashboard Component", () => {
 
     fireEvent.click(submitBtn);
 
-    expect(await screen.findByText(/Write a New Post/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /Account created! Please check your email to verify./i
+      )
+    ).toBeInTheDocument();
   });
 
   it("authenticates and shows dashboard on valid sign in", async () => {

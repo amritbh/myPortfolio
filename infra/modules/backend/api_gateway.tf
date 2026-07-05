@@ -47,6 +47,24 @@ resource "aws_apigatewayv2_route" "post_auth_login" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
+resource "aws_apigatewayv2_route" "post_auth_verify_email" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "POST /auth/verify-email"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "post_auth_forgot_password" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "POST /auth/forgot-password"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "post_auth_reset_password" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "POST /auth/reset-password"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
 resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.http_api.id
   name        = "$default"

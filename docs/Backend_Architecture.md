@@ -28,27 +28,33 @@ Every backend resource is defined in `infra/modules/backend/` and created fresh 
 | Resource        | Terraform Address                | Configuration                                                            |
 | --------------- | -------------------------------- | ------------------------------------------------------------------------ |
 | Lambda Function | `aws_lambda_function.api_lambda` | Python 3.9, handler: `app.lambda_handler`, 128MB memory, 3s timeout      |
-| DynamoDB Table  | `aws_dynamodb_table.blogs_table` | PAY_PER_REQUEST billing, hash key: `slug` (String), GSI on `publishDate` |
+| Blogs Table     | `aws_dynamodb_table.blogs_table` | PAY_PER_REQUEST billing, hash key: `slug` (String), GSI on `publishDate` |
+| Users Table     | `aws_dynamodb_table.users_table` | PAY_PER_REQUEST billing, hash key: `username` (String)                   |
 
 ### Networking & Routing
 
-| Resource                 | Terraform Address                                 | Configuration                                                |
-| ------------------------ | ------------------------------------------------- | ------------------------------------------------------------ |
-| HTTP API                 | `aws_apigatewayv2_api.http_api`                   | Protocol: HTTP, CORS: all origins, methods: GET/POST/OPTIONS |
-| Lambda Integration       | `aws_apigatewayv2_integration.lambda_integration` | AWS_PROXY type, POST method                                  |
-| Route: GET /blogs        | `aws_apigatewayv2_route.get_blogs`                | Lists all blog posts                                         |
-| Route: POST /blogs       | `aws_apigatewayv2_route.post_blogs`               | Creates a new blog post (admin)                              |
-| Route: GET /blogs/{slug} | `aws_apigatewayv2_route.get_blog_by_slug`         | Fetches a single post by slug                                |
-| Default Stage            | `aws_apigatewayv2_stage.default`                  | `$default` stage with auto_deploy enabled                    |
-| Lambda Permission        | `aws_lambda_permission.api_gw`                    | Allows API Gateway to invoke the Lambda                      |
+| Resource                       | Terraform Address                                  | Configuration                                                |
+| ------------------------------ | -------------------------------------------------- | ------------------------------------------------------------ |
+| HTTP API                       | `aws_apigatewayv2_api.http_api`                    | Protocol: HTTP, CORS: all origins, methods: GET/POST/OPTIONS |
+| Lambda Integration             | `aws_apigatewayv2_integration.lambda_integration`  | AWS_PROXY type, POST method                                  |
+| Route: GET /blogs              | `aws_apigatewayv2_route.get_blogs`                 | Lists all blog posts                                         |
+| Route: POST /blogs             | `aws_apigatewayv2_route.post_blogs`                | Creates a new blog post (admin)                              |
+| Route: GET /blogs/{slug}       | `aws_apigatewayv2_route.get_blog_by_slug`          | Fetches a single post by slug                                |
+| Route: POST /auth/signup       | `aws_apigatewayv2_route.post_auth_signup`          | Creates a new admin account and sends verification email     |
+| Route: POST /auth/login        | `aws_apigatewayv2_route.post_auth_login`           | Authenticates an admin and returns a JWT                     |
+| Route: POST /auth/verify-email | `aws_apigatewayv2_route.post_auth_verify_email`    | Verifies an email address using a JWT token                  |
+| Route: POST /auth/forgot-...   | `aws_apigatewayv2_route.post_auth_forgot_password` | Sends a password reset link to the user's email              |
+| Route: POST /auth/reset-...    | `aws_apigatewayv2_route.post_auth_reset_password`  | Resets the password using a JWT token                        |
+| Default Stage                  | `aws_apigatewayv2_stage.default`                   | `$default` stage with auto_deploy enabled                    |
+| Lambda Permission              | `aws_lambda_permission.api_gw`                     | Allows API Gateway to invoke the Lambda                      |
 
 ### Security & IAM
 
-| Resource               | Terraform Address                                       | Configuration                                                   |
-| ---------------------- | ------------------------------------------------------- | --------------------------------------------------------------- |
-| Lambda Execution Role  | `aws_iam_role.lambda_exec_role`                         | Trust policy: `lambda.amazonaws.com`                            |
-| Basic Execution Policy | `aws_iam_role_policy_attachment.lambda_basic_execution` | AWS managed `AWSLambdaBasicExecutionRole`                       |
-| DynamoDB Policy        | `aws_iam_role_policy.dynamodb_read_policy`              | Inline policy: Scan, Query, GetItem, PutItem on table + indexes |
+| Resource               | Terraform Address                                       | Configuration                                   |
+| ---------------------- | ------------------------------------------------------- | ----------------------------------------------- |
+| Lambda Execution Role  | `aws_iam_role.lambda_exec_role`                         | Trust policy: `lambda.amazonaws.com`            |
+| Basic Execution Policy | `aws_iam_role_policy_attachment.lambda_basic_execution` | AWS managed `AWSLambdaBasicExecutionRole`       |
+| Custom Permissions     | `aws_iam_role_policy.dynamodb_read_policy`              | Inline policy: DynamoDB CRUD, SES Email Sending |
 
 ### Lambda Packaging
 
@@ -96,12 +102,15 @@ This ensures the backend dynamically accepts payloads regardless of how API Gate
 
 The Lambda function receives these environment variables via Terraform:
 
-| Variable         | Source                                | Purpose                                          |
-| ---------------- | ------------------------------------- | ------------------------------------------------ |
-| `TABLE_NAME`     | `aws_dynamodb_table.blogs_table.name` | DynamoDB table name for blog CRUD operations     |
-| `ADMIN_PASSWORD` | Hardcoded in Terraform (`amrit123`)   | Simple password for admin blog creation endpoint |
+| Variable           | Source                                  | Purpose                                          |
+| ------------------ | --------------------------------------- | ------------------------------------------------ |
+| `TABLE_NAME`       | `aws_dynamodb_table.blogs_table.name`   | DynamoDB table name for blog CRUD operations     |
+| `USERS_TABLE_NAME` | `aws_dynamodb_table.users_table.name`   | DynamoDB table name for admin user accounts      |
+| `SENDER_EMAIL`     | Terraform Var (`amrit.bhattarai990...`) | SES verified email address for outbound emails   |
+| `ADMIN_PASSWORD`   | Hardcoded in Terraform (`amrit123`)     | Simple password for admin blog creation endpoint |
+| `JWT_SECRET`       | Defaults to `ADMIN_PASSWORD` fallback   | Secret key used for signing and verifying JWTs   |
 
-> **Security Note:** The `ADMIN_PASSWORD` is currently hardcoded in the Terraform module. For production hardening, this should be moved to AWS Secrets Manager or GitHub Secrets and injected as a Terraform variable.
+> **Security Note:** The `ADMIN_PASSWORD` and `JWT_SECRET` are currently hardcoded in the Terraform module. For production hardening, these should be moved to AWS Secrets Manager or GitHub Secrets and injected as Terraform variables.
 
 ---
 
@@ -121,7 +130,24 @@ cors_configuration {
 
 ---
 
-## 6. DynamoDB Schema
+## 6. Authentication & SES Flow
+
+The backend manages admin user authentication natively without relying on AWS Cognito.
+
+### Custom JWT Implementation
+
+Since the Lambda is kept lightweight without external pip dependencies like `pyjwt`, a custom zero-dependency JWT implementation is used in `app.py`. It leverages Python's built-in `hmac`, `hashlib`, and `base64` to sign and verify short-lived tokens.
+
+### SES Sandbox & Dynamic Origins
+
+AWS Simple Email Service (SES) is used to send transactional emails (verification, forgot password).
+
+- **Sandbox Limitation**: While in the SES sandbox, emails can only be sent _to_ and _from_ explicitly verified email addresses.
+- **Dynamic Email Links**: The backend reads the `Origin` header from incoming HTTP requests to dynamically construct the frontend URLs inside emails. E.g., if a user signs up on `http://localhost:3000`, the email link will correctly point to `localhost:3000/admin?verifyToken=...`. If they sign up on production, it points to `amrit.cloud`.
+
+---
+
+## 7. DynamoDB Schema
 
 ### Table: `amrit-portfolio-prod-blogs`
 

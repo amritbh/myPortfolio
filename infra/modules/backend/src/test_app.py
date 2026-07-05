@@ -78,7 +78,7 @@ def test_signup_admin_success(setup_dynamodb):
     response = app.lambda_handler(event, None)
     assert response['statusCode'] == 201
     body = json.loads(response['body'])
-    assert 'token' in body
+    assert 'Account created successfully' in body['message']
     assert body['user']['username'] == 'newuser'
 
 def test_signup_duplicate_username(setup_dynamodb):
@@ -112,6 +112,13 @@ def test_login_with_registered_dynamodb_user(setup_dynamodb):
         'body': json.dumps({'username': 'registereduser', 'password': 'MySecretPassword1!'})
     }
     app.lambda_handler(signup_evt, None)
+    
+    # 1.5 Manually verify the user in DynamoDB
+    app.users_table.update_item(
+        Key={'username': 'registereduser'},
+        UpdateExpression="SET verified = :v",
+        ExpressionAttributeValues={':v': True}
+    )
 
     # 2. Login user
     login_evt = {

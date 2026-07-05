@@ -39,6 +39,14 @@ resource "aws_iam_role_policy" "dynamodb_read_policy" {
           "${aws_dynamodb_table.blogs_table.arn}/index/*",
           aws_dynamodb_table.users_table.arn
         ]
+      },
+      {
+        Action = [
+          "ses:SendEmail",
+          "ses:SendRawEmail"
+        ],
+        Effect   = "Allow",
+        Resource = "*"
       }
     ]
   })
