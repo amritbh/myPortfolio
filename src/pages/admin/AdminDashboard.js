@@ -45,7 +45,11 @@ class AdminDashboard extends Component {
     isPublishing: false,
   };
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.handleUrlParams();
+  }
+
+  handleUrlParams = async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const verifyToken = urlParams.get("verifyToken");
     const resetToken = urlParams.get("resetToken");
@@ -76,7 +80,7 @@ class AdminDashboard extends Component {
         user: user || { username: "admin", role: "admin" },
       });
     }
-  }
+  };
 
   switchAuthMode = (mode) => {
     this.setState({
@@ -518,6 +522,8 @@ class AdminDashboard extends Component {
             {authMode === "signin" && (
               <div style={{ textAlign: "center", marginTop: "15px" }}>
                 <span
+                  role="button"
+                  tabIndex={0}
                   style={{
                     color: theme.imageHighlight,
                     cursor: "pointer",
@@ -525,6 +531,11 @@ class AdminDashboard extends Component {
                     textDecoration: "underline",
                   }}
                   onClick={() => this.switchAuthMode("forgotPassword")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      this.switchAuthMode("forgotPassword");
+                    }
+                  }}
                 >
                   Forgot Password?
                 </span>
@@ -535,6 +546,8 @@ class AdminDashboard extends Component {
               authMode === "resetPassword") && (
               <div style={{ textAlign: "center", marginTop: "15px" }}>
                 <span
+                  role="button"
+                  tabIndex={0}
                   style={{
                     color: theme.secondaryText,
                     cursor: "pointer",
@@ -542,6 +555,11 @@ class AdminDashboard extends Component {
                     textDecoration: "underline",
                   }}
                   onClick={() => this.switchAuthMode("signin")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      this.switchAuthMode("signin");
+                    }
+                  }}
                 >
                   Back to Sign In
                 </span>
