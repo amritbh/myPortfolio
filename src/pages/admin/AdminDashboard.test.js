@@ -126,12 +126,10 @@ describe("AdminDashboard Component", () => {
   });
 
   it("handles verifyToken from URL", async () => {
-    jest
-      .spyOn(apiClient, "verifyEmail")
-      .mockResolvedValueOnce({
-        success: true,
-        message: "Email verified successfully!",
-      });
+    jest.spyOn(apiClient, "verifyEmail").mockResolvedValueOnce({
+      success: true,
+      message: "Email verified successfully!",
+    });
     window.history.pushState({}, "Verify", "/admin?verifyToken=test-token");
     renderWithRouter(<AdminDashboard theme={mockTheme} />);
 
@@ -158,13 +156,90 @@ describe("AdminDashboard Component", () => {
     expect(await screen.findByText(/Reset link sent/i)).toBeInTheDocument();
   });
 
-  it("handles resetToken from URL and submits new password", async () => {
+  it("handles invalid credentials login flow", async () => {
     jest
-      .spyOn(apiClient, "resetPassword")
-      .mockResolvedValueOnce({
-        success: true,
-        message: "Password reset successfully!",
-      });
+      .spyOn(apiClient, "loginAdmin")
+      .mockResolvedValueOnce({ error: "Invalid credentials" });
+
+    renderWithRouter(<AdminDashboard theme={mockTheme} />);
+
+    const usernameInput = screen.getByPlaceholderText(/Username/i);
+    const passwordInput = screen.getByPlaceholderText(/Admin Password/i);
+    fireEvent.change(usernameInput, { target: { value: "wrong" } });
+    fireEvent.change(passwordInput, { target: { value: "wrongpass" } });
+
+    fireEvent.click(screen.getByRole("button", { name: /Sign In to CMS/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Invalid credentials/i)).toBeInTheDocument();
+    });
+  });
+
+  it("triggers Google login redirect when Continue with Google is clicked", () => {
+    const originalLocation = window.location;
+    delete window.location;
+    window.location = {
+      ...originalLocation,
+      href: "",
+      origin: "http://localhost:3000",
+    };
+
+    process.env.REACT_APP_COGNITO_CLIENT_ID = "test-client-id";
+
+    renderWithRouter(<AdminDashboard theme={mockTheme} />);
+    const googleBtn = screen.getByRole("button", {
+      name: /Continue with Google/i,
+    });
+    fireEvent.click(googleBtn);
+
+    expect(window.location.href).toContain("test-client-id");
+    expect(window.location.href).toContain("response_type=token");
+
+    window.location = originalLocation;
+  });
+
+  it("parses Cognito id_token from URL hash and logs in", async () => {
+    const originalLocation = window.location;
+    delete window.location;
+
+    // Create a fake id_token with base64 payload
+    const fakePayload = { email: "admin@example.com" };
+    const fakeToken = "header." + btoa(JSON.stringify(fakePayload)) + ".sig";
+
+    window.location = {
+      ...originalLocation,
+      hash: `#id_token=${fakeToken}`,
+      pathname: "/admin",
+    };
+
+    // Mock history.replaceState so it doesn't throw
+    const originalReplaceState = window.history.replaceState;
+    window.history.replaceState = jest.fn();
+
+    const setSessionSpy = jest
+      .spyOn(apiClient, "setSession")
+      .mockImplementation(() => {});
+
+    renderWithRouter(<AdminDashboard theme={mockTheme} />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/admin@example.com/i)).toBeInTheDocument();
+    });
+
+    expect(setSessionSpy).toHaveBeenCalledWith(
+      fakeToken,
+      expect.objectContaining({ username: "admin@example.com" })
+    );
+
+    window.location = originalLocation;
+    window.history.replaceState = originalReplaceState;
+  });
+
+  it("handles resetToken from URL and submits new password", async () => {
+    jest.spyOn(apiClient, "resetPassword").mockResolvedValueOnce({
+      success: true,
+      message: "Password reset successfully!",
+    });
     window.history.pushState({}, "Reset", "/admin?resetToken=reset-token");
 
     renderWithRouter(<AdminDashboard theme={mockTheme} />);
