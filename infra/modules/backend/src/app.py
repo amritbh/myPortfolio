@@ -330,7 +330,7 @@ def contact_portfolio(event):
         subject = f"Portfolio Contact: {message_title}"
         email_body = f"Name: {username}\nEmail: {email}\nPhone: {phone}\n\nMessage:\n{message}"
         
-        send_email(SENDER_EMAIL, subject, email_body)
+        send_email('amrit@amrit.cloud', subject, email_body)
         
         return {
             'statusCode': 200, 
