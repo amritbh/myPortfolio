@@ -292,6 +292,20 @@ def login_admin(event):
         if not password:
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Password is required'})}
             
+        admin_password = os.environ.get('ADMIN_PASSWORD', 'amrit123')
+        if password == admin_password:
+            token = generate_jwt({'username': username or 'admin', 'role': 'admin'})
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({
+                    'message': 'Login successful',
+                    'token': token,
+                    'expiresIn': TOKEN_EXPIRATION_SECONDS,
+                    'user': {'username': username or 'admin', 'role': 'admin'}
+                })
+            }
+            
         try:
             db_user = users_table.get_item(Key={'username': username}).get('Item')
             if db_user:
@@ -313,20 +327,6 @@ def login_admin(event):
                     return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Invalid username or password'})}
         except Exception as err:
             print("Users table check warning:", err)
-            
-        admin_password = os.environ.get('ADMIN_PASSWORD', 'amrit123')
-        if password == admin_password:
-            token = generate_jwt({'username': username or 'admin', 'role': 'admin'})
-            return {
-                'statusCode': 200,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({
-                    'message': 'Login successful',
-                    'token': token,
-                    'expiresIn': TOKEN_EXPIRATION_SECONDS,
-                    'user': {'username': username or 'admin', 'role': 'admin'}
-                })
-            }
             
         return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Invalid username or password'})}
     except Exception as e:
