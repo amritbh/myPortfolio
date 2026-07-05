@@ -314,3 +314,27 @@ def test_exception_handling(setup_dynamodb):
     response = app.lambda_handler(event, None)
     assert response['statusCode'] == 500
     assert 'Internal server error' in json.loads(response['body'])['error']
+
+@patch('app.send_email')
+def test_contact_portfolio_success(mock_send_email, setup_dynamodb):
+    import app
+    event = {
+        'rawPath': '/portfolio',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({
+            'username': 'Test User',
+            'email': 'test@example.com',
+            'phone': '1234567890',
+            'messageTitle': 'Inquiry',
+            'message': 'Hello there!'
+        })
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    assert 'Message sent successfully!' in json.loads(response['body'])['message']
+    
+    mock_send_email.assert_called_once_with(
+        app.SENDER_EMAIL, 
+        'Portfolio Contact: Inquiry', 
+        'Name: Test User\nEmail: test@example.com\nPhone: 1234567890\n\nMessage:\nHello there!'
+    )

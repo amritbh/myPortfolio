@@ -65,6 +65,12 @@ resource "aws_apigatewayv2_route" "post_auth_reset_password" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
+resource "aws_apigatewayv2_route" "post_portfolio" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "POST /portfolio"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
 resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.http_api.id
   name        = "$default"

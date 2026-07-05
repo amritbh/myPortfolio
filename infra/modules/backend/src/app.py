@@ -318,6 +318,33 @@ def create_blog(event):
         print(e)
         return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
 
+def contact_portfolio(event):
+    try:
+        body = json.loads(event.get('body', '{}'))
+        username = body.get('username', 'Unknown')
+        email = body.get('email', 'Unknown')
+        phone = body.get('phone', 'N/A')
+        message_title = body.get('messageTitle', 'No Subject')
+        message = body.get('message', '')
+        
+        subject = f"Portfolio Contact: {message_title}"
+        email_body = f"Name: {username}\nEmail: {email}\nPhone: {phone}\n\nMessage:\n{message}"
+        
+        send_email(SENDER_EMAIL, subject, email_body)
+        
+        return {
+            'statusCode': 200, 
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 
+            'body': json.dumps({'message': 'Message sent successfully!'})
+        }
+    except Exception as e:
+        print(f"Error sending contact email: {e}")
+        return {
+            'statusCode': 500, 
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 
+            'body': json.dumps({'error': 'Internal server error'})
+        }
+
 def lambda_handler(event, context):
     print("EVENT:", json.dumps(event))
     path = event.get('rawPath', event.get('path', ''))
@@ -336,6 +363,8 @@ def lambda_handler(event, context):
         return forgot_password_route(event)
     if path in ['/auth/reset-password', '/reset-password'] and method == 'POST':
         return reset_password_route(event)
+    if path in ['/portfolio', '/api/portfolio'] and method == 'POST':
+        return contact_portfolio(event)
             
     if path == '/blogs':
         if method == 'POST':
