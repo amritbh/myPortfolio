@@ -108,7 +108,7 @@ def get_cognito_jwks():
         
     keys_url = f'https://cognito-idp.{COGNITO_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}/.well-known/jwks.json'
     try:
-        with urllib.request.urlopen(keys_url) as response:
+        with urllib.request.urlopen(keys_url) as response: # nosec B310
             _jwks = json.loads(response.read().decode('utf-8'))
         return _jwks
     except Exception as e:
