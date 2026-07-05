@@ -179,7 +179,7 @@ function Contact(props) {
             {/* Info Items */}
             <div className="contact-info-items">
               <a
-                href="mailto:amrit.bhattarai990@gmail.com"
+                href="mailto:amrit@amrit.cloud"
                 className="contact-info-item"
                 style={{ color: theme.text }}
               >
@@ -201,9 +201,7 @@ function Contact(props) {
                   >
                     Email
                   </p>
-                  <p className="contact-info-value">
-                    amrit.bhattarai990@gmail.com
-                  </p>
+                  <p className="contact-info-value">amrit@amrit.cloud</p>
                 </div>
               </a>
 
