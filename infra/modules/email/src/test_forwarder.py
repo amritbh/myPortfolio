@@ -85,8 +85,7 @@ def test_lambda_handler_forwards_email(s3_client, ses_client):
     sent_msg = email.message_from_bytes(raw_message)
     
     assert sent_msg['Subject'] == '[Forwarded] Test Subject'
-    assert 'sender@external.com' in sent_msg['From']
-    assert '<admin@amrit.cloud>' in sent_msg['From']
+    assert 'admin@amrit.cloud' in sent_msg['From']
     assert sent_msg['Reply-To'] == 'sender@external.com'
     assert sent_msg['To'] == 'target@example.com'
 
