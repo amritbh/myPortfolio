@@ -41,13 +41,16 @@ graph TD
 
 ## 2. API Endpoint Specifications
 
-| Endpoint        | Method | Auth Required | Description                                                                                                                 |
-| :-------------- | :----- | :------------ | :-------------------------------------------------------------------------------------------------------------------------- |
-| `/auth/signup`  | `POST` | No            | Registers a new admin user in DynamoDB with salted PBKDF2 hash and returns an 8-hour JWT token.                             |
-| `/auth/login`   | `POST` | No            | Authenticates username & password against DynamoDB users table (with fallback to `ADMIN_PASSWORD`) and returns a JWT token. |
-| `/blogs`        | `GET`  | No            | Fetches all published blog posts sorted by `publishDate` descending.                                                        |
-| `/blogs/{slug}` | `GET`  | No            | Fetches a single blog post by its unique URL slug.                                                                          |
-| `/blogs`        | `POST` | **Yes (JWT)** | Creates/publishes a new blog post in DynamoDB.                                                                              |
+| Endpoint                | Method | Auth Required | Description                                                                                          |
+| :---------------------- | :----- | :------------ | :--------------------------------------------------------------------------------------------------- |
+| `/auth/signup`          | `POST` | No            | Registers a new admin user in DynamoDB (`verified=false`) and emails a verification JWT via AWS SES. |
+| `/auth/login`           | `POST` | No            | Authenticates user if `verified=true`. Returns an 8-hour JWT session token.                          |
+| `/auth/verify-email`    | `POST` | No            | Validates the verification JWT from the email link and updates the user's `verified` status to true. |
+| `/auth/forgot-password` | `POST` | No            | Looks up the user by email and sends a password reset JWT link via AWS SES.                          |
+| `/auth/reset-password`  | `POST` | No            | Validates the reset JWT, hashes the new password using PBKDF2, and updates DynamoDB.                 |
+| `/blogs`                | `GET`  | No            | Fetches all published blog posts sorted by `publishDate` descending.                                 |
+| `/blogs/{slug}`         | `GET`  | No            | Fetches a single blog post by its unique URL slug.                                                   |
+| `/blogs`                | `POST` | **Yes (JWT)** | Creates/publishes a new blog post in DynamoDB.                                                       |
 
 ---
 

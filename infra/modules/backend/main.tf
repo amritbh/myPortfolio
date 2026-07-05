@@ -58,6 +58,11 @@ resource "aws_lambda_function" "api_lambda" {
       TABLE_NAME       = aws_dynamodb_table.blogs_table.name
       USERS_TABLE_NAME = aws_dynamodb_table.users_table.name
       ADMIN_PASSWORD   = "amrit123" # Simple hardcoded default for now
+      SENDER_EMAIL     = "amrit.bhattarai990@gmail.com"
     }
   }
 }
+
+
+
+

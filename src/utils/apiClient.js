@@ -241,3 +241,77 @@ export const createBlog = async (blogData, token) => {
     return { success: false, error: error.message };
   }
 };
+
+export const verifyEmail = async (token) => {
+  if (!API_URL)
+    return { success: true, message: "Mock verification successful." };
+  try {
+    const response = await fetch(`${API_URL}/auth/verify-email`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    });
+    const data = await response.json();
+    return response.ok
+      ? { success: true, message: data.message }
+      : { success: false, error: data.error };
+  } catch (err) {
+    console.warn(
+      "API unreachable during verifyEmail, falling back to mock:",
+      err
+    );
+    return {
+      success: true,
+      message: "Mock verification successful (API unreachable).",
+    };
+  }
+};
+
+export const requestPasswordReset = async (email) => {
+  if (!API_URL) return { success: true, message: "Mock reset link sent." };
+  try {
+    const response = await fetch(`${API_URL}/auth/forgot-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await response.json();
+    return response.ok
+      ? { success: true, message: data.message }
+      : { success: false, error: data.error };
+  } catch (err) {
+    console.warn(
+      "API unreachable during requestPasswordReset, falling back to mock:",
+      err
+    );
+    return {
+      success: true,
+      message: "Mock reset link sent (API unreachable).",
+    };
+  }
+};
+
+export const resetPassword = async (token, newPassword) => {
+  if (!API_URL)
+    return { success: true, message: "Mock password reset successful." };
+  try {
+    const response = await fetch(`${API_URL}/auth/reset-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, password: newPassword }),
+    });
+    const data = await response.json();
+    return response.ok
+      ? { success: true, message: data.message }
+      : { success: false, error: data.error };
+  } catch (err) {
+    console.warn(
+      "API unreachable during resetPassword, falling back to mock:",
+      err
+    );
+    return {
+      success: true,
+      message: "Mock password reset successful (API unreachable).",
+    };
+  }
+};
