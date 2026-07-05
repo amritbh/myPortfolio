@@ -12,6 +12,7 @@ import {
   verifyEmail,
   requestPasswordReset,
   resetPassword,
+  setSession,
 } from "../../utils/apiClient";
 import { marked } from "marked";
 import "./AdminDashboard.css";
@@ -50,6 +51,38 @@ class AdminDashboard extends Component {
   }
 
   handleUrlParams = async () => {
+    const hashFragment = window.location.hash.substring(1);
+    if (hashFragment) {
+      const hashParams = new URLSearchParams(hashFragment);
+      const idToken = hashParams.get("id_token");
+
+      if (idToken) {
+        try {
+          const payload = JSON.parse(atob(idToken.split(".")[1]));
+          const user = {
+            username:
+              payload.email || payload["cognito:username"] || payload.sub,
+            type: "cognito",
+            role: "admin",
+          };
+          setSession(idToken, user);
+          this.setState({
+            isAuthenticated: true,
+            user: user,
+          });
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+          return;
+        } catch (e) {
+          console.error("Failed to parse Cognito JWT", e);
+          this.setState({ authError: "Social login failed." });
+        }
+      }
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const verifyToken = urlParams.get("verifyToken");
     const resetToken = urlParams.get("resetToken");
@@ -209,6 +242,24 @@ class AdminDashboard extends Component {
         isSubmitting: false,
       });
     }
+  };
+
+  handleGoogleLogin = () => {
+    const domain =
+      process.env.REACT_APP_COGNITO_DOMAIN ||
+      "amrit-portfolio-auth-prod.auth.us-east-1.amazoncognito.com";
+    const clientId = process.env.REACT_APP_COGNITO_CLIENT_ID;
+    const redirectUri = window.location.origin + "/admin";
+
+    if (!clientId) {
+      this.setState({ authError: "Cognito Client ID is not configured." });
+      return;
+    }
+
+    const url = `https://${domain}/oauth2/authorize?client_id=${clientId}&response_type=token&scope=email+openid+profile&redirect_uri=${encodeURIComponent(
+      redirectUri
+    )}`;
+    window.location.href = url;
   };
 
   handleLogout = () => {
@@ -497,6 +548,69 @@ class AdminDashboard extends Component {
                   required
                 />
               </div>
+            )}
+
+            {authMode === "signin" && (
+              <>
+                <button
+                  type="button"
+                  onClick={this.handleGoogleLogin}
+                  className="admin-btn"
+                  style={{
+                    backgroundColor: "#ffffff",
+                    color: "#000000",
+                    marginBottom: "15px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "10px",
+                    border: "1px solid #ddd",
+                  }}
+                >
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                    alt="Google"
+                    width="20"
+                  />
+                  Continue with Google
+                </button>
+
+                <div
+                  style={{
+                    textAlign: "center",
+                    margin: "15px 0 20px 0",
+                    color: theme.secondaryText,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      flex: 1,
+                      height: "1px",
+                      backgroundColor: theme.secondaryText,
+                      opacity: 0.2,
+                    }}
+                  ></div>
+                  <span
+                    style={{
+                      padding: "0 10px",
+                      fontSize: "0.85rem",
+                      opacity: 0.8,
+                    }}
+                  >
+                    OR SIGN IN WITH EMAIL
+                  </span>
+                  <div
+                    style={{
+                      flex: 1,
+                      height: "1px",
+                      backgroundColor: theme.secondaryText,
+                      opacity: 0.2,
+                    }}
+                  ></div>
+                </div>
+              </>
             )}
 
             <button

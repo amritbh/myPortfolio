@@ -1,3 +1,5 @@
+data "aws_region" "current" {}
+
 # DynamoDB Table
 resource "aws_dynamodb_table" "blogs_table" {
   name         = "${var.project_name}-${var.environment}-blogs"
@@ -37,11 +39,24 @@ resource "aws_dynamodb_table" "users_table" {
   }
 }
 
+# Install Pip Dependencies
+resource "null_resource" "pip_install" {
+  triggers = {
+    requirements = filemd5("${path.module}/src/requirements.txt")
+  }
+
+  provisioner "local-exec" {
+    command = "pip3 install -r ${path.module}/src/requirements.txt -t ${path.module}/src/ --upgrade"
+  }
+}
+
 # Package Python Code
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_dir  = "${path.module}/src"
   output_path = "${path.module}/lambda_function.zip"
+
+  depends_on = [null_resource.pip_install]
 }
 
 # Lambda Function
@@ -55,10 +70,12 @@ resource "aws_lambda_function" "api_lambda" {
 
   environment {
     variables = {
-      TABLE_NAME       = aws_dynamodb_table.blogs_table.name
-      USERS_TABLE_NAME = aws_dynamodb_table.users_table.name
-      ADMIN_PASSWORD   = "amrit123" # Simple hardcoded default for now
-      SENDER_EMAIL     = "noreply@amrit.cloud"
+      TABLE_NAME           = aws_dynamodb_table.blogs_table.name
+      USERS_TABLE_NAME     = aws_dynamodb_table.users_table.name
+      ADMIN_PASSWORD       = "amrit123" # Simple hardcoded default for now
+      SENDER_EMAIL         = "noreply@amrit.cloud"
+      COGNITO_USER_POOL_ID = aws_cognito_user_pool.pool.id
+      COGNITO_REGION       = data.aws_region.current.name
     }
   }
 }

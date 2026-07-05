@@ -29,3 +29,16 @@ yarn-error.log*
 terraform.tfstate*
 lambda_function.zip
 infra/modules/backend/venv/
+infra/modules/backend/src/*.dist-info/
+infra/modules/backend/src/__pycache__/
+infra/modules/backend/src/bin/
+infra/modules/backend/src/cffi/
+infra/modules/backend/src/cryptography/
+infra/modules/backend/src/ecdsa/
+infra/modules/backend/src/jose/
+infra/modules/backend/src/pyasn1/
+infra/modules/backend/src/pycparser/
+infra/modules/backend/src/rsa/
+infra/modules/backend/src/six.py
+infra/modules/backend/src/*.so
+infra/modules/email/src/__pycache__/

@@ -177,6 +177,19 @@ def test_create_blog_with_jwt(setup_dynamodb):
     response = app.lambda_handler(event, None)
     assert response['statusCode'] == 201
 
+@patch('app.verify_cognito_jwt')
+def test_create_blog_with_cognito_jwt(mock_verify_cognito_jwt, setup_dynamodb):
+    mock_verify_cognito_jwt.return_value = {'username': 'cognito_user', 'role': 'admin'}
+    event = {
+        'rawPath': '/blogs',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {'authorization': 'Bearer cognito-token-123'},
+        'body': json.dumps({'slug': 'test-cognito-blog', 'title': 'Title', 'content': 'Content'})
+    }
+    from app import lambda_handler
+    response = lambda_handler(event, None)
+    assert response['statusCode'] == 201
+
 def test_get_all_blogs(setup_dynamodb):
     import app
     app.table = boto3.resource('dynamodb', region_name='us-east-1').Table(os.environ['TABLE_NAME'])

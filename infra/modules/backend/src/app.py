@@ -5,7 +5,18 @@ import time
 import base64
 import hashlib
 import hmac
+import urllib.request
 from botocore.config import Config
+
+try:
+    from jose import jwk, jwt
+    from jose.utils import base64url_decode
+    JOSE_AVAILABLE = True
+except ImportError:
+    JOSE_AVAILABLE = False
+
+COGNITO_USER_POOL_ID = os.environ.get('COGNITO_USER_POOL_ID')
+COGNITO_REGION = os.environ.get('COGNITO_REGION')
 
 dynamodb = boto3.resource('dynamodb')
 table_name = os.environ.get('TABLE_NAME', 'amrit-cloud-prod-blogs')
@@ -84,6 +95,53 @@ def verify_jwt(token: str) -> dict:
             
         return payload
     except Exception:
+        return None
+
+_jwks = None
+
+def get_cognito_jwks():
+    global _jwks
+    if _jwks is not None:
+        return _jwks
+    if not COGNITO_USER_POOL_ID or not COGNITO_REGION:
+        return None
+        
+    keys_url = f'https://cognito-idp.{COGNITO_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}/.well-known/jwks.json'
+    try:
+        with urllib.request.urlopen(keys_url) as response:
+            _jwks = json.loads(response.read().decode('utf-8'))
+        return _jwks
+    except Exception as e:
+        print(f"Error fetching JWKS: {e}")
+        return None
+
+def verify_cognito_jwt(token: str):
+    if not JOSE_AVAILABLE:
+        print("python-jose not available, skipping cognito verification")
+        return None
+        
+    jwks = get_cognito_jwks()
+    if not jwks:
+        return None
+        
+    try:
+        # jwt.decode handles finding the correct key from JWKS, signature verification, and expiration
+        claims = jwt.decode(token, jwks, algorithms=['RS256'], options={'verify_aud': False, 'verify_at_hash': False})
+        
+        # Standardize claims to look like our custom payload for downstream
+        return {
+            'username': claims.get('email') or claims.get('cognito:username') or claims.get('sub'),
+            'type': 'cognito',
+            'role': 'admin' # Assume Cognito users (since they are in our private pool) are admins for this portfolio
+        }
+    except jwt.ExpiredSignatureError:
+        print('Token is expired')
+        return None
+    except jwt.JWTError as e:
+        print(f"JWT signature verification failed: {e}")
+        return None
+    except Exception as e:
+        print(f"Cognito JWT verification error: {e}")
         return None
 
 def hash_password(password: str, salt: bytes = None) -> tuple:
@@ -305,6 +363,9 @@ def create_blog(event):
         token = auth_header.replace('Bearer ', '').strip() if auth_header.startswith('Bearer ') else auth_header
         
         payload = verify_jwt(token)
+        if not payload:
+            payload = verify_cognito_jwt(token)
+            
         if not payload and token != admin_password:
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized or session expired'})}
             

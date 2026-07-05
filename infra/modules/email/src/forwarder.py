@@ -67,6 +67,15 @@ def lambda_handler(event, context):
         del msg['Subject']
         msg['Subject'] = f"[Forwarded] {original_subject}"
         
+        # Strip SES and DKIM headers that cause duplicates
+        headers_to_remove = [
+            'DKIM-Signature', 'X-SES-DKIM-SIGNATURE', 'X-SES-RECEIPT', 
+            'X-SES-Outgoing', 'Feedback-ID', 'Message-ID', 'Sender', 
+            'Authentication-Results', 'Received', 'Received-SPF'
+        ]
+        for header in headers_to_remove:
+            del msg[header]
+        
         # Send using SES
         print(f"Sending forwarded email from {send_from} to {FORWARD_TO}")
         
