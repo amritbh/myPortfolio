@@ -5,6 +5,7 @@ import time
 import base64
 import hashlib
 import hmac
+from botocore.config import Config
 
 dynamodb = boto3.resource('dynamodb')
 table_name = os.environ.get('TABLE_NAME', 'amrit-cloud-prod-blogs')
@@ -12,7 +13,8 @@ table = dynamodb.Table(table_name)
 users_table_name = os.environ.get('USERS_TABLE_NAME', 'amrit-cloud-prod-users')
 users_table = dynamodb.Table(users_table_name)
 
-ses = boto3.client('ses', region_name=os.environ.get('AWS_REGION', 'us-east-1'))
+config = Config(connect_timeout=5, read_timeout=5)
+ses = boto3.client('ses', region_name=os.environ.get('AWS_REGION', 'us-east-1'), config=config)
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'admin@amrit.cloud')
 
 # Super simple JWT implementation without external dependencies

@@ -257,3 +257,60 @@ def test_reset_password_success(setup_dynamodb):
     # Verify the password changed
     user = app.users_table.get_item(Key={'username': 'registereduser'}).get('Item')
     assert user['password_hash'] != 'old'
+
+def test_login_unverified_user(setup_dynamodb):
+    import app
+    app.users_table.put_item(Item={
+        'username': 'unverifieduser', 
+        'password_hash': 'hash', 
+        'salt': 'salt', 
+        'verified': False
+    })
+    
+    event = {
+        'rawPath': '/auth/login',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({'username': 'unverifieduser', 'password': 'Password123!'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 403
+    assert 'Please verify your email' in json.loads(response['body'])['error']
+
+def test_login_missing_password(setup_dynamodb):
+    import app
+    event = {
+        'rawPath': '/auth/login',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({'username': 'admin'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 401
+    assert 'Password is required' in json.loads(response['body'])['error']
+
+def test_reset_password_invalid_token(setup_dynamodb):
+    import app
+    event = {
+        'rawPath': '/auth/reset-password',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({'token': 'invalid.jwt.token', 'password': 'NewPassword123!'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 400
+    assert 'Invalid or expired reset token' in json.loads(response['body'])['error']
+
+def test_get_blog_by_slug_not_found(setup_dynamodb):
+    import app
+    response = app.get_blog_by_slug('does-not-exist')
+    assert response['statusCode'] == 404
+    assert 'Blog not found' in json.loads(response['body'])['error']
+
+def test_exception_handling(setup_dynamodb):
+    import app
+    event = {
+        'rawPath': '/auth/login',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': 'invalid-json'
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 500
+    assert 'Internal server error' in json.loads(response['body'])['error']
