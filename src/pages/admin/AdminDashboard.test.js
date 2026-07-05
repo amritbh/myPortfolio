@@ -235,6 +235,71 @@ describe("AdminDashboard Component", () => {
     window.history.replaceState = originalReplaceState;
   });
 
+  it("shows error if Cognito id_token is invalid", async () => {
+    const originalLocation = window.location;
+    delete window.location;
+
+    // Invalid base64 payload
+    const fakeToken = "header.invalidBase64!!!.sig";
+
+    window.location = {
+      ...originalLocation,
+      hash: `#id_token=${fakeToken}`,
+      pathname: "/admin",
+    };
+
+    const originalReplaceState = window.history.replaceState;
+    window.history.replaceState = jest.fn();
+
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+
+    renderWithRouter(<AdminDashboard theme={mockTheme} />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Social login failed/i)).toBeInTheDocument();
+    });
+
+    consoleErrorSpy.mockRestore();
+    window.location = originalLocation;
+    window.history.replaceState = originalReplaceState;
+  });
+
+  it("shows error if username is less than 3 characters", async () => {
+    renderWithRouter(<AdminDashboard theme={mockTheme} />);
+
+    const usernameInput = screen.getByPlaceholderText(/Username/i);
+    const passwordInput = screen.getByPlaceholderText(/Admin Password/i);
+    fireEvent.change(usernameInput, { target: { value: "ab" } });
+    fireEvent.change(passwordInput, { target: { value: "password123" } });
+
+    fireEvent.click(screen.getByRole("button", { name: /Sign In to CMS/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Username must be at least 3 characters long/i)
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("shows error if password is less than 6 characters", async () => {
+    renderWithRouter(<AdminDashboard theme={mockTheme} />);
+
+    const usernameInput = screen.getByPlaceholderText(/Username/i);
+    const passwordInput = screen.getByPlaceholderText(/Admin Password/i);
+    fireEvent.change(usernameInput, { target: { value: "admin" } });
+    fireEvent.change(passwordInput, { target: { value: "12345" } });
+
+    fireEvent.click(screen.getByRole("button", { name: /Sign In to CMS/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Password must be at least 6 characters long/i)
+      ).toBeInTheDocument();
+    });
+  });
+
   it("handles resetToken from URL and submits new password", async () => {
     jest.spyOn(apiClient, "resetPassword").mockResolvedValueOnce({
       success: true,
