@@ -59,7 +59,7 @@ resource "aws_s3_bucket_policy" "ses_put_policy" {
         Principal = {
           Service = "ses.amazonaws.com"
         }
-        Action = "s3:PutObject"
+        Action   = "s3:PutObject"
         Resource = "${aws_s3_bucket.inbound_mail.arn}/*"
         Condition = {
           StringEquals = {
@@ -98,8 +98,8 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
 }
 
 resource "aws_iam_role_policy" "lambda_forwarder_policy" {
-  name   = "lambda-ses-forwarder-policy"
-  role   = aws_iam_role.lambda_forwarder_role.id
+  name = "lambda-ses-forwarder-policy"
+  role = aws_iam_role.lambda_forwarder_role.id
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -134,9 +134,9 @@ resource "aws_lambda_function" "forwarder" {
 
   environment {
     variables = {
-      FORWARD_TO      = var.forward_email
-      S3_BUCKET       = aws_s3_bucket.inbound_mail.bucket
-      S3_PREFIX       = ""
+      FORWARD_TO = var.forward_email
+      S3_BUCKET  = aws_s3_bucket.inbound_mail.bucket
+      S3_PREFIX  = ""
     }
   }
 }
@@ -196,8 +196,8 @@ resource "aws_iam_access_key" "smtp_user_key" {
 }
 
 resource "aws_iam_user_policy" "smtp_user_policy" {
-  name   = "ses-smtp-policy"
-  user   = aws_iam_user.smtp_user.name
+  name = "ses-smtp-policy"
+  user = aws_iam_user.smtp_user.name
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
