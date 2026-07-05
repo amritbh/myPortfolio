@@ -55,10 +55,7 @@ def lambda_handler(event, context):
         send_from = mail_info['destination'][0]
         
         del msg['From']
-        if from_name:
-            msg['From'] = formataddr((from_name, send_from))
-        else:
-            msg['From'] = send_from
+        msg['From'] = send_from
         
         del msg['Return-Path']
         msg['Return-Path'] = send_from
