@@ -10,11 +10,12 @@ variable "environment" {
   default     = "prod"
 }
 
-variable "admin_password" {
+variable "admin_email" {
+  description = "Email address for the admin user"
   type        = string
-  description = "Hardcoded password for admin blog creation"
-  default     = "amrit123"
+  default     = "amrit.bhattarai990@gmail.com"
 }
+
 
 variable "google_client_id" {
   type        = string

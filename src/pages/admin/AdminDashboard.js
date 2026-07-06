@@ -712,144 +712,216 @@ class AdminDashboard extends Component {
 
     return (
       <div className="admin-dashboard-container">
-        <div className="admin-cms-header">
-          <div>
-            <h1 className="admin-title" style={{ color: theme.text }}>
-              Write a New Post
-            </h1>
-            <p style={{ color: theme.secondaryText, margin: 0 }}>
-              Logged in as <strong>{user?.username || "admin"}</strong>
-            </p>
-          </div>
-          <button
-            onClick={this.handleLogout}
-            className="admin-logout-btn"
+        {user?.role !== "admin" ? (
+          <div
+            className="admin-cms-header"
             style={{
-              borderColor: theme.text,
-              color: theme.text,
+              flexDirection: "column",
+              alignItems: "flex-start",
+              padding: "40px",
             }}
           >
-            Logout
-          </button>
-        </div>
-
-        {statusMessage && (
-          <div
-            className={`admin-status ${
-              statusMessage.includes("Success") ? "success" : "error"
-            }`}
-          >
-            {statusMessage}
+            <h1 className="admin-title" style={{ color: theme.text }}>
+              Welcome, {user?.username || "User"}!
+            </h1>
+            <p
+              style={{
+                color: theme.secondaryText,
+                marginTop: "20px",
+                fontSize: "1.2rem",
+              }}
+            >
+              Your profile has been created successfully.
+              <br />
+              <br />
+              Normal users currently do not have access to the CMS blog
+              authoring tools.
+            </p>
+            <button
+              onClick={this.handleLogout}
+              className="admin-logout-btn"
+              style={{
+                borderColor: theme.text,
+                color: theme.text,
+                marginTop: "40px",
+              }}
+            >
+              Logout
+            </button>
           </div>
-        )}
+        ) : (
+          <>
+            <div className="admin-cms-header">
+              <div>
+                <h1 className="admin-title" style={{ color: theme.text }}>
+                  Write a New Post
+                </h1>
+                <p style={{ color: theme.secondaryText, margin: 0 }}>
+                  Logged in as <strong>{user?.username || "admin"}</strong>
+                </p>
+              </div>
+              <button
+                onClick={this.handleLogout}
+                className="admin-logout-btn"
+                style={{
+                  borderColor: theme.text,
+                  color: theme.text,
+                }}
+              >
+                Logout
+              </button>
+            </div>
 
-        <form onSubmit={this.handlePublish} className="admin-form">
-          <div className="admin-metadata-grid">
-            <div className="admin-input-group">
-              <label style={{ color: theme.secondaryText }}>Title</label>
-              <input
-                required
-                name="title"
-                value={formData.title}
-                onChange={this.handleInputChange}
-                className="admin-input"
-                style={{ backgroundColor: theme.imageDark, color: theme.text }}
-              />
-            </div>
-            <div className="admin-input-group">
-              <label style={{ color: theme.secondaryText }}>Slug</label>
-              <input
-                required
-                name="slug"
-                value={formData.slug}
-                onChange={this.handleInputChange}
-                className="admin-input"
-                style={{ backgroundColor: theme.imageDark, color: theme.text }}
-              />
-            </div>
-            <div className="admin-input-group" style={{ gridColumn: "1 / -1" }}>
-              <label style={{ color: theme.secondaryText }}>Summary</label>
-              <textarea
-                required
-                name="summary"
-                value={formData.summary}
-                onChange={this.handleInputChange}
-                className="admin-input"
-                rows="2"
-                style={{ backgroundColor: theme.imageDark, color: theme.text }}
-              />
-            </div>
-            <div className="admin-input-group">
-              <label style={{ color: theme.secondaryText }}>
-                Cover Image URL
-              </label>
-              <input
-                name="coverImage"
-                value={formData.coverImage}
-                onChange={this.handleInputChange}
-                className="admin-input"
-                style={{ backgroundColor: theme.imageDark, color: theme.text }}
-              />
-            </div>
-            <div className="admin-input-group">
-              <label style={{ color: theme.secondaryText }}>
-                Tags (comma separated)
-              </label>
-              <input
-                name="tags"
-                value={formData.tags}
-                onChange={this.handleInputChange}
-                className="admin-input"
-                placeholder="React, AWS, Terraform"
-                style={{ backgroundColor: theme.imageDark, color: theme.text }}
-              />
-            </div>
-            <div className="admin-input-group">
-              <label style={{ color: theme.secondaryText }}>Read Time</label>
-              <input
-                name="readTime"
-                value={formData.readTime}
-                onChange={this.handleInputChange}
-                className="admin-input"
-                placeholder="5 min read"
-                style={{ backgroundColor: theme.imageDark, color: theme.text }}
-              />
-            </div>
-          </div>
-
-          <div className="admin-editor-split">
-            <div className="admin-editor-pane">
-              <label style={{ color: theme.secondaryText }}>
-                Markdown Content
-              </label>
-              <textarea
-                required
-                name="content"
-                value={formData.content}
-                onChange={this.handleInputChange}
-                className="admin-textarea"
-                style={{ backgroundColor: theme.imageDark, color: theme.text }}
-                placeholder="# Write your post here..."
-              />
-            </div>
-            <div className="admin-preview-pane">
-              <label style={{ color: theme.secondaryText }}>Live Preview</label>
+            {statusMessage && (
               <div
-                className="admin-preview-box markdown-body"
-                style={{ backgroundColor: theme.imageDark, color: theme.text }}
-                dangerouslySetInnerHTML={{ __html: htmlPreview }}
-              />
-            </div>
-          </div>
+                className={`admin-status ${
+                  statusMessage.includes("Success") ? "success" : "error"
+                }`}
+              >
+                {statusMessage}
+              </div>
+            )}
 
-          <button
-            type="submit"
-            disabled={isPublishing}
-            className="admin-publish-btn"
-          >
-            {isPublishing ? "Publishing..." : "Publish to DynamoDB"}
-          </button>
-        </form>
+            <form onSubmit={this.handlePublish} className="admin-form">
+              <div className="admin-metadata-grid">
+                <div className="admin-input-group">
+                  <label style={{ color: theme.secondaryText }}>Title</label>
+                  <input
+                    required
+                    name="title"
+                    value={formData.title}
+                    onChange={this.handleInputChange}
+                    className="admin-input"
+                    style={{
+                      backgroundColor: theme.imageDark,
+                      color: theme.text,
+                    }}
+                  />
+                </div>
+                <div className="admin-input-group">
+                  <label style={{ color: theme.secondaryText }}>Slug</label>
+                  <input
+                    required
+                    name="slug"
+                    value={formData.slug}
+                    onChange={this.handleInputChange}
+                    className="admin-input"
+                    style={{
+                      backgroundColor: theme.imageDark,
+                      color: theme.text,
+                    }}
+                  />
+                </div>
+                <div
+                  className="admin-input-group"
+                  style={{ gridColumn: "1 / -1" }}
+                >
+                  <label style={{ color: theme.secondaryText }}>Summary</label>
+                  <textarea
+                    required
+                    name="summary"
+                    value={formData.summary}
+                    onChange={this.handleInputChange}
+                    className="admin-input"
+                    rows="2"
+                    style={{
+                      backgroundColor: theme.imageDark,
+                      color: theme.text,
+                    }}
+                  />
+                </div>
+                <div className="admin-input-group">
+                  <label style={{ color: theme.secondaryText }}>
+                    Cover Image URL
+                  </label>
+                  <input
+                    name="coverImage"
+                    value={formData.coverImage}
+                    onChange={this.handleInputChange}
+                    className="admin-input"
+                    style={{
+                      backgroundColor: theme.imageDark,
+                      color: theme.text,
+                    }}
+                  />
+                </div>
+                <div className="admin-input-group">
+                  <label style={{ color: theme.secondaryText }}>
+                    Tags (comma separated)
+                  </label>
+                  <input
+                    name="tags"
+                    value={formData.tags}
+                    onChange={this.handleInputChange}
+                    className="admin-input"
+                    placeholder="React, AWS, Terraform"
+                    style={{
+                      backgroundColor: theme.imageDark,
+                      color: theme.text,
+                    }}
+                  />
+                </div>
+                <div className="admin-input-group">
+                  <label style={{ color: theme.secondaryText }}>
+                    Read Time
+                  </label>
+                  <input
+                    name="readTime"
+                    value={formData.readTime}
+                    onChange={this.handleInputChange}
+                    className="admin-input"
+                    placeholder="5 min read"
+                    style={{
+                      backgroundColor: theme.imageDark,
+                      color: theme.text,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="admin-editor-split">
+                <div className="admin-editor-pane">
+                  <label style={{ color: theme.secondaryText }}>
+                    Markdown Content
+                  </label>
+                  <textarea
+                    required
+                    name="content"
+                    value={formData.content}
+                    onChange={this.handleInputChange}
+                    className="admin-textarea"
+                    style={{
+                      backgroundColor: theme.imageDark,
+                      color: theme.text,
+                    }}
+                    placeholder="# Write your post here..."
+                  />
+                </div>
+                <div className="admin-preview-pane">
+                  <label style={{ color: theme.secondaryText }}>
+                    Live Preview
+                  </label>
+                  <div
+                    className="admin-preview-box markdown-body"
+                    style={{
+                      backgroundColor: theme.imageDark,
+                      color: theme.text,
+                    }}
+                    dangerouslySetInnerHTML={{ __html: htmlPreview }}
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isPublishing}
+                className="admin-publish-btn"
+              >
+                {isPublishing ? "Publishing..." : "Publish to DynamoDB"}
+              </button>
+            </form>
+          </>
+        )}
       </div>
     );
   }

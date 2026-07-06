@@ -131,42 +131,14 @@ def test_login_with_registered_dynamodb_user(setup_dynamodb):
     assert login_res['statusCode'] == 200
     assert 'token' in json.loads(login_res['body'])
 
-def test_login_admin_fallback_success(setup_dynamodb):
-    import app
-    event = {
-        'rawPath': '/auth/login',
-        'requestContext': {'http': {'method': 'POST'}},
-        'body': json.dumps({'username': 'admin', 'password': 'testpass'})
-    }
-    response = app.lambda_handler(event, None)
-    assert response['statusCode'] == 200
-    body = json.loads(response['body'])
-    assert 'token' in body
 
-def test_login_admin_invalid_password(setup_dynamodb):
-    import app
-    event = {
-        'rawPath': '/auth/login',
-        'requestContext': {'http': {'method': 'POST'}},
-        'body': json.dumps({'username': 'admin', 'password': 'wrongpassword'})
-    }
-    response = app.lambda_handler(event, None)
-    assert response['statusCode'] == 401
-    body = json.loads(response['body'])
-    assert 'error' in body
 
 def test_create_blog_with_jwt(setup_dynamodb):
     import app
     app.table = boto3.resource('dynamodb', region_name='us-east-1').Table(os.environ['TABLE_NAME'])
     app.users_table = boto3.resource('dynamodb', region_name='us-east-1').Table(os.environ['USERS_TABLE_NAME'])
 
-    login_evt = {
-        'rawPath': '/auth/login',
-        'requestContext': {'http': {'method': 'POST'}},
-        'body': json.dumps({'username': 'admin', 'password': 'testpass'})
-    }
-    login_res = app.lambda_handler(login_evt, None)
-    token = json.loads(login_res['body'])['token']
+    token = app.generate_jwt({'username': 'amrit', 'role': 'admin'})
 
     event = {
         'rawPath': '/blogs',

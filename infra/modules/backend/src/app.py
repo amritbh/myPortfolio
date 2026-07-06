@@ -128,11 +128,15 @@ def verify_cognito_jwt(token: str):
         # jwt.decode handles finding the correct key from JWKS, signature verification, and expiration
         claims = jwt.decode(token, jwks, algorithms=['RS256'], options={'verify_aud': False, 'verify_at_hash': False})
         
+        email = claims.get('email')
+        admin_email = os.environ.get('ADMIN_EMAIL', '')
+        role = 'admin' if email and admin_email and email == admin_email else 'user'
+        
         # Standardize claims to look like our custom payload for downstream
         return {
-            'username': claims.get('email') or claims.get('cognito:username') or claims.get('sub'),
+            'username': email or claims.get('cognito:username') or claims.get('sub'),
             'type': 'cognito',
-            'role': 'admin' # Assume Cognito users (since they are in our private pool) are admins for this portfolio
+            'role': role
         }
     except jwt.ExpiredSignatureError:
         print('Token is expired')
@@ -188,7 +192,7 @@ def signup_admin(event):
             'email': email,
             'password_hash': pwd_hash,
             'salt': pwd_salt,
-            'role': 'admin',
+            'role': 'user',
             'verified': False,
             'createdAt': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
         }
@@ -208,7 +212,7 @@ def signup_admin(event):
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Account created successfully. Please check your email to verify.',
-                'user': {'username': username, 'email': email, 'role': 'admin'}
+                'user': {'username': username, 'email': email, 'role': 'user'}
             })
         }
     except Exception as e:
@@ -292,27 +296,16 @@ def login_admin(event):
         if not password:
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Password is required'})}
             
-        admin_password = os.environ.get('ADMIN_PASSWORD', 'amrit123')
-        if password == admin_password:
-            token = generate_jwt({'username': username or 'admin', 'role': 'admin'})
-            return {
-                'statusCode': 200,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({
-                    'message': 'Login successful',
-                    'token': token,
-                    'expiresIn': TOKEN_EXPIRATION_SECONDS,
-                    'user': {'username': username or 'admin', 'role': 'admin'}
-                })
-            }
-            
         try:
             db_user = users_table.get_item(Key={'username': username}).get('Item')
             if db_user:
                 if db_user.get('verified', True) == False:
                     return {'statusCode': 403, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Please verify your email before logging in.'})}
                 if verify_password(password, db_user.get('password_hash'), db_user.get('salt')):
-                    token = generate_jwt({'username': username, 'role': 'admin'})
+                    email = db_user.get('email', '')
+                    admin_email = os.environ.get('ADMIN_EMAIL', '')
+                    role = 'admin' if email and admin_email and email == admin_email else 'user'
+                    token = generate_jwt({'username': username, 'role': role})
                     return {
                         'statusCode': 200,
                         'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -320,7 +313,7 @@ def login_admin(event):
                             'message': 'Login successful',
                             'token': token,
                             'expiresIn': TOKEN_EXPIRATION_SECONDS,
-                            'user': {'username': username, 'email': db_user.get('email', ''), 'role': 'admin'}
+                            'user': {'username': username, 'email': email, 'role': role}
                         })
                     }
                 else:

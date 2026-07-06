@@ -72,7 +72,7 @@ resource "aws_lambda_function" "api_lambda" {
     variables = {
       TABLE_NAME           = aws_dynamodb_table.blogs_table.name
       USERS_TABLE_NAME     = aws_dynamodb_table.users_table.name
-      ADMIN_PASSWORD       = "amrit123" # Simple hardcoded default for now
+      ADMIN_EMAIL          = var.admin_email
       SENDER_EMAIL         = "noreply@amrit.cloud"
       COGNITO_USER_POOL_ID = aws_cognito_user_pool.pool.id
       COGNITO_REGION       = data.aws_region.current.name
