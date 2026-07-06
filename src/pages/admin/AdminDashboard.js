@@ -52,7 +52,11 @@ class AdminDashboard extends Component {
         loading: false,
       });
     } else {
-      this.props.history.push("/login");
+      if (this.props.history) {
+        this.props.history.push("/login");
+      } else {
+        window.location.href = "/login";
+      }
     }
   };
 

@@ -7,6 +7,8 @@ import { BrowserRouter } from "react-router-dom";
 // Mock the API client
 jest.mock("../../utils/apiClient", () => ({
   fetchBlogs: jest.fn(),
+  getStoredUser: jest.fn(() => null),
+  clearSession: jest.fn(),
 }));
 
 const mockTheme = {
