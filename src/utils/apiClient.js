@@ -207,40 +207,41 @@ export const fetchBlogBySlug = async (slug) => {
   }
 };
 
-export const createBlog = async (blogData, token) => {
-  const authToken = token || getStoredToken();
-
-  if (!API_URL) {
-    console.error("API URL not configured, cannot create blog.");
-    return { success: false, error: "API URL not configured" };
-  }
-
+const authFetch = async (endpoint, method, token, body = null) => {
   try {
-    const response = await fetch(`${API_URL}/blogs`, {
-      method: "POST",
+    const options = {
+      method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken}`,
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(blogData),
-    });
-
-    if (response.status === 401) {
-      clearSession();
-      return { success: false, error: "Session expired. Please log in again." };
+    };
+    if (body) {
+      options.body = JSON.stringify(body);
     }
-
+    const response = await fetch(`${API_URL}${endpoint}`, options);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      return {
+        success: false,
+        error: errorData.error || `Error: ${response.status}`,
+      };
     }
-
-    const data = await response.json();
-    return { success: true, data };
+    return { success: true, data: await response.json() };
   } catch (error) {
-    console.error("Error creating blog:", error);
+    console.error(`Error with ${method} ${endpoint}:`, error);
     return { success: false, error: error.message };
   }
 };
+
+export const createBlog = (blogData, token) =>
+  authFetch("/blogs", "POST", token, blogData);
+
+export const updateBlog = (slug, blogData, token) =>
+  authFetch(`/blogs/${slug}`, "PUT", token, blogData);
+
+export const deleteBlog = (slug, token) =>
+  authFetch(`/blogs/${slug}`, "DELETE", token);
 
 export const verifyEmail = async (token) => {
   if (!API_URL)

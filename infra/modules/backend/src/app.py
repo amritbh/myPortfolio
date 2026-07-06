@@ -364,6 +364,51 @@ def create_blog(event):
         print(e)
         return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
 
+def update_blog(event, slug):
+    try:
+        payload = authenticate(event)
+        if not payload or payload.get('role') != 'admin':
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized or session expired'})}
+            
+        body = json.loads(event.get('body', '{}'))
+        new_slug = body.get('slug')
+        if not new_slug or not body.get('title'):
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing slug or title'})}
+
+        # Fetch existing to preserve engagement metrics
+        existing_res = table.get_item(Key={'slug': slug})
+        existing = existing_res.get('Item')
+        if not existing:
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Blog not found'})}
+
+        # Merge existing metrics
+        body['likes'] = existing.get('likes', [])
+        body['comments'] = existing.get('comments', [])
+
+        if new_slug != slug:
+            # Slug changed, create new and delete old
+            table.put_item(Item=body)
+            table.delete_item(Key={'slug': slug})
+        else:
+            table.put_item(Item=body)
+            
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Blog updated successfully!', 'item': body})}
+    except Exception as e:
+        print(e)
+        return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
+
+def delete_blog(event, slug):
+    try:
+        payload = authenticate(event)
+        if not payload or payload.get('role') != 'admin':
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized or session expired'})}
+            
+        table.delete_item(Key={'slug': slug})
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Blog deleted successfully!'})}
+    except Exception as e:
+        print(e)
+        return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
+
 def contact_portfolio(event):
     try:
         body = json.loads(event.get('body', '{}'))
@@ -544,6 +589,12 @@ def lambda_handler(event, context):
             return comment_blog(event, slug)
         if len(parts) == 4 and parts[3] == 'comment' and method == 'DELETE':
             return delete_comment(event, slug)
+            
+        if len(parts) == 3:
+            if method == 'PUT':
+                return update_blog(event, slug)
+            if method == 'DELETE':
+                return delete_blog(event, slug)
             
         return get_blog_by_slug(slug)
         

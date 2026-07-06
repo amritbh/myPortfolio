@@ -36,11 +36,11 @@ The Python Lambda function uses `python-jose` to parse and cryptographically ver
 
 ## 3. Frontend Authentication Flow (React)
 
-The frontend handles the authentication UI and session management in `src/pages/admin/AdminDashboard.js`.
+The frontend handles the authentication UI and session management in `src/pages/login/Login.js`.
 
 ### A. Initiating Login
 
-When the admin clicks "Continue with Google", the application redirects them to the AWS Cognito Hosted UI:
+When the user clicks "Continue with Google", the application redirects them to the AWS Cognito Hosted UI:
 
 ```javascript
 const url = `https://${domain}/oauth2/authorize?client_id=${clientId}&response_type=token&scope=email+openid+profile&redirect_uri=${redirectUri}`;
@@ -53,9 +53,13 @@ After a successful Google login, Cognito redirects the user back to `/admin` wit
 
 The application automatically parses the URL hash fragment on mount:
 
-1. Extracts the `id_token`.
-2. Decodes the base64 payload to extract the user's `email` (or `cognito:username`).
-3. Caches the `id_token` in `sessionStorage` using the `setSession()` utility.
+### C. Session Management and Role-Based Redirection
+
+If the token validates successfully:
+
+1. The frontend derives the user's role. If the email matches the primary admin email, they are assigned `role: 'admin'`, otherwise `role: 'user'`.
+2. The user profile and token are saved in `localStorage` via `apiClient.js`.
+3. Admin users are redirected to the CMS (`/admin`), while standard users are redirected to the homepage (`/home`).
 4. Updates the React state to `isAuthenticated: true`.
 5. Clears the URL hash using `window.history.replaceState` for security and aesthetic purposes.
 
