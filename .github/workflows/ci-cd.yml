@@ -1,0 +1,176 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  issues: write
+  actions: write
+
+jobs:
+  infrastructure:
+    name: Infrastructure Apply
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      TF_VAR_google_client_id: ${{ secrets.GOOGLE_CLIENT_ID }}
+      TF_VAR_google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      TERRAGRUNT_NON_INTERACTIVE: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.0
+          terraform_wrapper: false
+
+      - name: Setup Terragrunt
+        run: |
+          wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.53.8/terragrunt_linux_amd64
+          chmod +x terragrunt_linux_amd64
+          sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+          terragrunt --version
+
+      - name: Terraform Format Check
+        working-directory: infra
+        run: terraform fmt -check -recursive
+
+      - name: Terragrunt Format Check
+        working-directory: infra
+        run: terragrunt hclfmt --terragrunt-check
+
+      - name: Terragrunt Validate
+        working-directory: infra/live
+        run: terragrunt run-all validate --terragrunt-non-interactive
+
+      - name: Run tfsec Security Scanner
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          working_directory: infra
+          soft_fail: true
+
+      - name: Run Trivy vulnerability scanner in fs mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '0'
+          severity: 'HIGH,CRITICAL'
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Run Backend Application Tests & Coverage (pytest & bandit)
+        working-directory: infra/modules/backend/src
+        run: |
+          pip install -r requirements-test.txt
+          python -m pytest --cov=. --cov-report=xml test_app.py
+          bandit -r app.py
+
+      - name: Run Terraform Tests (Backend Module)
+        working-directory: infra/modules/backend
+        run: terraform init && terraform test
+
+      - name: Run Terraform Tests (Frontend Module)
+        working-directory: infra/modules/frontend
+        run: terraform init && terraform test
+
+      - name: Terragrunt Apply (Backend)
+        working-directory: infra/live/prod
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt Apply (Frontend)
+        working-directory: infra/live/prod/frontend
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+  frontend:
+    name: Build & Deploy Frontend
+    needs: infrastructure
+    runs-on: ubuntu-latest
+    env:
+      BUCKET: amrit.cloud
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.0
+          terraform_wrapper: false
+
+      - name: Setup Terragrunt
+        run: |
+          wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.53.8/terragrunt_linux_amd64
+          chmod +x terragrunt_linux_amd64
+          sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+          terragrunt --version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Frontend Tests & Coverage
+        run: CI=true npm run test -- --coverage
+
+      - name: Fetch API URL and Build production bundle
+        run: |
+          export REACT_APP_CUSTOM_API_URL=$(cd infra/live/prod && terragrunt output -raw api_endpoint)
+          echo "API URL is $REACT_APP_CUSTOM_API_URL"
+          npm run build
+
+      - name: Deploy to S3
+        run: |
+          echo "Syncing build/ → s3://$BUCKET/"
+          aws s3 sync build/ "s3://$BUCKET/" --delete
+          echo "✅ Deployment complete"
+
+      - name: Invalidate CloudFront Cache
+        run: |
+          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items!=null] | [?contains(Aliases.Items, '$BUCKET')].Id | [0]" --output text)
+          if [ "$DISTRIBUTION_ID" != "None" ] && [ -n "$DISTRIBUTION_ID" ]; then
+            echo "Invalidating CloudFront distribution: $DISTRIBUTION_ID"
+            aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
+            echo "✅ Cache invalidation triggered"
+          else
+            echo "⚠️ Could not find CloudFront distribution for $BUCKET"
+          fi
+
+      - name: Verify deployment
+        run: |
+          echo "Listing top-level objects in s3://$BUCKET/"
+          aws s3 ls "s3://$BUCKET/" | head -20
+          echo ""
+          OBJECT_COUNT=$(aws s3 ls "s3://$BUCKET/" --recursive | wc -l)
+          echo "Total objects in bucket: $OBJECT_COUNT"
+
+      - name: OWASP ZAP Baseline Scan (DAST)
+        uses: zaproxy/action-baseline@v0.15.0
+        with:
+          target: 'https://amrit.cloud'
+          fail_action: false
+          cmd_options: '-a'
