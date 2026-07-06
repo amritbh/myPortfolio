@@ -7,15 +7,9 @@ import {
   updateBlog,
   deleteBlog,
   fetchBlogs,
-  loginAdmin,
-  signupAdmin,
   getStoredToken,
   getStoredUser,
   clearSession,
-  verifyEmail,
-  requestPasswordReset,
-  resetPassword,
-  setSession,
 } from "../../utils/apiClient";
 import { marked } from "marked";
 import "./AdminDashboard.css";
