@@ -41,16 +41,18 @@ graph TD
 
 ## 2. API Endpoint Specifications
 
-| Endpoint                | Method | Auth Required | Description                                                                                          |
-| :---------------------- | :----- | :------------ | :--------------------------------------------------------------------------------------------------- |
-| `/auth/signup`          | `POST` | No            | Registers a new admin user in DynamoDB (`verified=false`) and emails a verification JWT via AWS SES. |
-| `/auth/login`           | `POST` | No            | Authenticates user if `verified=true`. Returns an 8-hour JWT session token.                          |
-| `/auth/verify-email`    | `POST` | No            | Validates the verification JWT from the email link and updates the user's `verified` status to true. |
-| `/auth/forgot-password` | `POST` | No            | Looks up the user by email and sends a password reset JWT link via AWS SES.                          |
-| `/auth/reset-password`  | `POST` | No            | Validates the reset JWT, hashes the new password using PBKDF2, and updates DynamoDB.                 |
-| `/blogs`                | `GET`  | No            | Fetches all published blog posts sorted by `publishDate` descending.                                 |
-| `/blogs/{slug}`         | `GET`  | No            | Fetches a single blog post by its unique URL slug.                                                   |
-| `/blogs`                | `POST` | **Yes (JWT)** | Creates/publishes a new blog post in DynamoDB.                                                       |
+| Endpoint                | Method   | Auth Required | Description                                                                                          |
+| :---------------------- | :------- | :------------ | :--------------------------------------------------------------------------------------------------- |
+| `/auth/signup`          | `POST`   | No            | Registers a new admin user in DynamoDB (`verified=false`) and emails a verification JWT via AWS SES. |
+| `/auth/login`           | `POST`   | No            | Authenticates user if `verified=true`. Returns an 8-hour JWT session token.                          |
+| `/auth/verify-email`    | `POST`   | No            | Validates the verification JWT from the email link and updates the user's `verified` status to true. |
+| `/auth/forgot-password` | `POST`   | No            | Looks up the user by email and sends a password reset JWT link via AWS SES.                          |
+| `/auth/reset-password`  | `POST`   | No            | Validates the reset JWT, hashes the new password using PBKDF2, and updates DynamoDB.                 |
+| `/blogs`                | `GET`    | No            | Fetches all published blog posts sorted by `publishDate` descending.                                 |
+| `/blogs/{slug}`         | `GET`    | No            | Fetches a single blog post by its unique URL slug.                                                   |
+| `/blogs`                | `POST`   | **Yes (JWT)** | Creates/publishes a new blog post in DynamoDB.                                                       |
+| `/blogs/{slug}`         | `PUT`    | **Yes (JWT)** | Edits an existing blog post while preserving likes and comments.                                     |
+| `/blogs/{slug}`         | `DELETE` | **Yes (JWT)** | Permanently deletes an existing blog post from DynamoDB.                                             |
 
 ---
 
@@ -99,13 +101,14 @@ graph TD
 
 ## 4. Frontend Component Structure
 
-- **[AdminDashboard.js](file:///Users/breeze/workspace/myPortfolio/src/pages/admin/AdminDashboard.js)**: Tabbed authentication card (**Sign In** & **Sign Up**), real-time form validation, session restoration (`componentDidMount`), markdown editor with live preview, and session logout.
-- **[apiClient.js](file:///Users/breeze/workspace/myPortfolio/src/utils/apiClient.js)**: API client functions (`loginAdmin`, `signupAdmin`, `createBlog`), session storage management, and local offline dev fallback.
-- **[AdminDashboard.css](file:///Users/breeze/workspace/myPortfolio/src/pages/admin/AdminDashboard.css)**: Glassmorphic dark/light UI card styling, tab bar indicators, and responsive markdown editor split pane.
+- **[AdminDashboard.js](file:///Users/breeze/workspace/myPortfolio/src/pages/admin/AdminDashboard.js)**: Tabbed CMS layout (**Write a New Post** & **Manage Posts**), real-time form validation, session protection, markdown editor with live preview, existing post listing, and edit/delete capabilities.
+- **[Login.js](file:///Users/breeze/workspace/myPortfolio/src/pages/login/Login.js)**: Tabbed authentication card (**Sign In** & **Sign Up**), custom and Google OAuth flows, and role-based redirection to the CMS or homepage.
+- **[apiClient.js](file:///Users/breeze/workspace/myPortfolio/src/utils/apiClient.js)**: API client functions (`createBlog`, `updateBlog`, `deleteBlog`, `loginAdmin`), session storage management, and local offline dev fallback.
+- **[AdminDashboard.css](file:///Users/breeze/workspace/myPortfolio/src/pages/admin/AdminDashboard.css)**: Glassmorphic dark/light UI card styling, tab bar indicators, styled lists for managing blogs, and responsive markdown editor split pane.
 
 ---
 
 ## 5. Automated Quality & Security Testing
 
-- **Backend Pytest (`pytest test_app.py`)**: 9 test cases covering PBKDF2 hashing, user signup, duplicate username rejection, JWT issuance, and DynamoDB item persistence.
-- **Frontend Jest (`npm test`)**: 13 test cases covering tab switching, password confirmation validation, session storage, and route protection.
+- **Backend Pytest (`pytest test_app.py`)**: 37 test cases covering hashing, auth flows, DynamoDB interactions (create, read, update, delete blogs), and engagement (likes/comments).
+- **Frontend Jest (`npm test`)**: Comprehensive test suite covering Auth flows (Login.js), UI rendering, and mock API interactions (AdminDashboard.js) maintaining over 80% coverage.
