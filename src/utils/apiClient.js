@@ -208,36 +208,72 @@ export const fetchBlogBySlug = async (slug) => {
 };
 
 export const createBlog = async (blogData, token) => {
-  const authToken = token || getStoredToken();
-
-  if (!API_URL) {
-    console.error("API URL not configured, cannot create blog.");
-    return { success: false, error: "API URL not configured" };
-  }
-
   try {
     const response = await fetch(`${API_URL}/blogs`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(blogData),
     });
-
-    if (response.status === 401) {
-      clearSession();
-      return { success: false, error: "Session expired. Please log in again." };
-    }
-
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      return {
+        success: false,
+        error: errorData.error || `Error: ${response.status}`,
+      };
     }
-
-    const data = await response.json();
-    return { success: true, data };
+    return { success: true, data: await response.json() };
   } catch (error) {
     console.error("Error creating blog:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const updateBlog = async (slug, blogData, token) => {
+  try {
+    const response = await fetch(`${API_URL}/blogs/${slug}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(blogData),
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return {
+        success: false,
+        error: errorData.error || `Error: ${response.status}`,
+      };
+    }
+    return { success: true, data: await response.json() };
+  } catch (error) {
+    console.error("Error updating blog:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const deleteBlog = async (slug, token) => {
+  try {
+    const response = await fetch(`${API_URL}/blogs/${slug}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return {
+        success: false,
+        error: errorData.error || `Error: ${response.status}`,
+      };
+    }
+    return { success: true, data: await response.json() };
+  } catch (error) {
+    console.error("Error deleting blog:", error);
     return { success: false, error: error.message };
   }
 };

@@ -449,6 +449,86 @@ def test_login_missing_password(setup_dynamodb):
     assert response['statusCode'] == 401
     assert 'Password is required' in json.loads(response['body'])['error']
 
+def test_update_blog_success(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'admin', 'role': 'admin'})
+    
+    # Pre-populate
+    app.table.put_item(Item={
+        'slug': 'test-blog-update',
+        'title': 'Old Title',
+        'likes': ['amrit'],
+        'comments': [{'id': 'c1', 'text': 'nice'}]
+    })
+    
+    event = {
+        'rawPath': '/blogs/test-blog-update',
+        'requestContext': {'http': {'method': 'PUT'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'slug': 'test-blog-update', 'title': 'New Title'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    
+    updated = app.table.get_item(Key={'slug': 'test-blog-update'}).get('Item')
+    assert updated['title'] == 'New Title'
+    assert 'amrit' in updated['likes']
+    assert len(updated['comments']) == 1
+
+def test_update_blog_slug_change(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'admin', 'role': 'admin'})
+    app.table.put_item(Item={'slug': 'old-slug', 'title': 'Old Title'})
+    
+    event = {
+        'rawPath': '/blogs/old-slug',
+        'requestContext': {'http': {'method': 'PUT'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'slug': 'new-slug', 'title': 'New Title'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    
+    assert not app.table.get_item(Key={'slug': 'old-slug'}).get('Item')
+    assert app.table.get_item(Key={'slug': 'new-slug'}).get('Item')
+
+def test_update_blog_unauthorized(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'user', 'role': 'user'})
+    event = {
+        'rawPath': '/blogs/test-blog',
+        'requestContext': {'http': {'method': 'PUT'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'slug': 'test-blog', 'title': 'Title'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 401
+
+def test_delete_blog_success(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'admin', 'role': 'admin'})
+    app.table.put_item(Item={'slug': 'test-delete'})
+    
+    event = {
+        'rawPath': '/blogs/test-delete',
+        'requestContext': {'http': {'method': 'DELETE'}},
+        'headers': {'authorization': f'Bearer {token}'}
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    assert not app.table.get_item(Key={'slug': 'test-delete'}).get('Item')
+
+def test_delete_blog_unauthorized(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'user', 'role': 'user'})
+    event = {
+        'rawPath': '/blogs/test-delete',
+        'requestContext': {'http': {'method': 'DELETE'}},
+        'headers': {'authorization': f'Bearer {token}'}
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 401
+
 def test_reset_password_invalid_token(setup_dynamodb):
     import app
     event = {
