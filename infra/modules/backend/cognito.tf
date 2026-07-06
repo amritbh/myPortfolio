@@ -29,8 +29,8 @@ resource "aws_cognito_user_pool_client" "client" {
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
 
   callback_urls = [
-    "https://amrit.cloud/admin",
-    "http://localhost:3000/admin"
+    "https://amrit.cloud/login",
+    "http://localhost:3000/login"
   ]
   logout_urls = [
     "https://amrit.cloud/",
