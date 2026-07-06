@@ -116,10 +116,10 @@ class AdminDashboard extends Component {
     const token = getStoredToken();
     const response = await deleteBlog(slug, token);
     if (response.success) {
-      this.setState({
+      this.setState((prevState) => ({
         statusMessage: "Blog deleted successfully.",
-        blogs: this.state.blogs.filter((b) => b.slug !== slug),
-      });
+        blogs: prevState.blogs.filter((b) => b.slug !== slug),
+      }));
     } else {
       this.setState({ statusMessage: `Error: ${response.error}` });
     }
@@ -178,20 +178,20 @@ class AdminDashboard extends Component {
     }
 
     if (response.success) {
-      this.setState({
+      this.setState((prevState) => ({
         statusMessage: editingSlug
           ? "Success! Post updated."
           : "Success! Post published.",
         isPublishing: false,
         editingSlug: null,
         formData: {
-          ...this.state.formData,
+          ...prevState.formData,
           title: "",
           slug: "",
           summary: "",
           content: "",
         },
-      });
+      }));
       this.loadBlogs(); // Refresh list
     } else {
       if (response.error && response.error.includes("expired")) {
