@@ -149,6 +149,67 @@ describe("apiClient", () => {
     expect(res.success).toBe(false);
   });
 
+  it("likeBlog success", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ message: "liked" }),
+    });
+    const res = await apiClient.likeBlog("test-slug");
+    expect(res.success).toBe(true);
+  });
+
+  it("likeBlog failure", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: "failed" }),
+    });
+    const res = await apiClient.likeBlog("test-slug");
+    expect(res.success).toBe(false);
+  });
+
+  it("commentBlog success", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ message: "commented" }),
+    });
+    const res = await apiClient.commentBlog("test-slug", "Nice post!");
+    expect(res.success).toBe(true);
+  });
+
+  it("commentBlog failure", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: "failed" }),
+    });
+    const res = await apiClient.commentBlog("test-slug", "Nice post!");
+    expect(res.success).toBe(false);
+  });
+
+  it("deleteComment success", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ message: "deleted" }),
+    });
+    const res = await apiClient.deleteComment("test-slug", "comment-id");
+    expect(res.success).toBe(true);
+  });
+
+  it("deleteComment failure", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: "failed" }),
+    });
+    const res = await apiClient.deleteComment("test-slug", "comment-id");
+    expect(res.success).toBe(false);
+  });
+
   it("session functions", () => {
     apiClient.setSession("token123", { username: "test" });
     expect(apiClient.getStoredToken()).toBe("token123");
@@ -207,5 +268,23 @@ describe("apiClient API unreachable", () => {
   it("resetPassword catches error and succeeds", async () => {
     const res = await apiClient.resetPassword("token", "newpass");
     expect(res.success).toBe(true);
+  });
+
+  it("likeBlog catches error and returns mock", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    const res = await apiClient.likeBlog("slug");
+    expect(res.success).toBe(false);
+  });
+
+  it("commentBlog catches error and returns mock", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    const res = await apiClient.commentBlog("slug", "text");
+    expect(res.success).toBe(false);
+  });
+
+  it("deleteComment catches error and returns mock", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    const res = await apiClient.deleteComment("slug", "id");
+    expect(res.success).toBe(false);
   });
 });
