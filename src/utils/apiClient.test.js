@@ -149,6 +149,52 @@ describe("apiClient", () => {
     expect(res.success).toBe(false);
   });
 
+  it("updateBlog success", async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ message: "updated" }),
+    });
+    const res = await apiClient.updateBlog(
+      "test",
+      { title: "new test" },
+      "token"
+    );
+    expect(res.success).toBe(true);
+  });
+
+  it("updateBlog failure", async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: "bad" }),
+    });
+    const res = await apiClient.updateBlog(
+      "test",
+      { title: "new test" },
+      "token"
+    );
+    expect(res.success).toBe(false);
+  });
+
+  it("deleteBlog success", async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ message: "deleted" }),
+    });
+    const res = await apiClient.deleteBlog("test", "token");
+    expect(res.success).toBe(true);
+  });
+
+  it("deleteBlog failure", async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: "bad" }),
+    });
+    const res = await apiClient.deleteBlog("test", "token");
+    expect(res.success).toBe(false);
+  });
+
   it("likeBlog success", async () => {
     apiClient.setSession("token123", { username: "test" });
     global.fetch.mockResolvedValueOnce({
@@ -237,6 +283,16 @@ describe("apiClient API unreachable", () => {
 
   it("createBlog catches error", async () => {
     const res = await apiClient.createBlog({});
+    expect(res.success).toBe(false);
+  });
+
+  it("updateBlog catches error", async () => {
+    const res = await apiClient.updateBlog("test", {});
+    expect(res.success).toBe(false);
+  });
+
+  it("deleteBlog catches error", async () => {
+    const res = await apiClient.deleteBlog("test");
     expect(res.success).toBe(false);
   });
 
