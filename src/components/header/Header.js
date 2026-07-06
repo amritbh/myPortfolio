@@ -4,6 +4,7 @@ import { Fade } from "react-reveal";
 import { NavLink, Link } from "react-router-dom";
 import { greeting, settings } from "../../portfolio.js";
 import SeoHeader from "../seoHeader/SeoHeader";
+import { getStoredUser, clearSession } from "../../utils/apiClient";
 
 const onMouseEnter = (event, color) => {
   const el = event.target;
@@ -16,7 +17,13 @@ const onMouseOut = (event) => {
 };
 
 class Header extends Component {
+  handleLogout = () => {
+    clearSession();
+    window.location.href = "/home";
+  };
+
   render() {
+    const user = getStoredUser();
     const theme = this.props.theme;
     const link = settings.isSplash ? "/splash" : "home";
     return (
@@ -119,6 +126,50 @@ class Header extends Component {
                 >
                   Contact Me
                 </NavLink>
+              </li>
+              <li>
+                {user ? (
+                  <button
+                    onClick={this.handleLogout}
+                    style={{
+                      color: theme.text,
+                      backgroundColor: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                      fontSize: "1em",
+                      fontWeight: "normal",
+                      padding: "10px",
+                    }}
+                    onMouseEnter={(event) => {
+                      event.target.style.backgroundColor = theme.highlight;
+                      event.target.style.fontWeight = "bold";
+                    }}
+                    onMouseOut={(event) => {
+                      event.target.style.backgroundColor = "transparent";
+                      event.target.style.fontWeight = "normal";
+                    }}
+                    onBlur={(event) => {
+                      event.target.style.backgroundColor = "transparent";
+                      event.target.style.fontWeight = "normal";
+                    }}
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <NavLink
+                    to="/login"
+                    tag={Link}
+                    activeStyle={{ fontWeight: "bold" }}
+                    style={{ color: theme.text }}
+                    onMouseEnter={(event) =>
+                      onMouseEnter(event, theme.highlight)
+                    }
+                    onMouseOut={(event) => onMouseOut(event)}
+                  >
+                    Login
+                  </NavLink>
+                )}
               </li>
             </ul>
           </header>

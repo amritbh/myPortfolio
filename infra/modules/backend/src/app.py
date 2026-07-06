@@ -349,17 +349,9 @@ def get_blog_by_slug(slug):
 
 def create_blog(event):
     try:
-        headers = event.get('headers', {})
-        auth_header = headers.get('authorization', headers.get('Authorization', ''))
-        
-        admin_password = os.environ.get('ADMIN_PASSWORD', 'amrit123')
-        token = auth_header.replace('Bearer ', '').strip() if auth_header.startswith('Bearer ') else auth_header
-        
-        payload = verify_jwt(token)
-        if not payload:
-            payload = verify_cognito_jwt(token)
+        payload = authenticate(event)
             
-        if not payload and token != admin_password:
+        if not payload or payload.get('role') != 'admin':
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized or session expired'})}
             
         body = json.loads(event.get('body', '{}'))
@@ -398,6 +390,124 @@ def contact_portfolio(event):
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 
             'body': json.dumps({'error': 'Internal server error'})
         }
+def authenticate(event):
+    headers = event.get('headers', {})
+    auth_header = headers.get('authorization', headers.get('Authorization', ''))
+    token = auth_header.replace('Bearer ', '').strip() if auth_header.startswith('Bearer ') else auth_header
+    payload = verify_jwt(token)
+    if not payload:
+        payload = verify_cognito_jwt(token)
+    return payload
+
+def like_blog(event, slug):
+    try:
+        payload = authenticate(event)
+        if not payload:
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+            
+        username = payload.get('username')
+        response = table.get_item(Key={'slug': slug})
+        item = response.get('Item')
+        if not item:
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Blog not found'})}
+            
+        likes = item.get('likes', [])
+        if username in likes:
+            likes.remove(username)
+        else:
+            likes.append(username)
+            
+        table.update_item(
+            Key={'slug': slug},
+            UpdateExpression="SET likes = :l",
+            ExpressionAttributeValues={':l': likes}
+        )
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Like toggled', 'likes': likes})}
+    except Exception as e:
+        print(e)
+        return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
+
+def comment_blog(event, slug):
+    try:
+        payload = authenticate(event)
+        if not payload:
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+            
+        body = json.loads(event.get('body', '{}'))
+        text = body.get('text', '').strip()
+        if not text:
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Comment text required'})}
+            
+        username = payload.get('username')
+        comment_id = str(int(time.time() * 1000))
+        new_comment = {
+            'id': comment_id,
+            'username': username,
+            'text': text,
+            'timestamp': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+        }
+        
+        response = table.get_item(Key={'slug': slug})
+        item = response.get('Item')
+        if not item:
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Blog not found'})}
+            
+        comments = item.get('comments', [])
+        comments.append(new_comment)
+        
+        table.update_item(
+            Key={'slug': slug},
+            UpdateExpression="SET comments = :c",
+            ExpressionAttributeValues={':c': comments}
+        )
+        return {'statusCode': 201, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Comment added', 'comment': new_comment})}
+    except Exception as e:
+        print(e)
+        return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
+
+def delete_comment(event, slug):
+    try:
+        payload = authenticate(event)
+        if not payload:
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+            
+        body = json.loads(event.get('body', '{}'))
+        comment_id = body.get('commentId', '')
+        if not comment_id:
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'commentId required'})}
+            
+        username = payload.get('username')
+        role = payload.get('role')
+        
+        response = table.get_item(Key={'slug': slug})
+        item = response.get('Item')
+        if not item:
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Blog not found'})}
+            
+        comments = item.get('comments', [])
+        new_comments = []
+        deleted = False
+        for c in comments:
+            if c.get('id') == comment_id:
+                if c.get('username') == username or role == 'admin':
+                    deleted = True
+                    continue
+                else:
+                    return {'statusCode': 403, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Not authorized to delete this comment'})}
+            new_comments.append(c)
+            
+        if not deleted:
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Comment not found'})}
+            
+        table.update_item(
+            Key={'slug': slug},
+            UpdateExpression="SET comments = :c",
+            ExpressionAttributeValues={':c': new_comments}
+        )
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Comment deleted'})}
+    except Exception as e:
+        print(e)
+        return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
 
 def lambda_handler(event, context):
     print("EVENT:", json.dumps(event))
@@ -426,7 +536,15 @@ def lambda_handler(event, context):
         return get_all_blogs()
         
     elif path.startswith('/blogs/'):
-        slug = path.split('/blogs/')[1]
+        parts = path.split('/')
+        slug = parts[2] if len(parts) > 2 else ''
+        if len(parts) == 4 and parts[3] == 'like' and method == 'POST':
+            return like_blog(event, slug)
+        if len(parts) == 4 and parts[3] == 'comment' and method == 'POST':
+            return comment_blog(event, slug)
+        if len(parts) == 4 and parts[3] == 'comment' and method == 'DELETE':
+            return delete_comment(event, slug)
+            
         return get_blog_by_slug(slug)
         
     return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Not found', 'path': path, 'method': method})}
