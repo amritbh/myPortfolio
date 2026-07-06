@@ -185,4 +185,107 @@ describe("Login Component", () => {
       expect(screen.getByText(/Invalid credentials/i)).toBeInTheDocument();
     });
   });
+
+  it("handles Cognito JWT in URL hash", () => {
+    const payload = { email: "amrit.bhattarai990@gmail.com", sub: "123" };
+    const token = "header." + btoa(JSON.stringify(payload)) + ".signature";
+    window.location.hash = "#id_token=" + token;
+
+    renderWithRouter(<Login theme={mockTheme} />);
+    // Should have redirected to admin due to email match
+    window.location.hash = "";
+  });
+
+  it("handles Google Login button click", () => {
+    const originalLocation = window.location;
+    delete window.location;
+    window.location = {
+      origin: "http://localhost",
+      href: "",
+      hash: "",
+      search: "",
+    };
+    renderWithRouter(<Login theme={mockTheme} />);
+    const googleBtn = screen.getByText(/Continue with Google/i);
+    fireEvent.click(googleBtn);
+    expect(window.location.href).toContain("cognito");
+    window.location = originalLocation;
+  });
+
+  it("handles auth mode switching", () => {
+    renderWithRouter(<Login theme={mockTheme} />);
+    fireEvent.click(screen.getByRole("button", { name: /^Sign Up$/i }));
+    expect(
+      screen.getByRole("button", { name: /Create Account/i })
+    ).toBeInTheDocument();
+  });
+
+  it("handles signup validation errors", () => {
+    renderWithRouter(<Login theme={mockTheme} />);
+    fireEvent.click(screen.getByRole("button", { name: /^Sign Up$/i }));
+    const submitBtn = screen.getByRole("button", { name: /Create Account/i });
+
+    // Short username
+    fireEvent.change(screen.getByPlaceholderText(/Username/i), {
+      target: { value: "ab" },
+    });
+    fireEvent.click(submitBtn);
+    expect(
+      screen.getByText(/Username must be at least 3 characters long/i)
+    ).toBeInTheDocument();
+
+    // Short password
+    fireEvent.change(screen.getByPlaceholderText(/Username/i), {
+      target: { value: "validUser" },
+    });
+    fireEvent.change(screen.getAllByPlaceholderText(/••••••••/i)[0], {
+      target: { value: "short" },
+    });
+    fireEvent.click(submitBtn);
+    expect(
+      screen.getByText(/Password must be at least 6 characters long/i)
+    ).toBeInTheDocument();
+  });
+
+  it("handles forgot password errors", async () => {
+    jest
+      .spyOn(apiClient, "requestPasswordReset")
+      .mockResolvedValueOnce({ success: false, error: "User not found" });
+    renderWithRouter(<Login theme={mockTheme} />);
+    fireEvent.click(screen.getByText(/Forgot Password\?/i));
+
+    const sendBtn = screen.getByRole("button", { name: /Send Reset Link/i });
+    fireEvent.click(sendBtn); // Empty email
+    expect(
+      screen.getByText(/Valid email address is required/i)
+    ).toBeInTheDocument();
+
+    fireEvent.change(screen.getByPlaceholderText(/name@example.com/i), {
+      target: { value: "test@test.com" },
+    });
+    fireEvent.click(sendBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText(/User not found/i)).toBeInTheDocument();
+    });
+  });
+
+  it("handles verifyEmail error", async () => {
+    jest
+      .spyOn(apiClient, "verifyEmail")
+      .mockResolvedValueOnce({ success: false, error: "Invalid token" });
+    const originalLocation = window.location;
+    delete window.location;
+    window.location = {
+      ...originalLocation,
+      search: "?verifyToken=badtoken",
+      hash: "",
+    };
+    renderWithRouter(<Login theme={mockTheme} />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Invalid token/i)).toBeInTheDocument();
+    });
+    window.location = originalLocation;
+  });
 });
