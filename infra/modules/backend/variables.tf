@@ -9,3 +9,57 @@ variable "environment" {
   type        = string
   default     = "prod"
 }
+
+variable "admin_password" {
+  type        = string
+  description = "Hardcoded password for admin blog creation"
+  default     = "amrit123"
+}
+
+variable "google_client_id" {
+  type        = string
+  description = "Client ID for Google OAuth"
+  default     = ""
+}
+
+variable "google_client_secret" {
+  type        = string
+  description = "Client Secret for Google OAuth"
+  default     = ""
+}
+
+variable "apple_client_id" {
+  type        = string
+  description = "Client ID for Apple OAuth"
+  default     = ""
+}
+
+variable "apple_team_id" {
+  type        = string
+  description = "Team ID for Apple OAuth"
+  default     = ""
+}
+
+variable "apple_key_id" {
+  type        = string
+  description = "Key ID for Apple OAuth"
+  default     = ""
+}
+
+variable "apple_private_key" {
+  type        = string
+  description = "Private Key for Apple OAuth"
+  default     = ""
+}
+
+variable "github_client_id" {
+  type        = string
+  description = "Client ID for GitHub OAuth"
+  default     = ""
+}
+
+variable "github_client_secret" {
+  type        = string
+  description = "Client Secret for GitHub OAuth"
+  default     = ""
+}
