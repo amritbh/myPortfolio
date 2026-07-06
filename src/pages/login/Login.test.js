@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import Login from "./Login";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route, MemoryRouter } from "react-router-dom";
 import * as apiClient from "../../utils/apiClient";
 
 const mockTheme = {
@@ -89,6 +89,100 @@ describe("Login Component", () => {
 
     await waitFor(() => {
       expect(apiClient.loginAdmin).toHaveBeenCalled();
+    });
+  });
+
+  it("calls verifyEmail when verifyToken and email are in query params", async () => {
+    jest
+      .spyOn(apiClient, "verifyEmail")
+      .mockResolvedValueOnce({ success: true });
+    window.history.pushState(
+      {},
+      "Test Title",
+      "/login?verifyToken=123&email=test@test.com"
+    );
+
+    renderWithRouter(<Login theme={mockTheme} />);
+
+    await waitFor(() => {
+      expect(apiClient.verifyEmail).toHaveBeenCalledWith("123");
+      expect(
+        screen.getByText(/Email verified successfully!/i)
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("handles forgot password and reset flows", async () => {
+    jest
+      .spyOn(apiClient, "requestPasswordReset")
+      .mockResolvedValueOnce({ success: true });
+
+    renderWithRouter(<Login theme={mockTheme} />);
+
+    // Click forgot password
+    const forgotLink = screen.getByText(/Forgot Password\?/i);
+    fireEvent.click(forgotLink);
+
+    const emailInput = screen.getByPlaceholderText(/name@example.com/i);
+    fireEvent.change(emailInput, { target: { value: "test@test.com" } });
+
+    const sendResetBtn = screen.getByRole("button", {
+      name: /Send Reset Link/i,
+    });
+    fireEvent.click(sendResetBtn);
+
+    await waitFor(() => {
+      expect(apiClient.requestPasswordReset).toHaveBeenCalledWith(
+        "test@test.com"
+      );
+    });
+  });
+
+  it("handles reset password flow with resetToken", async () => {
+    jest
+      .spyOn(apiClient, "resetPassword")
+      .mockResolvedValueOnce({ success: true });
+    window.history.pushState({}, "Test Title", "/login?resetToken=abc");
+
+    renderWithRouter(<Login theme={mockTheme} />);
+
+    const passwordInputs = screen.getAllByPlaceholderText(/••••••••/i);
+    fireEvent.change(passwordInputs[0], { target: { value: "NewPass123!" } });
+    fireEvent.change(passwordInputs[1], { target: { value: "NewPass123!" } });
+
+    const resetBtn = screen.getByRole("button", { name: /Update Password/i });
+    fireEvent.click(resetBtn);
+
+    await waitFor(() => {
+      expect(apiClient.resetPassword).toHaveBeenCalledWith(
+        "abc",
+        "NewPass123!"
+      );
+      expect(
+        screen.getByText(/Password reset successful! Please log in./i)
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("handles login error", async () => {
+    jest.spyOn(apiClient, "loginAdmin").mockResolvedValueOnce({
+      success: false,
+      error: "Invalid credentials",
+    });
+
+    renderWithRouter(<Login theme={mockTheme} />);
+
+    const usernameInput = screen.getByPlaceholderText(/Username/i);
+    const passwordInput = screen.getAllByPlaceholderText(/••••••••/i)[0];
+    const loginBtns = screen.getAllByRole("button", { name: /^Sign In$/i });
+    const loginBtn = loginBtns[loginBtns.length - 1];
+
+    fireEvent.change(usernameInput, { target: { value: "admin" } });
+    fireEvent.change(passwordInput, { target: { value: "wrongpassword" } });
+    fireEvent.click(loginBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Invalid credentials/i)).toBeInTheDocument();
     });
   });
 });

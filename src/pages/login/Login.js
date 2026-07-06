@@ -563,6 +563,12 @@ class Login extends Component {
                       textDecoration: "underline",
                     }}
                     onClick={() => this.switchAuthMode("forgotPassword")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        this.switchAuthMode("forgotPassword");
+                      }
+                    }}
                   >
                     Forgot Password?
                   </span>
@@ -582,6 +588,12 @@ class Login extends Component {
                       textDecoration: "underline",
                     }}
                     onClick={() => this.switchAuthMode("signin")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        this.switchAuthMode("signin");
+                      }
+                    }}
                   >
                     Back to Sign In
                   </span>

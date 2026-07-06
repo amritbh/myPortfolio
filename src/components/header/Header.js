@@ -149,6 +149,10 @@ class Header extends Component {
                       event.target.style.backgroundColor = "transparent";
                       event.target.style.fontWeight = "normal";
                     }}
+                    onBlur={(event) => {
+                      event.target.style.backgroundColor = "transparent";
+                      event.target.style.fontWeight = "normal";
+                    }}
                   >
                     Logout
                   </button>
