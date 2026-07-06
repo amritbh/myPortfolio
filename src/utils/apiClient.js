@@ -315,3 +315,84 @@ export const resetPassword = async (token, newPassword) => {
     };
   }
 };
+
+export const likeBlog = async (slug) => {
+  if (!API_URL)
+    return { success: true, message: "Mock like successful.", likes: [] };
+  const token = getStoredToken();
+  if (!token) return { success: false, error: "Not authenticated" };
+
+  try {
+    const response = await fetch(`${API_URL}/blogs/${slug}/like`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    return response.ok
+      ? { success: true, likes: data.likes }
+      : { success: false, error: data.error };
+  } catch (err) {
+    console.error("API unreachable during likeBlog:", err);
+    return { success: false, error: "Network error" };
+  }
+};
+
+export const commentBlog = async (slug, text) => {
+  if (!API_URL)
+    return {
+      success: true,
+      comment: {
+        id: "mock",
+        username: "mock",
+        text,
+        timestamp: new Date().toISOString(),
+      },
+    };
+  const token = getStoredToken();
+  if (!token) return { success: false, error: "Not authenticated" };
+
+  try {
+    const response = await fetch(`${API_URL}/blogs/${slug}/comment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ text }),
+    });
+    const data = await response.json();
+    return response.ok
+      ? { success: true, comment: data.comment }
+      : { success: false, error: data.error };
+  } catch (err) {
+    console.error("API unreachable during commentBlog:", err);
+    return { success: false, error: "Network error" };
+  }
+};
+
+export const deleteComment = async (slug, commentId) => {
+  if (!API_URL) return { success: true, message: "Mock delete successful." };
+  const token = getStoredToken();
+  if (!token) return { success: false, error: "Not authenticated" };
+
+  try {
+    const response = await fetch(`${API_URL}/blogs/${slug}/comment`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ commentId }),
+    });
+    const data = await response.json();
+    return response.ok
+      ? { success: true, message: data.message }
+      : { success: false, error: data.error };
+  } catch (err) {
+    console.error("API unreachable during deleteComment:", err);
+    return { success: false, error: "Network error" };
+  }
+};

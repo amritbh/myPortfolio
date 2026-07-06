@@ -180,6 +180,76 @@ def test_get_blog_by_slug(setup_dynamodb):
     body = json.loads(response['body'])
     assert body['title'] == 'Test Blog 1'
 
+def test_like_blog(setup_dynamodb):
+    import app
+    app.table = boto3.resource('dynamodb', region_name='us-east-1').Table(os.environ['TABLE_NAME'])
+    token = app.generate_jwt({'username': 'testuser', 'role': 'user'})
+
+    # Like the blog
+    event = {
+        'rawPath': '/blogs/test-blog-1/like',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {'authorization': f'Bearer {token}'}
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    body = json.loads(response['body'])
+    assert 'testuser' in body['likes']
+
+    # Unlike the blog
+    response2 = app.lambda_handler(event, None)
+    assert response2['statusCode'] == 200
+    body2 = json.loads(response2['body'])
+    assert 'testuser' not in body2['likes']
+
+def test_comment_blog(setup_dynamodb):
+    import app
+    app.table = boto3.resource('dynamodb', region_name='us-east-1').Table(os.environ['TABLE_NAME'])
+    token = app.generate_jwt({'username': 'testuser', 'role': 'user'})
+
+    event = {
+        'rawPath': '/blogs/test-blog-1/comment',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'text': 'Great post!'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 201
+    body = json.loads(response['body'])
+    assert body['comment']['text'] == 'Great post!'
+    assert body['comment']['username'] == 'testuser'
+    assert 'id' in body['comment']
+
+def test_delete_comment(setup_dynamodb):
+    import app
+    app.table = boto3.resource('dynamodb', region_name='us-east-1').Table(os.environ['TABLE_NAME'])
+    token = app.generate_jwt({'username': 'testuser', 'role': 'user'})
+
+    # 1. Add comment
+    add_evt = {
+        'rawPath': '/blogs/test-blog-1/comment',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'text': 'To be deleted'})
+    }
+    res = app.lambda_handler(add_evt, None)
+    comment_id = json.loads(res['body'])['comment']['id']
+
+    # 2. Delete comment
+    del_evt = {
+        'rawPath': '/blogs/test-blog-1/comment',
+        'requestContext': {'http': {'method': 'DELETE'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'commentId': comment_id})
+    }
+    del_res = app.lambda_handler(del_evt, None)
+    assert del_res['statusCode'] == 200
+
+    # 3. Verify it's gone
+    get_res = app.get_blog_by_slug('test-blog-1')
+    blog = json.loads(get_res['body'])
+    assert len([c for c in blog.get('comments', []) if c['id'] == comment_id]) == 0
+
 def test_verify_email_success(setup_dynamodb):
     import app
     token = app.generate_jwt({'username': 'registereduser', 'type': 'verify'})

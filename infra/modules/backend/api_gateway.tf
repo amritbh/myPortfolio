@@ -35,6 +35,24 @@ resource "aws_apigatewayv2_route" "get_blog_by_slug" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
+resource "aws_apigatewayv2_route" "post_blog_like" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "POST /blogs/{slug}/like"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "post_blog_comment" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "POST /blogs/{slug}/comment"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "delete_blog_comment" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "DELETE /blogs/{slug}/comment"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
 resource "aws_apigatewayv2_route" "post_auth_signup" {
   api_id    = aws_apigatewayv2_api.http_api.id
   route_key = "POST /auth/signup"
