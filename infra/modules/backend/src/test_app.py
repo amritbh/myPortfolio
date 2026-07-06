@@ -250,6 +250,113 @@ def test_delete_comment(setup_dynamodb):
     blog = json.loads(get_res['body'])
     assert len([c for c in blog.get('comments', []) if c['id'] == comment_id]) == 0
 
+def test_comment_blog_unauthorized(setup_dynamodb):
+    import app
+    event = {
+        'rawPath': '/blogs/test-blog-1/comment',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {},
+        'body': json.dumps({'text': 'Great post!'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 401
+
+def test_comment_blog_missing_text(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'testuser', 'role': 'user'})
+    event = {
+        'rawPath': '/blogs/test-blog-1/comment',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'text': '   '})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 400
+
+def test_comment_blog_not_found(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'testuser', 'role': 'user'})
+    event = {
+        'rawPath': '/blogs/not-found/comment',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'text': 'hello'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 404
+
+def test_delete_comment_unauthorized(setup_dynamodb):
+    import app
+    event = {
+        'rawPath': '/blogs/test-blog-1/comment',
+        'requestContext': {'http': {'method': 'DELETE'}},
+        'headers': {},
+        'body': json.dumps({'commentId': '123'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 401
+
+def test_delete_comment_missing_id(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'testuser', 'role': 'user'})
+    event = {
+        'rawPath': '/blogs/test-blog-1/comment',
+        'requestContext': {'http': {'method': 'DELETE'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 400
+
+def test_delete_comment_blog_not_found(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'testuser', 'role': 'user'})
+    event = {
+        'rawPath': '/blogs/not-found/comment',
+        'requestContext': {'http': {'method': 'DELETE'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'commentId': '123'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 404
+
+def test_delete_comment_not_found(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'testuser', 'role': 'user'})
+    event = {
+        'rawPath': '/blogs/test-blog-1/comment',
+        'requestContext': {'http': {'method': 'DELETE'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'commentId': 'not-exists'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 404
+
+def test_delete_comment_not_authorized_user(setup_dynamodb):
+    import app
+    app.table = boto3.resource('dynamodb', region_name='us-east-1').Table(os.environ['TABLE_NAME'])
+    # User 1 makes comment
+    token1 = app.generate_jwt({'username': 'user1', 'role': 'user'})
+    add_evt = {
+        'rawPath': '/blogs/test-blog-1/comment',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {'authorization': f'Bearer {token1}'},
+        'body': json.dumps({'text': 'To be deleted'})
+    }
+    res = app.lambda_handler(add_evt, None)
+    comment_id = json.loads(res['body'])['comment']['id']
+
+    # User 2 tries to delete it
+    token2 = app.generate_jwt({'username': 'user2', 'role': 'user'})
+    del_evt = {
+        'rawPath': '/blogs/test-blog-1/comment',
+        'requestContext': {'http': {'method': 'DELETE'}},
+        'headers': {'authorization': f'Bearer {token2}'},
+        'body': json.dumps({'commentId': comment_id})
+    }
+    del_res = app.lambda_handler(del_evt, None)
+    assert del_res['statusCode'] == 403
+
 def test_verify_email_success(setup_dynamodb):
     import app
     token = app.generate_jwt({'username': 'registereduser', 'type': 'verify'})
@@ -358,6 +465,69 @@ def test_get_blog_by_slug_not_found(setup_dynamodb):
     response = app.get_blog_by_slug('does-not-exist')
     assert response['statusCode'] == 404
     assert 'Blog not found' in json.loads(response['body'])['error']
+
+def test_get_cognito_jwks():
+    import app
+    from unittest.mock import patch, MagicMock
+    app.COGNITO_USER_POOL_ID = 'us-east-1_XXXXX'
+    app.COGNITO_REGION = 'us-east-1'
+    app._jwks = None
+    
+    with patch('urllib.request.urlopen') as mock_urlopen:
+        mock_response = MagicMock()
+        mock_response.read.return_value = b'{"keys": ["test_key"]}'
+        mock_urlopen.return_value.__enter__.return_value = mock_response
+        
+        jwks = app.get_cognito_jwks()
+        assert jwks == {"keys": ["test_key"]}
+        
+        # Test cache
+        jwks2 = app.get_cognito_jwks()
+        assert jwks2 == {"keys": ["test_key"]}
+        
+        app._jwks = None
+        mock_urlopen.side_effect = Exception("Network error")
+        jwks3 = app.get_cognito_jwks()
+        assert jwks3 is None
+
+def test_verify_cognito_jwt():
+    import app
+    from unittest.mock import patch
+    app.JOSE_AVAILABLE = True
+    app._jwks = {"keys": ["test_key"]}
+    app.COGNITO_USER_POOL_ID = 'us-east-1_XXXXX'
+    app.COGNITO_REGION = 'us-east-1'
+    
+    with patch('jose.jwt.decode') as mock_decode:
+        # Success case user
+        mock_decode.return_value = {'email': 'test@example.com'}
+        payload = app.verify_cognito_jwt('valid_token')
+        assert payload['role'] == 'user'
+        
+        # Success case admin
+        os.environ['ADMIN_EMAIL'] = 'admin@example.com'
+        mock_decode.return_value = {'email': 'admin@example.com'}
+        payload = app.verify_cognito_jwt('valid_token')
+        assert payload['role'] == 'admin'
+        
+        # Expired signature
+        from jose import jwt
+        mock_decode.side_effect = jwt.ExpiredSignatureError("Expired")
+        assert app.verify_cognito_jwt('expired_token') is None
+        
+        # JWT Error
+        mock_decode.side_effect = jwt.JWTError("Bad signature")
+        assert app.verify_cognito_jwt('bad_token') is None
+        
+        # Generic Exception
+        mock_decode.side_effect = Exception("Generic")
+        assert app.verify_cognito_jwt('token') is None
+
+def test_verify_cognito_jwt_no_jose():
+    import app
+    app.JOSE_AVAILABLE = False
+    assert app.verify_cognito_jwt('token') is None
+    app.JOSE_AVAILABLE = True
 
 def test_exception_handling(setup_dynamodb):
     import app
