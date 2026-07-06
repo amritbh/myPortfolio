@@ -49,7 +49,7 @@ window.location.href = url;
 
 ### B. Handling the Redirect
 
-After a successful Google login, Cognito redirects the user back to `/admin` with the token embedded in the URL hash fragment (`#id_token=...&access_token=...`).
+After a successful Google login, Cognito redirects the user back to `/login` with the token embedded in the URL hash fragment (`#id_token=...&access_token=...`).
 
 The application automatically parses the URL hash fragment on mount:
 
