@@ -6,9 +6,9 @@ This document outlines the Continuous Integration and Continuous Deployment (CI/
 
 ## 1. Frontend CI/CD (React & S3)
 
-**Workflow File:** ## Application Code Deployment (`deploy-to-s3.yml`)
+**Workflow File:** `.github/workflows/ci-cd.yml` (Frontend Deploy Job)
 
-The frontend application code lives in the root directory (Create React App). Its deployment is completely decoupled from the Terraform infrastructure to allow fast, iterative frontend updates without running Terraform.
+The frontend application code lives in the root directory (Create React App). Its deployment is triggered as part of the unified CI/CD pipeline, but crucially, it waits for the infrastructure job to pass.
 
 - **Trigger**: Runs automatically whenever code is merged into the `main` branch.
 - **Process**:
@@ -40,7 +40,7 @@ We run a dedicated, parallel pipeline on all Pull Requests and pushes to `main` 
 
 ## 2. Infrastructure CI/CD (GitOps & Terragrunt)
 
-**Workflow Files:** `.github/workflows/infra-plan.yml` and `.github/workflows/infra-apply.yml`
+**Workflow Files:** `.github/workflows/infra-plan.yml` and `.github/workflows/ci-cd.yml` (Infrastructure Job)
 
 The AWS infrastructure (API Gateway, DynamoDB, Lambda, CloudFront, Route53, S3, ACM, IAM) is managed via Terraform and Terragrunt using a strict **GitOps** approach. This guarantees that the `main` branch is the single source of truth for all infrastructure.
 

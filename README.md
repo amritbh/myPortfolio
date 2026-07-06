@@ -65,8 +65,8 @@ python -m pytest --cov=.
 
 The infrastructure and application code are continuously deployed via GitHub Actions:
 
-- **Application Code:** Pushing to `main` triggers `.github/workflows/deploy-to-s3.yml` which tests and deploys the React frontend immediately.
-- **Infrastructure Code:** Pull Requests touching `infra/` trigger Terraform validation and tests. Merging triggers `.github/workflows/infra-apply.yml` to automatically provision or update the AWS resources (Lambda, DynamoDB, API Gateway, S3, CloudFront).
+- **Application Code:** Pushing to `main` triggers `.github/workflows/ci-cd.yml` which tests and deploys the React frontend immediately (only if infrastructure deployment succeeds).
+- **Infrastructure Code:** Pull Requests touching `infra/` trigger Terraform validation and tests. Merging triggers `.github/workflows/ci-cd.yml` to automatically provision or update the AWS resources (Lambda, DynamoDB, API Gateway, S3, CloudFront).
 
 ---
 

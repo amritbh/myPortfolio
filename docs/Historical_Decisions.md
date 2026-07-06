@@ -83,7 +83,7 @@ The CI/CD pipeline runs on modern GitHub Actions runners (`ubuntu-latest` defaul
 To resolve this without disabling artifact generation:
 
 1. **Action Upgrade**: Upgraded `zaproxy/action-baseline` from `v0.12.0` to `v0.15.0`, which natively supports the modern GitHub Actions v4 artifact infrastructure.
-2. **Permissions**: Explicitly granted `actions: write` and `issues: write` permissions to the `deploy-to-s3.yml` workflow, allowing ZAP to upload the HTML report and automatically generate GitHub Issues for discovered vulnerabilities.
+2. **Permissions**: Explicitly granted `actions: write` and `issues: write` permissions to the `ci-cd.yml` workflow, allowing ZAP to upload the HTML report and automatically generate GitHub Issues for discovered vulnerabilities.
 
 ---
 
@@ -118,4 +118,4 @@ During the deployment pipeline run on `main`, the OWASP ZAP Baseline Scan step f
 `Error: The process '/usr/bin/docker' failed with exit code 3`
 
 **The Fix Implemented:**
-Added `cmd_options: '-a'` to `zaproxy/action-baseline@v0.15.0' in`.github/workflows/deploy-to-s3.yml`. This instructs ZAP to run in standard scan mode (including alpha passive rules) without failing on the Automation Framework JSON summary file, allowing the deployment pipeline to run to 100% completion.
+Added `cmd_options: '-a'` to `zaproxy/action-baseline@v0.15.0' in`.github/workflows/ci-cd.yml`. This instructs ZAP to run in standard scan mode (including alpha passive rules) without failing on the Automation Framework JSON summary file, allowing the deployment pipeline to run to 100% completion.
