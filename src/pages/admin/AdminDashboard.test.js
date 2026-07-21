@@ -9,11 +9,22 @@ const mockTheme = {
   text: "#000000",
   secondaryText: "#888888",
   imageHighlight: "#f5f5f5",
+  imageDark: "#eeeeee",
 };
 
 const mockBlogs = [
-  { slug: "test-blog-1", title: "Test Blog 1", summary: "Summary 1" },
-  { slug: "test-blog-2", title: "Test Blog 2", summary: "Summary 2" },
+  {
+    slug: "test-blog-1",
+    title: "Test Blog 1",
+    summary: "Summary 1",
+    publishDate: "2026-01-01",
+  },
+  {
+    slug: "test-blog-2",
+    title: "Test Blog 2",
+    summary: "Summary 2",
+    publishDate: "2026-01-02",
+  },
 ];
 
 describe("AdminDashboard Component", () => {
@@ -62,18 +73,27 @@ describe("AdminDashboard Component", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
+    // New story tab should be visible
+    expect(screen.getByText(/New story/i)).toBeInTheDocument();
 
-    // Form interaction
+    // The title textarea is the first textbox in the editor
     const titleInput = screen.getAllByRole("textbox")[0];
     fireEvent.change(titleInput, {
       target: { name: "title", value: "My New Blog" },
     });
 
-    const publishBtn = screen.getByRole("button", {
-      name: /Publish to DynamoDB/i,
-    });
+    // Open publish panel
+    const publishBtn = screen.getByRole("button", { name: /^Publish$/i });
     fireEvent.click(publishBtn);
+
+    // Add a slug in the panel
+    await waitFor(() => {
+      expect(screen.getByText(/Story Preview/i)).toBeInTheDocument();
+    });
+
+    // Click publish now
+    const publishNowBtn = screen.getByRole("button", { name: /Publish now/i });
+    fireEvent.click(publishNowBtn);
 
     await waitFor(() => {
       expect(apiClient.createBlog).toHaveBeenCalled();
@@ -91,8 +111,8 @@ describe("AdminDashboard Component", () => {
       </MemoryRouter>
     );
 
-    // Switch to manage tab
-    const manageTab = screen.getByText("Manage Posts");
+    // Switch to Stories tab
+    const manageTab = screen.getByText("Stories");
     fireEvent.click(manageTab);
 
     // Wait for blogs to load
@@ -104,16 +124,25 @@ describe("AdminDashboard Component", () => {
     const editBtns = screen.getAllByText("Edit");
     fireEvent.click(editBtns[0]);
 
-    // Should switch to write tab and populate form
-    expect(screen.getByText("Edit Post")).toBeInTheDocument();
+    // Should switch to write tab with "Edit story" label
+    expect(screen.getByText(/Edit story/i)).toBeInTheDocument();
 
-    const titleInputs = screen.getAllByRole("textbox");
-    // Title is the first input
-    expect(titleInputs[0].value).toBe("Test Blog 1");
+    // Open publish panel to trigger update
+    const updateStoryBtns = screen.getAllByRole("button", {
+      name: /Update story/i,
+    });
+    // The first one is in the topbar
+    fireEvent.click(updateStoryBtns[0]);
 
-    // Click update
-    const updateBtn = screen.getByRole("button", { name: /Update Post/i });
-    fireEvent.click(updateBtn);
+    await waitFor(() => {
+      expect(screen.getByText(/Story Preview/i)).toBeInTheDocument();
+    });
+
+    const updateNowBtns = screen.getAllByRole("button", {
+      name: /Update story/i,
+    });
+    // The second one is in the publish panel (confirm)
+    fireEvent.click(updateNowBtns[1]);
 
     await waitFor(() => {
       expect(apiClient.updateBlog).toHaveBeenCalledWith(
@@ -136,8 +165,8 @@ describe("AdminDashboard Component", () => {
       </MemoryRouter>
     );
 
-    // Switch to manage tab
-    const manageTab = screen.getByText("Manage Posts");
+    // Switch to Stories tab
+    const manageTab = screen.getByText("Stories");
     fireEvent.click(manageTab);
 
     await waitFor(() => {
@@ -172,8 +201,9 @@ describe("AdminDashboard Component", () => {
       </MemoryRouter>
     );
 
-    const logoutBtns = screen.getAllByRole("button", { name: /Logout/i });
-    logoutBtns[1].click();
+    // "Sign out" is the new logout button text
+    const logoutBtn = screen.getByRole("button", { name: /Sign out/i });
+    fireEvent.click(logoutBtn);
 
     expect(clearSessionSpy).toHaveBeenCalled();
     expect(testHistory.location.pathname).toBe("/login");

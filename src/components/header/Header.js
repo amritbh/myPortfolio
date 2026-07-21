@@ -18,8 +18,21 @@ const onMouseOut = (event) => {
 
 class Header extends Component {
   handleLogout = () => {
+    const user = getStoredUser();
     clearSession();
-    window.location.href = "/home";
+
+    if (user && user.type === "cognito") {
+      const domain =
+        process.env.REACT_APP_COGNITO_DOMAIN ||
+        "amrit-portfolio-auth-prod.auth.us-east-1.amazoncognito.com";
+      const clientId = process.env.REACT_APP_COGNITO_CLIENT_ID;
+      const logoutUri = window.location.origin + "/";
+      window.location.href = `https://${domain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
+        logoutUri
+      )}`;
+    } else {
+      window.location.href = "/home";
+    }
   };
 
   render() {
@@ -47,7 +60,7 @@ class Header extends Component {
                 <NavLink
                   to="/home"
                   tag={Link}
-                  activeStyle={{ fontWeight: "bold" }}
+                  activeStyle={{ WebkitTextStroke: "0.5px currentColor" }}
                   style={{ color: theme.text }}
                   onMouseEnter={(event) => onMouseEnter(event, theme.highlight)}
                   onMouseOut={(event) => onMouseOut(event)}
@@ -59,7 +72,7 @@ class Header extends Component {
                 <NavLink
                   to="/education"
                   tag={Link}
-                  activeStyle={{ fontWeight: "bold" }}
+                  activeStyle={{ WebkitTextStroke: "0.5px currentColor" }}
                   style={{ color: theme.text }}
                   onMouseEnter={(event) => onMouseEnter(event, theme.highlight)}
                   onMouseOut={(event) => onMouseOut(event)}
@@ -71,7 +84,7 @@ class Header extends Component {
                 <NavLink
                   to="/experience"
                   tag={Link}
-                  activeStyle={{ fontWeight: "bold" }}
+                  activeStyle={{ WebkitTextStroke: "0.5px currentColor" }}
                   style={{ color: theme.text }}
                   onMouseEnter={(event) => onMouseEnter(event, theme.highlight)}
                   onMouseOut={(event) => onMouseOut(event)}
@@ -83,7 +96,7 @@ class Header extends Component {
                 <NavLink
                   to="/projects"
                   tag={Link}
-                  activeStyle={{ fontWeight: "bold" }}
+                  activeStyle={{ WebkitTextStroke: "0.5px currentColor" }}
                   style={{ color: theme.text }}
                   onMouseEnter={(event) => onMouseEnter(event, theme.highlight)}
                   onMouseOut={(event) => onMouseOut(event)}
@@ -95,7 +108,7 @@ class Header extends Component {
                 <NavLink
                   to="/opensource"
                   tag={Link}
-                  activeStyle={{ fontWeight: "bold" }}
+                  activeStyle={{ WebkitTextStroke: "0.5px currentColor" }}
                   style={{ color: theme.text }}
                   onMouseEnter={(event) => onMouseEnter(event, theme.highlight)}
                   onMouseOut={(event) => onMouseOut(event)}
@@ -107,7 +120,7 @@ class Header extends Component {
                 <NavLink
                   to="/blogs"
                   tag={Link}
-                  activeStyle={{ fontWeight: "bold" }}
+                  activeStyle={{ WebkitTextStroke: "0.5px currentColor" }}
                   style={{ color: theme.text }}
                   onMouseEnter={(event) => onMouseEnter(event, theme.highlight)}
                   onMouseOut={(event) => onMouseOut(event)}
@@ -119,7 +132,7 @@ class Header extends Component {
                 <NavLink
                   to="/contact"
                   tag={Link}
-                  activeStyle={{ fontWeight: "bold" }}
+                  activeStyle={{ WebkitTextStroke: "0.5px currentColor" }}
                   style={{ color: theme.text }}
                   onMouseEnter={(event) => onMouseEnter(event, theme.highlight)}
                   onMouseOut={(event) => onMouseOut(event)}
@@ -139,19 +152,20 @@ class Header extends Component {
                       fontFamily: "inherit",
                       fontSize: "1em",
                       fontWeight: "normal",
-                      padding: "10px",
+                      padding: "20px 10px",
                     }}
                     onMouseEnter={(event) => {
                       event.target.style.backgroundColor = theme.highlight;
-                      event.target.style.fontWeight = "bold";
+                      event.target.style.WebkitTextStroke =
+                        "0.5px currentColor";
                     }}
                     onMouseOut={(event) => {
                       event.target.style.backgroundColor = "transparent";
-                      event.target.style.fontWeight = "normal";
+                      event.target.style.WebkitTextStroke = "0px";
                     }}
                     onBlur={(event) => {
                       event.target.style.backgroundColor = "transparent";
-                      event.target.style.fontWeight = "normal";
+                      event.target.style.WebkitTextStroke = "0px";
                     }}
                   >
                     Logout
@@ -160,7 +174,7 @@ class Header extends Component {
                   <NavLink
                     to="/login"
                     tag={Link}
-                    activeStyle={{ fontWeight: "bold" }}
+                    activeStyle={{ WebkitTextStroke: "0.5px currentColor" }}
                     style={{ color: theme.text }}
                     onMouseEnter={(event) =>
                       onMouseEnter(event, theme.highlight)

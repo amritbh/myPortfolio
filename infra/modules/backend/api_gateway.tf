@@ -5,7 +5,7 @@ resource "aws_apigatewayv2_api" "http_api" {
 
   cors_configuration {
     allow_origins = ["*"] # In prod, restrict this to amrit.cloud
-    allow_methods = ["GET", "POST", "OPTIONS"]
+    allow_methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     allow_headers = ["content-type", "authorization"]
   }
 }

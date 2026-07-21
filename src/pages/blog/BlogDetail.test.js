@@ -9,6 +9,7 @@ const mockTheme = {
   text: "#000000",
   secondaryText: "#888888",
   imageHighlight: "#f5f5f5",
+  imageDark: "#eeeeee",
 };
 
 const renderWithRouter = (ui) => {
@@ -46,6 +47,7 @@ describe("BlogDetail Component", () => {
         },
       ],
     });
+    jest.spyOn(apiClient, "fetchBlogs").mockResolvedValueOnce([]);
     jest
       .spyOn(apiClient, "getStoredUser")
       .mockReturnValue({ username: "amrit", role: "admin" });
@@ -59,13 +61,15 @@ describe("BlogDetail Component", () => {
       expect(
         screen.getByText("This is a test blog content.")
       ).toBeInTheDocument();
-      expect(screen.getByText(/Great post!/i)).toBeInTheDocument(); // comment
+      expect(screen.getByText(/Great post!/i)).toBeInTheDocument();
     });
 
     jest
       .spyOn(apiClient, "likeBlog")
       .mockResolvedValue({ success: true, likes: ["amrit", "user1", "user2"] });
-    const likeBtn = screen.getByRole("button", { name: /Liked/i });
+
+    // Like engagement button - find it by its title attr
+    const likeBtn = screen.getByTitle("Like this story");
     fireEvent.click(likeBtn);
 
     await waitFor(() => {
@@ -81,10 +85,12 @@ describe("BlogDetail Component", () => {
         timestamp: "2026-01-02T00:00:00Z",
       },
     });
-    const commentBox = screen.getByPlaceholderText(/Add a comment/i);
+
+    // New response textarea uses "What are your thoughts?" placeholder
+    const commentBox = screen.getByPlaceholderText(/What are your thoughts/i);
     fireEvent.change(commentBox, { target: { value: "New comment!" } });
 
-    const submitBtn = screen.getByRole("button", { name: /Post Comment/i });
+    const submitBtn = screen.getByRole("button", { name: /Publish/i });
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
@@ -110,6 +116,7 @@ describe("BlogDetail Component", () => {
         },
       ],
     });
+    jest.spyOn(apiClient, "fetchBlogs").mockResolvedValueOnce([]);
     jest
       .spyOn(apiClient, "getStoredUser")
       .mockReturnValue({ username: "amrit", role: "admin" });
@@ -119,14 +126,13 @@ describe("BlogDetail Component", () => {
 
     renderWithRouter(<BlogDetail theme={mockTheme} />);
 
-    // Wait for comment to load
     await waitFor(() => {
       expect(screen.getByText(/Great post!/i)).toBeInTheDocument();
     });
 
     jest.spyOn(window, "confirm").mockReturnValueOnce(true);
 
-    const deleteBtn = screen.getByTitle("Delete Comment");
+    const deleteBtn = screen.getByTitle("Delete");
     fireEvent.click(deleteBtn);
 
     await waitFor(() => {
@@ -142,6 +148,7 @@ describe("BlogDetail Component", () => {
       likes: [],
       comments: [],
     });
+    jest.spyOn(apiClient, "fetchBlogs").mockResolvedValueOnce([]);
     jest
       .spyOn(apiClient, "getStoredUser")
       .mockReturnValue({ username: "user1", role: "user" });
@@ -158,12 +165,13 @@ describe("BlogDetail Component", () => {
       expect(screen.getByText("Content.")).toBeInTheDocument();
     });
 
-    const likeBtn = screen.getByRole("button", { name: /Like/i });
+    // The like engagement button found by title
+    const likeBtn = screen.getByTitle("Like this story");
     fireEvent.click(likeBtn);
 
-    const commentBox = screen.getByPlaceholderText(/Add a comment/i);
+    const commentBox = screen.getByPlaceholderText(/What are your thoughts/i);
     fireEvent.change(commentBox, { target: { value: "New comment!" } });
-    const submitBtn = screen.getByRole("button", { name: /Post Comment/i });
+    const submitBtn = screen.getByRole("button", { name: /Publish/i });
     fireEvent.click(submitBtn);
 
     await waitFor(() => {

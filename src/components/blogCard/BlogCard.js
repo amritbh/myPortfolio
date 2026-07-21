@@ -12,6 +12,8 @@ export default function BlogCard({ blog, theme }) {
     author,
     tags,
     readTime,
+    likes,
+    comments,
   } = blog;
 
   const displayAuthor = author || {
@@ -20,98 +22,115 @@ export default function BlogCard({ blog, theme }) {
   };
   const displayTags = tags || ["Engineering"];
   const displayReadTime = readTime || "5 min read";
+  const likeCount = Array.isArray(likes) ? likes.length : 0;
+  const commentCount = Array.isArray(comments) ? comments.length : 0;
+
+  const formattedDate = new Date(publishDate).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 
   return (
     <Link
       to={`/blogs/${slug}`}
-      className="blog-card-link"
+      className="medium-story-link"
       style={{ textDecoration: "none" }}
     >
-      <div
-        className="premium-blog-card"
-        style={{ backgroundColor: theme.imageDark }}
+      <article
+        className="medium-story-card"
+        style={{ borderBottomColor: theme.imageDark }}
       >
-        {imageUrl && (
-          <div className="blog-card-image-wrapper">
-            <img src={imageUrl} alt={title} className="blog-card-image" />
-            <div className="blog-card-tags">
-              {displayTags.slice(0, 2).map((tag, i) => (
-                <span
-                  key={i}
-                  className="blog-card-tag"
-                  style={{ backgroundColor: theme.body, color: theme.text }}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="blog-card-content">
-          <div
-            className="blog-card-meta"
-            style={{ color: theme.secondaryText }}
-          >
-            <span>
-              {new Date(publishDate).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
+        {/* Left Content */}
+        <div className="medium-story-body">
+          {/* Author Row */}
+          <div className="medium-story-author-row">
+            <img
+              src={displayAuthor.avatar}
+              alt={displayAuthor.name}
+              className="medium-story-avatar"
+            />
+            <span
+              className="medium-story-author-name"
+              style={{ color: theme.text }}
+            >
+              {displayAuthor.name}
             </span>
-            <span className="dot-separator">•</span>
-            <span>{displayReadTime}</span>
+            <span
+              className="medium-story-dot"
+              style={{ color: theme.secondaryText }}
+            >
+              ·
+            </span>
+            <span
+              className="medium-story-date"
+              style={{ color: theme.secondaryText }}
+            >
+              {formattedDate}
+            </span>
           </div>
 
-          <h2 className="blog-card-title" style={{ color: theme.text }}>
+          {/* Title */}
+          <h2 className="medium-story-title" style={{ color: theme.text }}>
             {title}
           </h2>
 
+          {/* Summary */}
           <p
-            className="blog-card-summary"
+            className="medium-story-summary"
             style={{ color: theme.secondaryText }}
           >
             {summary}
           </p>
 
-          <div
-            className="blog-card-footer"
-            style={{ borderTopColor: theme.secondaryText }}
-          >
-            <div className="blog-card-author">
-              <img
-                src={displayAuthor.avatar}
-                alt={displayAuthor.name}
-                className="blog-card-avatar"
-              />
-              <span
-                className="blog-card-author-name"
-                style={{ color: theme.text }}
-              >
-                {displayAuthor.name}
-              </span>
+          {/* Footer Row */}
+          <div className="medium-story-footer">
+            <div className="medium-story-tags">
+              {displayTags.slice(0, 2).map((tag, i) => (
+                <span
+                  key={i}
+                  className="medium-story-tag"
+                  style={{
+                    backgroundColor: theme.imageDark,
+                    color: theme.secondaryText,
+                  }}
+                >
+                  {tag}
+                </span>
+              ))}
             </div>
-
-            <div className="blog-card-readmore" style={{ color: theme.text }}>
-              Read Article
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
+            <div
+              className="medium-story-meta"
+              style={{ color: theme.secondaryText }}
+            >
+              <span>{displayReadTime}</span>
+              {likeCount > 0 && (
+                <>
+                  <span className="medium-story-dot">·</span>
+                  <span>❤ {likeCount}</span>
+                </>
+              )}
+              {commentCount > 0 && (
+                <>
+                  <span className="medium-story-dot">·</span>
+                  <span>💬 {commentCount}</span>
+                </>
+              )}
             </div>
           </div>
         </div>
-      </div>
+
+        {/* Right Thumbnail */}
+        {imageUrl && (
+          <div className="medium-story-thumbnail-wrapper">
+            <img
+              src={imageUrl}
+              alt={title}
+              className="medium-story-thumbnail"
+            />
+          </div>
+        )}
+      </article>
     </Link>
   );
 }
