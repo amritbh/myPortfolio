@@ -1,11 +1,12 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import BlogList from "./BlogList";
-import { fetchBlogs } from "../../utils/apiClient";
+import { fetchBlogs, fetchMediumBlogs } from "../../utils/apiClient";
 import { BrowserRouter } from "react-router-dom";
 
 jest.mock("../../utils/apiClient", () => ({
   fetchBlogs: jest.fn(),
+  fetchMediumBlogs: jest.fn(),
   getStoredUser: jest.fn(() => null),
   clearSession: jest.fn(),
 }));
@@ -29,6 +30,7 @@ describe("BlogList Component", () => {
 
   it("renders loading state initially", async () => {
     fetchBlogs.mockResolvedValueOnce([]);
+    fetchMediumBlogs.mockResolvedValueOnce([]);
     const { container } = renderWithRouter(<BlogList theme={mockTheme} />);
 
     // The topic filter bar should always be visible
@@ -55,6 +57,7 @@ describe("BlogList Component", () => {
       },
     ];
     fetchBlogs.mockResolvedValueOnce(mockBlogs);
+    fetchMediumBlogs.mockResolvedValueOnce([]);
 
     renderWithRouter(<BlogList theme={mockTheme} />);
 

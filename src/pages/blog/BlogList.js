@@ -3,7 +3,7 @@ import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import TopButton from "../../components/topButton/TopButton";
 import BlogCard from "../../components/blogCard/BlogCard";
-import { fetchBlogs } from "../../utils/apiClient";
+import { fetchBlogs, fetchMediumBlogs } from "../../utils/apiClient";
 import "./BlogList.css";
 
 const TOPICS = [
@@ -20,6 +20,7 @@ const TOPICS = [
 class BlogList extends Component {
   state = {
     blogs: [],
+    mediumBlogs: [],
     loading: true,
     activeTopic: "All",
   };
@@ -29,8 +30,15 @@ class BlogList extends Component {
   }
 
   loadBlogs = async () => {
-    const blogs = await fetchBlogs();
-    this.setState({ blogs: Array.isArray(blogs) ? blogs : [], loading: false });
+    const [blogs, mediumBlogs] = await Promise.all([
+      fetchBlogs(),
+      fetchMediumBlogs(),
+    ]);
+    this.setState({
+      blogs: Array.isArray(blogs) ? blogs : [],
+      mediumBlogs: Array.isArray(mediumBlogs) ? mediumBlogs : [],
+      loading: false,
+    });
   };
 
   getFilteredBlogs() {
@@ -103,17 +111,38 @@ class BlogList extends Component {
                   }}
                 />
               </div>
-            ) : filtered.length === 0 ? (
-              <div
-                className="medium-feed-empty"
-                style={{ color: theme.secondaryText }}
-              >
-                <p>No stories found for "{activeTopic}".</p>
-              </div>
             ) : (
-              filtered.map((blog) => (
-                <BlogCard key={blog.slug} blog={blog} theme={theme} />
-              ))
+              <div>
+                {filtered.length > 0 ? (
+                  filtered.map((blog) => (
+                    <BlogCard key={blog.slug} blog={blog} theme={theme} />
+                  ))
+                ) : (
+                  <div style={{ color: theme.secondaryText }}>
+                    No blogs found for this topic.
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Medium Blogs Section */}
+            {this.state.mediumBlogs.length > 0 && (
+              <div style={{ marginTop: "40px" }}>
+                <h2
+                  style={{
+                    color: theme.text,
+                    marginBottom: "20px",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  Articles on Medium
+                </h2>
+                <div className="medium-feed-list">
+                  {this.state.mediumBlogs.map((blog) => (
+                    <BlogCard key={blog.slug} blog={blog} theme={theme} />
+                  ))}
+                </div>
+              </div>
             )}
           </main>
 
