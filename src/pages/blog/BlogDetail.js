@@ -32,8 +32,12 @@ class BlogDetail extends Component {
 
   articleRef = React.createRef();
 
-  async componentDidMount() {
+  componentDidMount() {
     window.addEventListener("scroll", this.handleScroll);
+    this.loadBlog();
+  }
+
+  loadBlog = async () => {
     const slug = this.props.match.params.slug;
     const [blog, allBlogs] = await Promise.all([
       fetchBlogBySlug(slug),
@@ -56,7 +60,7 @@ class BlogDetail extends Component {
     } else {
       this.setState({ error: true, loading: false, user });
     }
-  }
+  };
 
   componentWillUnmount() {
     window.removeEventListener("scroll", this.handleScroll);

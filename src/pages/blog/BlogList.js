@@ -24,10 +24,14 @@ class BlogList extends Component {
     activeTopic: "All",
   };
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.loadBlogs();
+  }
+
+  loadBlogs = async () => {
     const blogs = await fetchBlogs();
     this.setState({ blogs: Array.isArray(blogs) ? blogs : [], loading: false });
-  }
+  };
 
   getFilteredBlogs() {
     const { blogs, activeTopic } = this.state;
