@@ -264,6 +264,55 @@ describe("apiClient", () => {
     expect(apiClient.getStoredToken()).toBeNull();
     expect(apiClient.getStoredUser()).toBeNull();
   });
+
+  it("fetchMediumBlogs successfully parses rss2json data", async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        status: "ok",
+        items: [
+          {
+            guid: "mock-guid-1",
+            title: "Mock Medium Blog",
+            description: '<p>Some intro</p><img src="mock-image.png" />',
+            pubDate: "2026-07-21 12:00:00",
+            author: "Mock Author",
+            categories: ["Mock Category"],
+            link: "https://medium.com/mock-link",
+          },
+          {
+            guid: "mock-guid-2",
+            title: "Mock Medium Blog 2",
+            description: "<p>No image here</p>",
+            pubDate: "2026-07-21 13:00:00",
+            author: "",
+            categories: [],
+            link: "https://medium.com/mock-link-2",
+            thumbnail: "thumbnail.png",
+          },
+        ],
+      }),
+    });
+    const res = await apiClient.fetchMediumBlogs();
+    expect(res).toHaveLength(2);
+    expect(res[0].slug).toBe("mock-guid-1");
+    expect(res[0].coverImage).toBe("mock-image.png"); // extracted from description
+    expect(res[0].tags[0]).toBe("Mock Category");
+    expect(res[1].slug).toBe("mock-guid-2");
+    expect(res[1].coverImage).toBe("thumbnail.png"); // fallback to thumbnail
+    expect(res[1].tags[0]).toBe("Medium"); // default tag
+  });
+
+  it("fetchMediumBlogs returns empty array on status not ok", async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        status: "error",
+      }),
+    });
+    const res = await apiClient.fetchMediumBlogs();
+    expect(res).toEqual([]);
+  });
 });
 
 describe("apiClient API unreachable", () => {
@@ -342,5 +391,10 @@ describe("apiClient API unreachable", () => {
     apiClient.setSession("token123", { username: "test" });
     const res = await apiClient.deleteComment("slug", "id");
     expect(res.success).toBe(false);
+  });
+
+  it("fetchMediumBlogs catches error and returns empty array", async () => {
+    const res = await apiClient.fetchMediumBlogs();
+    expect(res).toEqual([]);
   });
 });

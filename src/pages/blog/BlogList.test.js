@@ -70,4 +70,26 @@ describe("BlogList Component", () => {
       );
     });
   });
+
+  it("renders medium blogs in a separate section", async () => {
+    fetchBlogs.mockResolvedValueOnce([]);
+    fetchMediumBlogs.mockResolvedValueOnce([
+      {
+        slug: "medium-blog-1",
+        title: "Medium Blog Title",
+        summary: "Medium summary",
+        publishDate: "2026-07-21",
+        isExternal: true,
+        externalLink: "https://medium.com/some-article",
+      },
+    ]);
+
+    renderWithRouter(<BlogList theme={mockTheme} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Articles on Medium")).toBeInTheDocument();
+      expect(screen.getByText("Medium Blog Title")).toBeInTheDocument();
+      expect(screen.getByText("↗️ Medium")).toBeInTheDocument();
+    });
+  });
 });

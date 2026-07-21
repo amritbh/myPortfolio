@@ -52,4 +52,25 @@ describe("BlogCard Component", () => {
     expect(screen.queryByText("❤")).not.toBeInTheDocument();
     expect(screen.queryByText("💬")).not.toBeInTheDocument();
   });
+
+  it("renders external blog correctly", () => {
+    const blog = {
+      slug: "external-blog",
+      title: "External Blog",
+      summary: "External summary",
+      isExternal: true,
+      externalLink: "https://medium.com/some-article",
+    };
+
+    const { container } = renderWithRouter(
+      <BlogCard blog={blog} theme={mockTheme} />
+    );
+    expect(screen.getByText("External Blog")).toBeInTheDocument();
+    expect(screen.getByText("↗️ Medium")).toBeInTheDocument();
+
+    const anchor = container.querySelector("a.medium-story-link");
+    expect(anchor).toBeInTheDocument();
+    expect(anchor).toHaveAttribute("href", "https://medium.com/some-article");
+    expect(anchor).toHaveAttribute("target", "_blank");
+  });
 });

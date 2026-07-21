@@ -430,7 +430,7 @@ export const fetchMediumBlogs = async () => {
             name: item.author || "Amrit Bhattarai",
             avatar: "https://avatars.githubusercontent.com/u/79965355?v=4",
           },
-          tags: item.categories || ["Medium"],
+          tags: item.categories?.length ? item.categories : ["Medium"],
           readTime: "5 min read",
           isExternal: true,
           externalLink: item.link,
