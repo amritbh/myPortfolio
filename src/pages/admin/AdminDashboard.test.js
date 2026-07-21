@@ -206,4 +206,68 @@ describe("AdminDashboard Component", () => {
     expect(clearSessionSpy).toHaveBeenCalled();
     expect(testHistory.location.pathname).toBe("/login");
   });
+
+  it("handles toolbar formatting and tag input logic", async () => {
+    jest.spyOn(apiClient, "createBlog").mockResolvedValue({ success: true });
+    render(
+      <MemoryRouter initialEntries={["/admin"]}>
+        <Route
+          render={(props) => <AdminDashboard theme={mockTheme} {...props} />}
+        />
+      </MemoryRouter>
+    );
+
+    // 1. Tag input tests
+    const tagInputs = screen.queryAllByPlaceholderText(/Add a topic/i);
+    // Open publish panel first to see tag inputs
+    fireEvent.change(screen.getAllByRole("textbox")[0], {
+      target: { name: "title", value: "T" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /^Publish$/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Topics \(up to 5\)/i)).toBeInTheDocument();
+    });
+
+    const activeTagInput = screen.getByPlaceholderText(/Add a topic/i);
+    fireEvent.change(activeTagInput, { target: { value: "react" } });
+    fireEvent.keyDown(activeTagInput, { key: "Enter", code: "Enter" });
+
+    // Add second tag via comma
+    fireEvent.change(activeTagInput, { target: { value: "javascript" } });
+    fireEvent.keyDown(activeTagInput, { key: ",", code: "Comma" });
+
+    // Expect tags to be rendered
+    expect(screen.getByText("react")).toBeInTheDocument();
+    expect(screen.getByText("javascript")).toBeInTheDocument();
+
+    // Remove tag
+    const removeBtns = document.querySelectorAll(".medium-tag-chip-remove");
+    if (removeBtns.length > 0) {
+      fireEvent.click(removeBtns[0]);
+    }
+
+    // Cancel publish
+    fireEvent.click(screen.getByText("Cancel"));
+
+    // 2. Toolbar formatting
+    // The main editor textarea is rendered in renderEditor
+    const textareas = screen.getAllByRole("textbox");
+    // Find the textarea for content
+    const contentArea = textareas.find(
+      (ta) => ta.placeholder && ta.placeholder.includes("Tell your story")
+    );
+
+    // Select some text
+    contentArea.value = "my text";
+    contentArea.selectionStart = 0;
+    contentArea.selectionEnd = 7;
+
+    const boldBtn = screen.getByRole("button", { name: "B" });
+    fireEvent.mouseDown(boldBtn);
+
+    // Test header formatting
+    const h2Btn = screen.getByRole("button", { name: "H2" });
+    fireEvent.mouseDown(h2Btn);
+  });
 });

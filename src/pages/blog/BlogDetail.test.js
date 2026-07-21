@@ -179,4 +179,41 @@ describe("BlogDetail Component", () => {
       expect(apiClient.likeBlog).toHaveBeenCalled();
     });
   });
+
+  it("handles share link and reading progress", async () => {
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: jest.fn().mockImplementation(() => Promise.resolve()),
+      },
+    });
+
+    const testBlog = {
+      slug: "test-blog",
+      title: "Test Blog",
+      content: "Content",
+    };
+    const relatedBlog = {
+      slug: "related-1",
+      title: "Related 1",
+      content: "Content",
+    };
+
+    jest.spyOn(apiClient, "fetchBlogBySlug").mockResolvedValueOnce(testBlog);
+    jest
+      .spyOn(apiClient, "fetchBlogs")
+      .mockResolvedValueOnce([testBlog, relatedBlog]);
+
+    renderWithRouter(<BlogDetail theme={mockTheme} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Related 1")).toBeInTheDocument();
+    });
+
+    const shareBtn = screen.getByTitle("Copy link");
+    fireEvent.click(shareBtn);
+    expect(navigator.clipboard.writeText).toHaveBeenCalled();
+
+    // Trigger scroll
+    fireEvent.scroll(window, { target: { scrollY: 100 } });
+  });
 });

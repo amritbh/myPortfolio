@@ -259,6 +259,15 @@ describe("Login Component", () => {
     expect(
       screen.getByText(/Password must be at least 6 characters/i)
     ).toBeInTheDocument();
+
+    // Invalid email
+    fireEvent.change(screen.getByPlaceholderText(/Email address/i), {
+      target: { value: "notanemail" },
+    });
+    fireEvent.click(submitBtn);
+    expect(
+      screen.getByText(/Please enter a valid email address/i)
+    ).toBeInTheDocument();
   });
 
   it("handles forgot password errors", async () => {
