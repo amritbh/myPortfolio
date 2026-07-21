@@ -397,3 +397,51 @@ export const deleteComment = async (slug, commentId) => {
     return { success: false, error: "Network error" };
   }
 };
+
+export const fetchMediumBlogs = async () => {
+  try {
+    const rssUrl = "https://medium.com/feed/@amrit.bhattarai990";
+    const res = await fetch(
+      `https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`
+    );
+    const data = await res.json();
+    if (data.status === "ok") {
+      return data.items.map((item) => {
+        let imageUrl = item.thumbnail;
+        if (!imageUrl && item.description) {
+          const imgMatch = item.description.match(/<img[^>]+src="([^">]+)"/);
+          if (imgMatch) imageUrl = imgMatch[1];
+        }
+
+        const summary =
+          item.description
+            .replace(/<[^>]+>/g, " ")
+            .replace(/\s+/g, " ")
+            .trim()
+            .substring(0, 150) + "...";
+
+        return {
+          slug: item.guid,
+          title: item.title,
+          summary,
+          publishDate: item.pubDate,
+          coverImage: imageUrl,
+          author: {
+            name: item.author || "Amrit Bhattarai",
+            avatar: "https://avatars.githubusercontent.com/u/79965355?v=4",
+          },
+          tags: item.categories?.length ? item.categories : ["Medium"],
+          readTime: "5 min read",
+          isExternal: true,
+          externalLink: item.link,
+          likes: [],
+          comments: [],
+        };
+      });
+    }
+    return [];
+  } catch (error) {
+    console.error("Error fetching Medium blogs:", error);
+    return [];
+  }
+};
