@@ -77,11 +77,11 @@ describe("Login Component", () => {
     // Expand the email form
     fireEvent.click(screen.getByText(/Sign in with email/i));
 
-    const usernameInput = screen.getByPlaceholderText(/Username/i);
+    const emailInput = screen.getByPlaceholderText(/Email address/i);
     const passwordInput = screen.getByPlaceholderText(/Password/i);
     const loginBtn = document.getElementById("login-submit-btn");
 
-    fireEvent.change(usernameInput, { target: { value: "admin" } });
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "amrit123" } });
     fireEvent.click(loginBtn);
 
@@ -179,11 +179,11 @@ describe("Login Component", () => {
 
     fireEvent.click(screen.getByText(/Sign in with email/i));
 
-    const usernameInput = screen.getByPlaceholderText(/Username/i);
+    const emailInput = screen.getByPlaceholderText(/Email address/i);
     const passwordInput = screen.getByPlaceholderText(/Password/i);
     const loginBtn = document.getElementById("login-submit-btn");
 
-    fireEvent.change(usernameInput, { target: { value: "admin" } });
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "wrongpassword" } });
     fireEvent.click(loginBtn);
 
@@ -234,6 +234,12 @@ describe("Login Component", () => {
     fireEvent.change(screen.getByPlaceholderText(/Username/i), {
       target: { value: "ab" },
     });
+    fireEvent.change(screen.getByPlaceholderText(/Email address/i), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Password \(min 6 chars\)/i), {
+      target: { value: "validpassword" },
+    });
     fireEvent.click(submitBtn);
     expect(
       screen.getByText(/Username must be at least 3 characters/i)
@@ -242,6 +248,9 @@ describe("Login Component", () => {
     // Short password
     fireEvent.change(screen.getByPlaceholderText(/Username/i), {
       target: { value: "validUser" },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Email address/i), {
+      target: { value: "test@example.com" },
     });
     fireEvent.change(screen.getByPlaceholderText(/Password \(min 6 chars\)/i), {
       target: { value: "short" },

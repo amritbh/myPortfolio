@@ -34,9 +34,7 @@ describe("AdminDashboard Component", () => {
     jest
       .spyOn(apiClient, "getStoredUser")
       .mockReturnValue({ role: "admin", username: "adminuser" });
-    jest
-      .spyOn(apiClient, "fetchBlogs")
-      .mockResolvedValue({ success: true, data: mockBlogs });
+    jest.spyOn(apiClient, "fetchBlogs").mockResolvedValue(mockBlogs);
   });
 
   afterEach(() => {
