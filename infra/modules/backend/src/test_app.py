@@ -131,6 +131,35 @@ def test_login_with_registered_dynamodb_user(setup_dynamodb):
     assert login_res['statusCode'] == 200
     assert 'token' in json.loads(login_res['body'])
 
+def test_login_by_email(setup_dynamodb):
+    import app
+    app.users_table = boto3.resource('dynamodb', region_name='us-east-1').Table(os.environ['USERS_TABLE_NAME'])
+
+    # 1. Sign up user with email
+    signup_evt = {
+        'rawPath': '/auth/signup',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({'username': 'emailuser', 'email': 'testlogin@email.com', 'password': 'MySecretPassword1!'})
+    }
+    app.lambda_handler(signup_evt, None)
+    
+    # 1.5 Manually verify the user in DynamoDB
+    app.users_table.update_item(
+        Key={'username': 'emailuser'},
+        UpdateExpression="SET verified = :v",
+        ExpressionAttributeValues={':v': True}
+    )
+
+    # 2. Login user by email
+    login_evt = {
+        'rawPath': '/auth/login',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({'username': 'testlogin@email.com', 'password': 'MySecretPassword1!'})
+    }
+    login_res = app.lambda_handler(login_evt, None)
+    assert login_res['statusCode'] == 200
+    assert 'token' in json.loads(login_res['body'])
+
 
 
 def test_create_blog_with_jwt(setup_dynamodb):

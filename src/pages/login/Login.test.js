@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import Login from "./Login";
-import { BrowserRouter, Route, MemoryRouter } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
 import * as apiClient from "../../utils/apiClient";
 
 const mockTheme = {
@@ -27,9 +27,9 @@ describe("Login Component", () => {
     jest.restoreAllMocks();
   });
 
-  it("renders sign in form initially", () => {
+  it("renders sign in modal initially", () => {
     renderWithRouter(<Login theme={mockTheme} />);
-    expect(screen.getAllByText(/Sign In/i)[0]).toBeInTheDocument();
+    expect(screen.getByText(/Welcome back./i)).toBeInTheDocument();
   });
 
   it("signs up user successfully when form is valid", async () => {
@@ -40,16 +40,18 @@ describe("Login Component", () => {
     });
 
     renderWithRouter(<Login theme={mockTheme} />);
-    fireEvent.click(screen.getByRole("button", { name: /^Sign Up$/i }));
 
-    const usernameInput = screen.getByPlaceholderText(
-      /Username \(e\.g\. amrit\)/i
-    );
-    const emailInput = screen.getByPlaceholderText(/name@example\.com/i);
-    const passwordInputs = screen.getAllByPlaceholderText(/••••••••/i);
-    const passInput = passwordInputs[0];
-    const confirmInput = passwordInputs[1];
-    const submitBtn = screen.getByRole("button", { name: /Create Account/i });
+    // Switch to Create Account mode
+    fireEvent.click(screen.getByText(/Create one/i));
+
+    // Expand the email form
+    fireEvent.click(screen.getByText(/Sign up with email/i));
+
+    const usernameInput = screen.getByPlaceholderText(/Username/i);
+    const emailInput = screen.getByPlaceholderText(/Email address/i);
+    const passInput = screen.getByPlaceholderText(/Password \(min 6 chars\)/i);
+    const confirmInput = screen.getByPlaceholderText(/Confirm password/i);
+    const submitBtn = document.getElementById("login-submit-btn");
 
     fireEvent.change(usernameInput, { target: { value: "newuser" } });
     fireEvent.change(emailInput, { target: { value: "user@example.com" } });
@@ -59,9 +61,7 @@ describe("Login Component", () => {
     fireEvent.click(submitBtn);
 
     expect(
-      await screen.findByText(
-        /Account created! Please check your email to verify./i
-      )
+      await screen.findByText(/Account created! Check your email to verify./i)
     ).toBeInTheDocument();
   });
 
@@ -74,16 +74,14 @@ describe("Login Component", () => {
 
     renderWithRouter(<Login theme={mockTheme} />);
 
-    const usernameInput = screen.getByPlaceholderText(
-      /Username \(e\.g\. amrit\)/i
-    );
-    const passwordInput = screen.getAllByPlaceholderText(/••••••••/i)[0];
+    // Expand the email form
+    fireEvent.click(screen.getByText(/Sign in with email/i));
 
-    // There are tabs with text 'Sign In' and a button with 'Sign In'
-    const loginBtns = screen.getAllByRole("button", { name: /^Sign In$/i });
-    const loginBtn = loginBtns[loginBtns.length - 1]; // Submit button
+    const emailInput = screen.getByPlaceholderText(/Email address/i);
+    const passwordInput = screen.getByPlaceholderText(/Password/i);
+    const loginBtn = document.getElementById("login-submit-btn");
 
-    fireEvent.change(usernameInput, { target: { value: "admin" } });
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "amrit123" } });
     fireEvent.click(loginBtn);
 
@@ -107,7 +105,7 @@ describe("Login Component", () => {
     await waitFor(() => {
       expect(apiClient.verifyEmail).toHaveBeenCalledWith("123");
       expect(
-        screen.getByText(/Email verified successfully!/i)
+        screen.getByText(/Email verified! You can now sign in./i)
       ).toBeInTheDocument();
     });
   });
@@ -115,15 +113,18 @@ describe("Login Component", () => {
   it("handles forgot password and reset flows", async () => {
     jest
       .spyOn(apiClient, "requestPasswordReset")
-      .mockResolvedValueOnce({ success: true });
+      .mockResolvedValueOnce({ success: true, message: "Reset link sent!" });
 
     renderWithRouter(<Login theme={mockTheme} />);
 
-    // Click forgot password
-    const forgotLink = screen.getByText(/Forgot Password\?/i);
+    // Expand email form
+    fireEvent.click(screen.getByText(/Sign in with email/i));
+
+    // Click forgot password link
+    const forgotLink = screen.getByText(/Forgot your password\?/i);
     fireEvent.click(forgotLink);
 
-    const emailInput = screen.getByPlaceholderText(/name@example.com/i);
+    const emailInput = screen.getByPlaceholderText(/Email address/i);
     fireEvent.change(emailInput, { target: { value: "test@test.com" } });
 
     const sendResetBtn = screen.getByRole("button", {
@@ -146,11 +147,15 @@ describe("Login Component", () => {
 
     renderWithRouter(<Login theme={mockTheme} />);
 
-    const passwordInputs = screen.getAllByPlaceholderText(/••••••••/i);
-    fireEvent.change(passwordInputs[0], { target: { value: "NewPass123!" } });
-    fireEvent.change(passwordInputs[1], { target: { value: "NewPass123!" } });
+    const passwordInput = screen.getByPlaceholderText(
+      /New password \(min 6 chars\)/i
+    );
+    const confirmInput = screen.getByPlaceholderText(/Confirm new password/i);
 
-    const resetBtn = screen.getByRole("button", { name: /Update Password/i });
+    fireEvent.change(passwordInput, { target: { value: "NewPass123!" } });
+    fireEvent.change(confirmInput, { target: { value: "NewPass123!" } });
+
+    const resetBtn = screen.getByRole("button", { name: /Set New Password/i });
     fireEvent.click(resetBtn);
 
     await waitFor(() => {
@@ -159,7 +164,7 @@ describe("Login Component", () => {
         "NewPass123!"
       );
       expect(
-        screen.getByText(/Password reset successful! Please log in./i)
+        screen.getByText(/Password reset! Please sign in./i)
       ).toBeInTheDocument();
     });
   });
@@ -172,12 +177,13 @@ describe("Login Component", () => {
 
     renderWithRouter(<Login theme={mockTheme} />);
 
-    const usernameInput = screen.getByPlaceholderText(/Username/i);
-    const passwordInput = screen.getAllByPlaceholderText(/••••••••/i)[0];
-    const loginBtns = screen.getAllByRole("button", { name: /^Sign In$/i });
-    const loginBtn = loginBtns[loginBtns.length - 1];
+    fireEvent.click(screen.getByText(/Sign in with email/i));
 
-    fireEvent.change(usernameInput, { target: { value: "admin" } });
+    const emailInput = screen.getByPlaceholderText(/Email address/i);
+    const passwordInput = screen.getByPlaceholderText(/Password/i);
+    const loginBtn = document.getElementById("login-submit-btn");
+
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "wrongpassword" } });
     fireEvent.click(loginBtn);
 
@@ -192,7 +198,6 @@ describe("Login Component", () => {
     window.location.hash = "#id_token=" + token;
 
     renderWithRouter(<Login theme={mockTheme} />);
-    // Should have redirected to admin due to email match
     window.location.hash = "";
   });
 
@@ -206,7 +211,7 @@ describe("Login Component", () => {
       search: "",
     };
     renderWithRouter(<Login theme={mockTheme} />);
-    const googleBtn = screen.getByText(/Continue with Google/i);
+    const googleBtn = screen.getByText(/Sign in with Google/i);
     fireEvent.click(googleBtn);
     expect(window.location.href).toContain("cognito");
     window.location = originalLocation;
@@ -214,36 +219,54 @@ describe("Login Component", () => {
 
   it("handles auth mode switching", () => {
     renderWithRouter(<Login theme={mockTheme} />);
-    fireEvent.click(screen.getByRole("button", { name: /^Sign Up$/i }));
-    expect(
-      screen.getByRole("button", { name: /Create Account/i })
-    ).toBeInTheDocument();
+    fireEvent.click(screen.getByText(/Create one/i));
+    expect(screen.getByText(/Join us./i)).toBeInTheDocument();
   });
 
   it("handles signup validation errors", () => {
     renderWithRouter(<Login theme={mockTheme} />);
-    fireEvent.click(screen.getByRole("button", { name: /^Sign Up$/i }));
-    const submitBtn = screen.getByRole("button", { name: /Create Account/i });
+    fireEvent.click(screen.getByText(/Create one/i));
+    fireEvent.click(screen.getByText(/Sign up with email/i));
+
+    const submitBtn = document.getElementById("login-submit-btn");
 
     // Short username
     fireEvent.change(screen.getByPlaceholderText(/Username/i), {
       target: { value: "ab" },
     });
+    fireEvent.change(screen.getByPlaceholderText(/Email address/i), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Password \(min 6 chars\)/i), {
+      target: { value: "validpassword" },
+    });
     fireEvent.click(submitBtn);
     expect(
-      screen.getByText(/Username must be at least 3 characters long/i)
+      screen.getByText(/Username must be at least 3 characters/i)
     ).toBeInTheDocument();
 
     // Short password
     fireEvent.change(screen.getByPlaceholderText(/Username/i), {
       target: { value: "validUser" },
     });
-    fireEvent.change(screen.getAllByPlaceholderText(/••••••••/i)[0], {
+    fireEvent.change(screen.getByPlaceholderText(/Email address/i), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Password \(min 6 chars\)/i), {
       target: { value: "short" },
     });
     fireEvent.click(submitBtn);
     expect(
-      screen.getByText(/Password must be at least 6 characters long/i)
+      screen.getByText(/Password must be at least 6 characters/i)
+    ).toBeInTheDocument();
+
+    // Invalid email
+    fireEvent.change(screen.getByPlaceholderText(/Email address/i), {
+      target: { value: "notanemail" },
+    });
+    fireEvent.click(submitBtn);
+    expect(
+      screen.getByText(/Please enter a valid email address/i)
     ).toBeInTheDocument();
   });
 
@@ -252,15 +275,17 @@ describe("Login Component", () => {
       .spyOn(apiClient, "requestPasswordReset")
       .mockResolvedValueOnce({ success: false, error: "User not found" });
     renderWithRouter(<Login theme={mockTheme} />);
-    fireEvent.click(screen.getByText(/Forgot Password\?/i));
+
+    fireEvent.click(screen.getByText(/Sign in with email/i));
+    fireEvent.click(screen.getByText(/Forgot your password\?/i));
 
     const sendBtn = screen.getByRole("button", { name: /Send Reset Link/i });
-    fireEvent.click(sendBtn); // Empty email
+    fireEvent.click(sendBtn); // Empty email triggers front-end validation
     expect(
-      screen.getByText(/Valid email address is required/i)
+      screen.getByText(/Please enter a valid email address./i)
     ).toBeInTheDocument();
 
-    fireEvent.change(screen.getByPlaceholderText(/name@example.com/i), {
+    fireEvent.change(screen.getByPlaceholderText(/Email address/i), {
       target: { value: "test@test.com" },
     });
     fireEvent.click(sendBtn);

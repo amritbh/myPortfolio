@@ -61,6 +61,26 @@ describe("Header Component", () => {
     expect(window.location.href).toBe("/home");
   });
 
+  it("handles cognito logout click", () => {
+    jest
+      .spyOn(apiClient, "getStoredUser")
+      .mockReturnValue({ username: "test", type: "cognito" });
+    jest.spyOn(apiClient, "clearSession").mockImplementation(() => {});
+
+    // Mock window.location.href
+    delete window.location;
+    window.location = { href: "", origin: "http://localhost:3000" };
+    process.env.REACT_APP_COGNITO_CLIENT_ID = "mock-client-id";
+
+    renderWithRouter(<Header theme={mockTheme} />);
+    const logoutBtn = screen.getByText("Logout");
+
+    fireEvent.click(logoutBtn);
+    expect(apiClient.clearSession).toHaveBeenCalled();
+    expect(window.location.href).toContain("mock-client-id");
+    expect(window.location.href).toContain("logout_uri=");
+  });
+
   it("handles mouse hover and out on all nav links", () => {
     jest.spyOn(apiClient, "getStoredUser").mockReturnValue(null);
     renderWithRouter(<Header theme={mockTheme} />);

@@ -297,14 +297,29 @@ def login_admin(event):
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Password is required'})}
             
         try:
-            db_user = users_table.get_item(Key={'username': username}).get('Item')
+            db_user = None
+            if '@' in username:
+                response = users_table.scan(
+                    FilterExpression="email = :e",
+                    ExpressionAttributeValues={":e": username}
+                )
+                items = response.get('Items', [])
+                if items:
+                    db_user = items[0]
+            else:
+                db_user = users_table.get_item(Key={'username': username}).get('Item')
+                
             if db_user:
                 if db_user.get('verified', True) == False:
                     return {'statusCode': 403, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Please verify your email before logging in.'})}
                 if verify_password(password, db_user.get('password_hash'), db_user.get('salt')):
                     email = db_user.get('email', '')
                     admin_email = os.environ.get('ADMIN_EMAIL', '')
-                    role = 'admin' if email and admin_email and email == admin_email else 'user'
+                    
+                    # Use role from database, but fallback to admin if email matches ADMIN_EMAIL
+                    db_role = db_user.get('role', 'user')
+                    role = 'admin' if (email and admin_email and email == admin_email) else db_role
+                    
                     token = generate_jwt({'username': username, 'role': role})
                     return {
                         'statusCode': 200,
