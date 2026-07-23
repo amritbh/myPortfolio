@@ -89,7 +89,9 @@ describe("BlogList Component", () => {
     await waitFor(() => {
       expect(screen.getByText("Articles on Medium")).toBeInTheDocument();
       expect(screen.getByText("Medium Blog Title")).toBeInTheDocument();
-      expect(screen.getByText("↗️ Medium")).toBeInTheDocument();
+      expect(
+        screen.getByRole("img", { name: "external link" })
+      ).toBeInTheDocument();
     });
   });
 });

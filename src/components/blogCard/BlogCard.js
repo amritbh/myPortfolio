@@ -102,19 +102,34 @@ export default function BlogCard({ blog, theme }) {
             {likeCount > 0 && (
               <>
                 <span className="medium-story-dot">·</span>
-                <span>❤ {likeCount}</span>
+                <span>
+                  <span role="img" aria-label="likes">
+                    ❤
+                  </span>{" "}
+                  {likeCount}
+                </span>
               </>
             )}
             {commentCount > 0 && (
               <>
                 <span className="medium-story-dot">·</span>
-                <span>💬 {commentCount}</span>
+                <span>
+                  <span role="img" aria-label="comments">
+                    💬
+                  </span>{" "}
+                  {commentCount}
+                </span>
               </>
             )}
             {blog.isExternal && (
               <>
                 <span className="medium-story-dot">·</span>
-                <span>↗️ Medium</span>
+                <span>
+                  <span role="img" aria-label="external link">
+                    ↗️
+                  </span>{" "}
+                  Medium
+                </span>
               </>
             )}
           </div>

@@ -18,6 +18,8 @@ const mockBlogs = [
     title: "Test Blog 1",
     summary: "Summary 1",
     publishDate: "2026-01-01",
+    likes: ["user1", "user2"],
+    comments: [{ id: 1, text: "nice" }],
   },
   {
     slug: "test-blog-2",

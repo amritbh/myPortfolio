@@ -36,8 +36,10 @@ describe("BlogCard Component", () => {
     expect(screen.getByText("React")).toBeInTheDocument();
     expect(screen.getByText("JavaScript")).toBeInTheDocument();
     expect(screen.getByText("Amrit")).toBeInTheDocument();
-    expect(screen.getByText("❤ 2")).toBeInTheDocument();
-    expect(screen.getByText("💬 1")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "likes" })).toBeInTheDocument();
+    expect(screen.getByText(/2/)).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "comments" })).toBeInTheDocument();
+    expect(screen.getByText(/1/)).toBeInTheDocument();
   });
 
   it("renders with minimal blog details", () => {
@@ -49,8 +51,12 @@ describe("BlogCard Component", () => {
 
     renderWithRouter(<BlogCard blog={blog} theme={mockTheme} />);
     expect(screen.getByText("Test Blog")).toBeInTheDocument();
-    expect(screen.queryByText("❤")).not.toBeInTheDocument();
-    expect(screen.queryByText("💬")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("img", { name: "likes" })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("img", { name: "comments" })
+    ).not.toBeInTheDocument();
   });
 
   it("renders external blog correctly", () => {
@@ -66,7 +72,34 @@ describe("BlogCard Component", () => {
       <BlogCard blog={blog} theme={mockTheme} />
     );
     expect(screen.getByText("External Blog")).toBeInTheDocument();
-    expect(screen.getByText("↗️ Medium")).toBeInTheDocument();
+    expect(screen.getByText(/Medium/)).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "external link" })
+    ).toBeInTheDocument();
+
+    const anchor = container.querySelector("a.medium-story-link");
+    expect(anchor).toBeInTheDocument();
+    expect(anchor).toHaveAttribute("href", "https://medium.com/some-article");
+    expect(anchor).toHaveAttribute("target", "_blank");
+  });
+
+  it("renders external blog correctly", () => {
+    const blog = {
+      slug: "external-blog",
+      title: "External Blog",
+      summary: "External summary",
+      isExternal: true,
+      externalLink: "https://medium.com/some-article",
+    };
+
+    const { container } = renderWithRouter(
+      <BlogCard blog={blog} theme={mockTheme} />
+    );
+    expect(screen.getByText("External Blog")).toBeInTheDocument();
+    expect(screen.getByText(/Medium/)).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "external link" })
+    ).toBeInTheDocument();
 
     const anchor = container.querySelector("a.medium-story-link");
     expect(anchor).toBeInTheDocument();
