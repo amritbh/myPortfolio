@@ -1,6 +1,6 @@
 # Blog Content Plan — AWS, Terraform & Architecture Design
 
-A detailed plan for writing technical blog posts on your portfolio at [amritbhattarai.com/blogs](http://localhost:3000/blogs). Each blog follows the same rich style as your Medium article, with architecture diagrams, code snippets, step-by-step walkthroughs, and real-world context from your own projects.
+A detailed plan for writing technical blog posts on your portfolio at [amrit.cloud/blogs](https://amrit.cloud/blogs). Each blog follows the same rich style as your Medium article, with architecture diagrams, code snippets, step-by-step walkthroughs, and real-world context from your own projects.
 
 ---
 
