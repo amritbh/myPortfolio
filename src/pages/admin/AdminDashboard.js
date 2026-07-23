@@ -366,11 +366,17 @@ class AdminDashboard extends Component {
                   <span>{blog.readTime || "5 min read"}</span>
                   <span>·</span>
                   <span>
-                    ❤ {Array.isArray(blog.likes) ? blog.likes.length : 0}
+                    <span role="img" aria-label="likes">
+                      ❤
+                    </span>{" "}
+                    {Array.isArray(blog.likes) ? blog.likes.length : 0}
                   </span>
                   <span>·</span>
                   <span>
-                    💬 {Array.isArray(blog.comments) ? blog.comments.length : 0}
+                    <span role="img" aria-label="comments">
+                      💬
+                    </span>{" "}
+                    {Array.isArray(blog.comments) ? blog.comments.length : 0}
                   </span>
                 </div>
               </div>
