@@ -1,0 +1,55 @@
+name: Migrate Blog to Prod
+
+on:
+  push:
+    paths:
+      - 'blog1_payload.json'
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install boto3
+        run: pip install boto3
+
+      - name: Run migration script
+        run: |
+          cat << 'PYEOF' > migrate.py
+          import boto3
+          import json
+          from decimal import Decimal
+
+          def float_to_decimal(obj):
+              if isinstance(obj, float):
+                  return Decimal(str(obj))
+              if isinstance(obj, dict):
+                  return {k: float_to_decimal(v) for k, v in obj.items()}
+              if isinstance(obj, list):
+                  return [float_to_decimal(v) for v in obj]
+              return obj
+
+          with open('blog1_payload.json') as f:
+              blog = json.load(f)
+              
+          blog = float_to_decimal(blog)
+          dynamodb = boto3.resource('dynamodb')
+          table = dynamodb.Table('my-portfolio-prod-blogs')
+          table.put_item(Item=blog)
+          print("Successfully migrated blog to prod DynamoDB")
+          PYEOF
+          python migrate.py
