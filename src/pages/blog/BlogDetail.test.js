@@ -50,14 +50,12 @@ describe("BlogDetail Component", () => {
       ],
     });
     jest.spyOn(apiClient, "fetchBlogs").mockResolvedValueOnce([]);
-    jest
-      .spyOn(apiClient, "getStoredUser")
-      .mockReturnValue({
-        username: "amrit",
-        name: "Amrit Bhattarai",
-        picture: "https://example.com/pic.jpg",
-        role: "admin",
-      });
+    jest.spyOn(apiClient, "getStoredUser").mockReturnValue({
+      username: "amrit",
+      name: "Amrit Bhattarai",
+      picture: "https://example.com/pic.jpg",
+      role: "admin",
+    });
 
     renderWithRouter(<BlogDetail theme={mockTheme} />);
 
@@ -106,6 +104,34 @@ describe("BlogDetail Component", () => {
         "test-blog",
         "New comment!"
       );
+    });
+  });
+
+  it("formats legacy comment names containing an email domain correctly", async () => {
+    jest.spyOn(apiClient, "fetchBlogBySlug").mockResolvedValueOnce({
+      slug: "test-blog",
+      title: "Test Blog",
+      content: "This is a test blog content.",
+      likes: [],
+      comments: [
+        {
+          id: "c1",
+          username: "unblended0992@gmail.com",
+          name: "unblended0992@gmail.com",
+          text: "Legacy comment!",
+          timestamp: "2026-01-01T00:00:00Z",
+        },
+      ],
+    });
+    jest.spyOn(apiClient, "fetchBlogs").mockResolvedValueOnce([]);
+    jest.spyOn(apiClient, "getStoredUser").mockReturnValue(null);
+
+    renderWithRouter(<BlogDetail theme={mockTheme} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Legacy comment!")).toBeInTheDocument();
+      // Should strip @gmail.com
+      expect(screen.getByText("unblended0992")).toBeInTheDocument();
     });
   });
 
