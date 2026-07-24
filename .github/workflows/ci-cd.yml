@@ -86,6 +86,10 @@ jobs:
         working-directory: infra/modules/frontend
         run: terraform init && terraform test
 
+      - name: Package Lambda dependencies
+        working-directory: infra/modules/backend/src
+        run: pip3 install -r requirements.txt -t . --upgrade
+
       - name: Terragrunt Apply (Backend)
         working-directory: infra/live/prod
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
