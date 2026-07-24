@@ -610,7 +610,11 @@ class BlogDetail extends Component {
                               className="medium-response-username"
                               style={{ color: theme.text }}
                             >
-                              {c.name || c.username?.split("@")[0] || "User"}
+                              {(c.name && c.name.includes("@")
+                                ? c.name.split("@")[0]
+                                : c.name) ||
+                                c.username?.split("@")[0] ||
+                                "User"}
                             </span>
                             <span
                               className="medium-response-date"
