@@ -19,7 +19,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Check SES Account Status
+      - name: Check AWS Support Cases
         run: |
-          aws sesv2 get-account > ses_status.json
-          cat ses_status.json
+          aws support describe-cases --region us-east-1 > support_cases.json || echo "Failed to describe cases" > support_cases.json
+          cat support_cases.json
