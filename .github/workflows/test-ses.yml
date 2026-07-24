@@ -1,0 +1,28 @@
+name: Test SES Send
+
+on:
+  push:
+    paths:
+      - '.github/workflows/test-ses.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Send Test Email
+        run: |
+          aws ses send-email \
+            --from "admin@amrit.cloud" \
+            --destination "ToAddresses=amrit.bhattarai990@gmail.com" \
+            --message "Subject={Data=Test Email from admin@amrit.cloud},Body={Text={Data=Hello Amrit! This is a test email to prove that admin@amrit.cloud is fully verified and working as a sender in Amazon SES.}}" \
+            --region us-east-1
