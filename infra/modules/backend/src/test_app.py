@@ -746,20 +746,23 @@ def test_verify_cognito_jwt():
         # Expired signature
         from jose import jwt
         mock_decode.side_effect = jwt.ExpiredSignatureError("Expired")
-        assert app.verify_cognito_jwt('expired_token') is None
+        assert 'error' in app.verify_cognito_jwt('expired_token')
         
         # JWT Error
         mock_decode.side_effect = jwt.JWTError("Bad signature")
-        assert app.verify_cognito_jwt('bad_token') is None
+        assert 'error' in app.verify_cognito_jwt('bad_token')
         
         # Generic Exception
         mock_decode.side_effect = Exception("Generic")
-        assert app.verify_cognito_jwt('token') is None
+        assert 'error' in app.verify_cognito_jwt('token')
 
 def test_verify_cognito_jwt_no_jose():
     import app
     app.JOSE_AVAILABLE = False
-    assert app.verify_cognito_jwt('token') is None
+    app.JOSE_IMPORT_ERROR = "MockError"
+    result = app.verify_cognito_jwt('token')
+    assert isinstance(result, dict)
+    assert 'error' in result
     app.JOSE_AVAILABLE = True
 
 def test_exception_handling(setup_dynamodb):

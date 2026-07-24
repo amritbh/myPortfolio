@@ -8,12 +8,14 @@ import hmac
 import urllib.request
 from botocore.config import Config
 
+JOSE_IMPORT_ERROR = None
 try:
     from jose import jwk, jwt
     from jose.utils import base64url_decode
     JOSE_AVAILABLE = True
-except ImportError:
+except ImportError as e:
     JOSE_AVAILABLE = False
+    JOSE_IMPORT_ERROR = str(e)
 
 COGNITO_USER_POOL_ID = os.environ.get('COGNITO_USER_POOL_ID')
 COGNITO_REGION = os.environ.get('COGNITO_REGION')
@@ -118,7 +120,7 @@ def get_cognito_jwks():
 def verify_cognito_jwt(token: str):
     if not JOSE_AVAILABLE:
         print("python-jose not available, skipping cognito verification")
-        return None
+        return {'error': f'python-jose not available due to ImportError: {JOSE_IMPORT_ERROR}'}
         
     jwks = get_cognito_jwks()
     if not jwks:
@@ -142,13 +144,13 @@ def verify_cognito_jwt(token: str):
         }
     except jwt.ExpiredSignatureError:
         print('Token is expired')
-        return None
+        return {'error': 'Cognito token is expired'}
     except jwt.JWTError as e:
         print(f"JWT signature verification failed: {e}")
-        return None
+        return {'error': f'JWT signature verification failed: {e}'}
     except Exception as e:
         print(f"Cognito JWT verification error: {e}")
-        return None
+        return {'error': f'Cognito JWT verification error: {e}'}
 
 def hash_password(password: str, salt: bytes = None) -> tuple:
     if not salt:
