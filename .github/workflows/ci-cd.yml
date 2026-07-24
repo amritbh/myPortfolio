@@ -140,7 +140,10 @@ jobs:
       - name: Fetch API URL and Build production bundle
         run: |
           export REACT_APP_CUSTOM_API_URL=$(cd infra/live/prod && terragrunt output -raw api_endpoint)
+          export REACT_APP_COGNITO_DOMAIN=$(cd infra/live/prod && terragrunt output -raw cognito_domain)
+          export REACT_APP_COGNITO_CLIENT_ID=$(cd infra/live/prod && terragrunt output -raw cognito_client_id)
           echo "API URL is $REACT_APP_CUSTOM_API_URL"
+          echo "Cognito Domain is $REACT_APP_COGNITO_DOMAIN"
           npm run build
 
       - name: Deploy to S3
