@@ -223,7 +223,7 @@ class Login extends Component {
   handleGoogleLogin = () => {
     const domain =
       process.env.REACT_APP_COGNITO_DOMAIN ||
-      "amrit-portfolio-auth-prod.auth.us-east-1.amazoncognito.com";
+      "amrit-portfolio-auth-v2-prod.auth.us-east-1.amazoncognito.com";
     const clientId =
       process.env.REACT_APP_COGNITO_CLIENT_ID || "63ct5e88sn10306cbh2rm5ur68";
     const redirectUri = window.location.origin + "/login";
