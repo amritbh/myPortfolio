@@ -491,11 +491,32 @@ class BlogDetail extends Component {
                   className="medium-response-form"
                   style={{ borderColor: theme.imageDark }}
                 >
-                  <img
-                    src={displayAuthor.avatar}
-                    alt="You"
-                    className="medium-response-avatar"
-                  />
+                  {user && user.picture ? (
+                    <img
+                      src={user.picture}
+                      alt={user.name || "You"}
+                      className="medium-response-avatar"
+                      style={{ objectFit: "cover" }}
+                    />
+                  ) : (
+                    <div
+                      className="medium-response-avatar"
+                      style={{
+                        backgroundColor: "#1a8917",
+                        color: "#fff",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {user && user.name
+                        ? user.name[0].toUpperCase()
+                        : user && user.username
+                        ? user.username[0].toUpperCase()
+                        : "U"}
+                    </div>
+                  )}
                   <div className="medium-response-input-wrap">
                     <textarea
                       value={newCommentText}
@@ -567,16 +588,29 @@ class BlogDetail extends Component {
                             style={{
                               backgroundColor: "#1a8917",
                               color: "#fff",
+                              overflow: "hidden",
                             }}
                           >
-                            {c.username ? c.username[0].toUpperCase() : "U"}
+                            {c.picture ? (
+                              <img
+                                src={c.picture}
+                                alt={c.name || c.username}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            ) : (
+                              (c.name || c.username || "U")[0].toUpperCase()
+                            )}
                           </div>
                           <div>
                             <span
                               className="medium-response-username"
                               style={{ color: theme.text }}
                             >
-                              {c.username}
+                              {c.name || c.username}
                             </span>
                             <span
                               className="medium-response-date"

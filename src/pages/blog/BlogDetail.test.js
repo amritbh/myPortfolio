@@ -42,6 +42,8 @@ describe("BlogDetail Component", () => {
         {
           id: "c1",
           username: "amrit",
+          name: "Amrit Bhattarai",
+          picture: "https://example.com/pic.jpg",
           text: "Great post!",
           timestamp: "2026-01-01T00:00:00Z",
         },
@@ -50,7 +52,12 @@ describe("BlogDetail Component", () => {
     jest.spyOn(apiClient, "fetchBlogs").mockResolvedValueOnce([]);
     jest
       .spyOn(apiClient, "getStoredUser")
-      .mockReturnValue({ username: "amrit", role: "admin" });
+      .mockReturnValue({
+        username: "amrit",
+        name: "Amrit Bhattarai",
+        picture: "https://example.com/pic.jpg",
+        role: "admin",
+      });
 
     renderWithRouter(<BlogDetail theme={mockTheme} />);
 
@@ -62,6 +69,7 @@ describe("BlogDetail Component", () => {
         screen.getByText("This is a test blog content.")
       ).toBeInTheDocument();
       expect(screen.getByText(/Great post!/i)).toBeInTheDocument();
+      expect(screen.getByText("Amrit Bhattarai")).toBeInTheDocument();
     });
 
     jest

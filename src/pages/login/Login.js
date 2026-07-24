@@ -43,6 +43,13 @@ class Login extends Component {
           const user = {
             username:
               payload.email || payload["cognito:username"] || payload.sub,
+            name:
+              payload.name ||
+              payload.given_name ||
+              payload.email ||
+              payload["cognito:username"] ||
+              payload.sub,
+            picture: payload.picture || null,
             type: "cognito",
             role: "user",
           };
