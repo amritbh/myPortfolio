@@ -31,7 +31,9 @@ resource "aws_iam_role_policy" "dynamodb_read_policy" {
           "dynamodb:Scan",
           "dynamodb:Query",
           "dynamodb:GetItem",
-          "dynamodb:PutItem"
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem"
         ]
         Effect = "Allow"
         Resource = [
