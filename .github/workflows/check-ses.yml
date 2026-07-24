@@ -1,0 +1,25 @@
+name: Check SES Status
+
+on:
+  push:
+    paths:
+      - '.github/workflows/check-ses.yml'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Check SES Account Status
+        run: |
+          aws sesv2 get-account > ses_status.json
+          cat ses_status.json
