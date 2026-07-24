@@ -135,6 +135,8 @@ def verify_cognito_jwt(token: str):
         # Standardize claims to look like our custom payload for downstream
         return {
             'username': email or claims.get('cognito:username') or claims.get('sub'),
+            'name': claims.get('name') or claims.get('given_name'),
+            'picture': claims.get('picture'),
             'type': 'cognito',
             'role': role
         }
@@ -499,10 +501,14 @@ def comment_blog(event, slug):
             return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Comment text required'})}
             
         username = payload.get('username')
+        name = payload.get('name') or username
+        picture = payload.get('picture')
         comment_id = str(int(time.time() * 1000))
         new_comment = {
             'id': comment_id,
             'username': username,
+            'name': name,
+            'picture': picture,
             'text': text,
             'timestamp': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
         }
