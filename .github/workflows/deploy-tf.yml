@@ -33,6 +33,9 @@ jobs:
 
       - name: Terragrunt Apply
         working-directory: infra/live/prod
+        env:
+          TF_VAR_google_client_id: ${{ secrets.GOOGLE_CLIENT_ID }}
+          TF_VAR_google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: |
           terragrunt init
           terragrunt apply -auto-approve
