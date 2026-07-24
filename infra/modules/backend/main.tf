@@ -76,6 +76,7 @@ resource "aws_lambda_function" "api_lambda" {
       SENDER_EMAIL         = var.admin_email
       COGNITO_USER_POOL_ID = aws_cognito_user_pool.pool.id
       COGNITO_REGION       = data.aws_region.current.name
+      COGNITO_CLIENT_ID    = aws_cognito_user_pool_client.client.id
     }
   }
 }
