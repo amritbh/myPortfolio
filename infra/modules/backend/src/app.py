@@ -465,7 +465,7 @@ def authenticate(event):
         payload = verify_cognito_jwt(token)
         if payload and 'error' in payload:
             print(f"Authentication failed: {payload['error']}")
-            return None
+            return {'__auth_error': payload['error']}
     return payload
 
 def like_blog(event, slug):
@@ -499,11 +499,12 @@ def like_blog(event, slug):
 def comment_blog(event, slug):
     try:
         payload = authenticate(event)
+        if payload and '__auth_error' in payload:
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': f"Backend Error: {payload['__auth_error']}"})}
         if not payload:
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
             
-        body = json.loads(event.get('body', '{}'))
-        text = body.get('text', '').strip()
+        text = json.loads(event.get('body', '{}')).get('text', '').strip()
         if not text:
             return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Comment text required'})}
             
