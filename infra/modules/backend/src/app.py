@@ -142,13 +142,13 @@ def verify_cognito_jwt(token: str):
         }
     except jwt.ExpiredSignatureError:
         print('Token is expired')
-        return None
+        return {'error': 'Token is expired'}
     except jwt.JWTError as e:
-        print(f"JWT signature verification failed: {e}")
-        return None
+        print(f"Token verification failed: {e}")
+        return {'error': f'Token verification failed: {e}'}
     except Exception as e:
-        print(f"Cognito JWT verification error: {e}")
-        return None
+        print(f"Unknown error: {e}")
+        return {'error': f'Unknown error: {e}'}
 
 def hash_password(password: str, salt: bytes = None) -> tuple:
     if not salt:
@@ -495,6 +495,8 @@ def comment_blog(event, slug):
         if not payload:
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
             
+        if isinstance(payload, dict) and 'error' in payload:
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': f"Unauthorized: {payload['error']}"})}
         body = json.loads(event.get('body', '{}'))
         text = body.get('text', '').strip()
         if not text:
@@ -507,11 +509,13 @@ def comment_blog(event, slug):
         new_comment = {
             'id': comment_id,
             'username': username,
-            'name': name,
-            'picture': picture,
             'text': text,
             'timestamp': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
         }
+        if name:
+            new_comment['name'] = name
+        if picture:
+            new_comment['picture'] = picture
         
         response = table.get_item(Key={'slug': slug})
         item = response.get('Item')
