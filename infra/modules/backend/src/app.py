@@ -458,9 +458,14 @@ def authenticate(event):
     headers = event.get('headers', {})
     auth_header = headers.get('authorization', headers.get('Authorization', ''))
     token = auth_header.replace('Bearer ', '').strip() if auth_header.startswith('Bearer ') else auth_header
+    if not token:
+        return None
     payload = verify_jwt(token)
     if not payload:
         payload = verify_cognito_jwt(token)
+        if payload and 'error' in payload:
+            print(f"Authentication failed: {payload['error']}")
+            return None
     return payload
 
 def like_blog(event, slug):
