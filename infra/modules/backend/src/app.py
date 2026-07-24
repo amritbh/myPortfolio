@@ -144,13 +144,13 @@ def verify_cognito_jwt(token: str):
         }
     except jwt.ExpiredSignatureError:
         print('Token is expired')
-        return None
+        return {'error': 'Cognito token is expired'}
     except jwt.JWTError as e:
         print(f"JWT signature verification failed: {e}")
-        return None
+        return {'error': f'JWT signature verification failed: {e}'}
     except Exception as e:
         print(f"Cognito JWT verification error: {e}")
-        return None
+        return {'error': f'Cognito JWT verification error: {e}'}
 
 def hash_password(password: str, salt: bytes = None) -> tuple:
     if not salt:
