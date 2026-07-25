@@ -75,10 +75,77 @@ const socialMediaLinks = [
 const skills = {
   data: [
     {
+      title: "Agentic AI and LLMs",
+      fileName: "DataScienceImg",
+      skills: [
+        "⚡ Experience with Agentic AI, Large Language Models (LLMs) and RAG",
+        "⚡ Developing multi-agent AI architectures and applications",
+        "⚡ Integrating Agentic AI frameworks and advanced LLMs into engineering workflows",
+      ],
+      softwareSkills: [
+        {
+          skillName: "Python",
+          fontAwesomeClassname: "ion-logo-python",
+          style: {
+            color: "#3776AB",
+          },
+        },
+        {
+          skillName: "OpenAI / GPT",
+          fontAwesomeClassname: "simple-icons:openai",
+          style: {
+            color: "#412991",
+          },
+        },
+        {
+          skillName: "Anthropic / Claude",
+          fontAwesomeClassname: "simple-icons:anthropic",
+          style: {
+            color: "#D97757",
+          },
+        },
+        {
+          skillName: "GitHub Copilot",
+          fontAwesomeClassname: "simple-icons:githubcopilot",
+          style: {
+            color: "#000000",
+          },
+        },
+        {
+          skillName: "Amazon Bedrock",
+          fontAwesomeClassname: "simple-icons:amazonaws",
+          style: {
+            color: "#FF9900",
+          },
+        },
+        {
+          skillName: "Microsoft AI Foundry",
+          fontAwesomeClassname: "simple-icons:microsoft",
+          style: {
+            color: "#00A4EF",
+          },
+        },
+        {
+          skillName: "LangChain",
+          fontAwesomeClassname: "simple-icons:langchain",
+          style: {
+            color: "#000000",
+          },
+        },
+        {
+          skillName: "CrewAI",
+          fontAwesomeClassname: "simple-icons:openai",
+          style: {
+            color: "#00A4EF",
+          },
+        },
+      ],
+    },
+    {
       title: "Full Stack Software Engineer",
       fileName: "SoftwareImg",
       skills: [
-        "⚡ Strong experience building backend applications using Java and Spring Boot",
+        "⚡ Strong experience building backend applications using Java, Python and Spring Boot",
         "⚡ Experience developing RESTful APIs and microservices",
         "⚡ Proficient in Python for scripting and backend development",
         "⚡ Building responsive frontend UIs with React",
@@ -669,9 +736,9 @@ const certifications = {
 // Experience Page
 const experience = {
   title: "Experience",
-  subtitle: "Work, Internship and Volunteership",
+  subtitle: "",
   description:
-    "I am a cross-functional engineer with experience spanning software development, site reliability, DevOps, cloud and network operations across startups and large enterprises. I design, build and operate resilient, secure, and observable distributed systems; automate infrastructure and CI/CD; lead migrations, launches and runbooks; and collaborate closely with product, security and operations teams. I also mentor engineers, contribute to open-source projects, and focus on delivering reliable systems and measurable business outcomes at scale.",
+    "Software Cloud and DevOps/SRE Engineer with over 8 years of expertise spanning backend development, cloud infrastructure, and Site Reliability Engineering. I specialize in designing highly scalable, multi-cloud architectures (AWS, Azure, GCP), automating DevSecOps pipelines, and driving operational excellence while integrating advanced AI technologies.",
   header_image_path: "experience.svg",
   sections: [
     {
@@ -679,97 +746,89 @@ const experience = {
       work: true,
       experiences: [
         {
+          title: "Sr. Software Engineer - Cloud Architect (Agentic AI)",
+          company: "HP",
+          company_url: "https://www.hp.com/",
+          logo_path: "hp_logo.svg",
+          duration: "Jun 2026 - Present",
+          location: "Corvallis, Oregon, United States",
+          description: `• Lead the end-to-end architecture design and setup of a highly scalable AWS environment for distributed, multi-agent AI systems.
+• Engineer foundational AWS topology, optimizing high-performance compute clusters, secure networking (VPCs), IAM/OIDC security, and cost governance.
+• Deploy and orchestrate specialized AI agents (Claude, LLMs), establishing secure cross-agent communication protocols and stateful memory persistence.
+• Architect modular Infrastructure as Code (IaC) utilizing Terraform and Terragrunt to manage AWS resources and eliminate manual deployment bottlenecks.
+• Design and build comprehensive GitHub Actions CI/CD pipelines for continuous integration and delivery of infrastructure and Python-based agentic applications.
+• Develop advanced automation scripts utilizing Python and Bash to streamline system configuration and manage container lifecycles.
+• Integrate Agentic AI frameworks (Copilot, Claude, Gemini, ChatGPT) into daily engineering workflows to accelerate infrastructure code generation and optimize state management.`,
+          color: "#0096D6",
+        },
+        {
           title: "Software Engineer - Development, DevOps, Cloud & SRE",
           company: "Sam's Club / Walmart Inc.",
           company_url: "https://www.samsclub.com/",
-          logo_path: "projects_image.svg",
+          logo_path: "walmart_logo.svg",
           duration: "Oct 2024 - Present",
           location: "Arkansas, United States",
-          description: [
-            "Atlas is a warehouse management system (WMS) suite used by Walmart Distribution Centers (DCs) and Fulfillment Centers (FCs) to manage daily operations. It replaces multiple legacy WMS systems, streamlining processes and reducing the cost and complexity of supporting many disparate systems across DCs.",
-            "Developed, debugged and maintained Java Spring Boot microservices for the Loading Server (inter-DC freight transport) and Allocation Order Services (AOS) modules that handle pallet distribution in delivery workflows.",
-            "Created Bash automation scripts for Linux system administration tasks (log rotation, service monitoring), reducing manual intervention by ~30%.",
-            "Managed Linux-based Kubernetes clusters (WCNP) on Azure; used Ansible Tower to orchestrate deployments and updates, improving deployment efficiency and uptime.",
-            "Led GLS-to-Atlas migration activities and converted 15 sites successfully.",
-            "Delivered hyper-care, soft launch and go-live support; provided L3 incident resolution for escalations routed via xMatters.",
-            "Collaborated across ATLAS components (GDM, Scheduler, Receiving, Inventory, Shore, Spire, OT/OP, Merchandise Movement, DC Fin, FIX-IT) to ensure smooth integration and data flow.",
-            "Implemented Infrastructure as Code (Terraform) to provision and manage cloud resources in Azure and GCP consistent with security and architecture standards.",
-            "Utilized Lenses for Kafka and Hyte Console for IBM MQ to manage and monitor streaming/messaging platforms.",
-            "Debugged services, performed root-cause analysis, and implemented fixes to improve system stability and performance.",
-            "Worked with MS SQL for data persistence and retrieval.",
-            "Played a key role in bringing a new distribution center into production while maintaining module-specific configuration, performance, and data integrity.",
-            "Worked on WCNP (Walmart Cloud Native Platform) — a PaaS layer built on Azure and GCP — to host Sam's/Walmart applications.",
-            "Integrated security tooling into CI/CD pipelines (SAST, container scans, secrets detection) in collaboration with cybersecurity and compliance teams.",
-            "Managed CRQs for production deployments and used CCM2, Venafi, PassPass and Akeyless for centralized secure credential management.",
-            "Integrated Splunk and OpenObserve for centralized logs, tracing and analysis; implemented AI-assisted pipeline debugging and AI chatbots to accelerate incident resolution.",
-            "Maintained CI/CD pipelines in Looper Pro (Jenkins-based), and used Prometheus & Grafana to monitor Kubernetes clusters with custom dashboards for visibility.",
-          ],
+          description: `Project: ATLAS - Warehouse Management System (WMS) (Java, Spring Boot, Python, Microservices, React, SQL, NoSQL, Kafka, IBMMQ)
+
+• Enhanced fault tolerance and scalability of Atlas WMS, ensuring zero downtime for critical operations.
+• Designed resilient autoscaling architectures using KEDA and messaging queues, improving cluster stability and reducing resource waste.
+• Migrated applications across 15 sites, providing go-live support, L3 incident resolution via xMatters, and root cause analysis.
+• Engineered custom deployments across Walmart Cloud Native Platform (WCNP), a multi-cloud abstraction layer on GCP, Azure, OpenShift, and OpenStack.
+• Migrated legacy applications to a GCP/Azure-integrated platform utilizing Terraform for 99.99% uptime.
+• Automated DevSecOps and deployments using Terraform, Terragrunt, Ansible, Snyk, SonarQube, and central configuration tools.
+• Reduced MTTR by deploying AI-powered agents to troubleshoot CI/CD pipeline failures across 200+ internal services.
+• Implemented robust observability pipelines using Prometheus, Grafana, Open Observe, DynaTrace, Datadog, and Splunk.
+• Managed Azure Databricks workspaces for data governance and scalable GCP event-driven messaging using Pub/Sub, BigQuery, and Airflow.`,
           color: "#000000",
         },
         {
-          title: "Software Cloud Engineer",
+          title: "Sr. Cloud Software Engineer",
           company: "PB Group Pvt. Ltd.",
           company_url: "https://pbg.com.np/",
           logo_path: "pbg_logo.png",
-          duration: "August 2022 - Jan 2023",
+          duration: "Aug 2022 - Jan 2023",
           location: "Kathmandu, Bagmati, Nepal",
-          description: [
-            "Developed job automation and CI/CD pipelines in GitLab to deploy applications to AWS EKS, reducing manual effort by ~40%.",
-            "Packaged Kubernetes apps with Helm Charts and managed releases for production stability.",
-            "Implemented Terraform and Ansible for VM provisioning and bootstrapping, shortening setup time by ~70%.",
-            "Configured Prometheus and Grafana with custom dashboards for cluster and application observability.",
-            "Managed production Kubernetes clusters to ensure high availability and scalability.",
-            "Integrated security tooling (Snyk, OWASP checks, SonarQube) into pipelines for automated security scanning.",
-          ],
+          description: `• Developed jobs automation and created CI/CD pipelines using GitHub Actions, Azure DevOps, Jenkins, and GitLab to deploy to AWS EKS and Azure AKS clusters.
+• Engineered backend services in Java and Python, containerizing with Docker for scalable microservices deployments.
+• Provisioned and bootstrapped VMs using Terraform and Ansible, achieving a ~70% reduction in deployment time.
+• Set up Prometheus and Grafana to monitor Kubernetes clusters, creating custom dashboards for performance metrics visualization.
+• Implemented a robust DevSecOps framework by integrating Snyk, OWASP, and SonarQube into CI/CD pipelines.
+• Maintained comprehensive documentation for multi-cloud infrastructure (AWS and Azure) automation workflows.
+• Automated network configuration tasks with custom Python and Bash scripts, significantly improving accuracy and efficiency.
+• Configured and managed NGINX as a reverse proxy and NGINX Ingress Controller for traffic routing, load balancing, and SSL.`,
           color: "#000000",
         },
         {
           title:
-            "Software Engineer - Java, Spring Boot, React, DevOps, Cloud, SRE",
-          company: "Worldlink Communications Ltd.",
+            "Infrastructure Engineer - Cloud, Monitoring, Development, DevOps",
+          company: "WorldLink Communications Ltd.",
           company_url: "https://worldlink.com.np/",
           logo_path: "worldlink_logo.png",
-          duration: "January 2018 - June 2022",
+          duration: "Apr 2016 - Jun 2022",
           location: "Kathmandu, Bagmati, Nepal",
-          description: [
-            "Managed and monitored ISP on-premises and AWS cloud networks, including VPC, Security Groups, ALB/NLB, Route 53, Direct Connect, and Transit Gateway.",
-            "Built infrastructure for deploying an IPTV product on AWS and maintained production operations.",
-            "Established CI/CD pipelines with Jenkins and deployed applications to AWS EKS using Terraform and ArgoCD (GitOps).",
-            "Automated network and infrastructure provisioning with Ansible and Terraform.",
-            "Deployed and managed Istio service mesh to improve microservices traffic management and observability.",
-            "Defined and implemented SLOs/SLA frameworks and disaster recovery (RPO/RTO) practices to increase system reliability.",
-          ],
+          description: `• Developed high-traffic video streaming and monitoring applications (NetTV, myWorldlink) using Java, Spring Boot, Kafka, and Python.
+• Transitioned legacy monolithic applications to containerized microservices architectures, significantly reducing downtime and doubling scalability.
+• Engineered robust CI/CD pipelines with Jenkins and GitOps (ArgoCD), deploying to AWS EKS and Azure AKS.
+• Automated cloud infrastructure provisioning (AWS, Azure) using Terraform and Ansible, cutting deployment times by ~70% and saving up to 50% in cloud costs.
+• Implemented comprehensive observability and tracing using OpenTelemetry, Prometheus, Grafana, Splunk, and New Relic to reduce MTTR.
+• Ensured high availability and system resilience by managing SLOs/SLAs, deploying Istio service mesh, and migrating workloads across clouds with zero downtime.
+• Built automated DataOps pipelines with PySpark and Airflow while managing backup, disaster recovery, and PKI security systems.`,
           color: "#000000",
         },
         {
-          title: "Software DevOps Engineer",
-          company: "Worldlink Communications Ltd.",
-          company_url: "https://worldlink.com.np/",
-          logo_path: "worldlink_logo.png",
-          duration: "April 2016 - January 2018",
-          location: "Kathmandu, Bagmati, Nepal",
-          description: [
-            "Designed, deployed, and maintained development and infrastructure systems for the organization.",
-            "Developed an infrastructure monitoring system using Java and Python to monitor national and international network devices.",
-            "Worked as a backend Java developer (Spring Boot, Hibernate, MySQL) on the Task Ticket Management System.",
-            "Performed performance tuning and hardware/resource optimization for data center systems.",
-            "Managed cloud infrastructure costs through analysis and optimizations, achieving up to ~50% savings.",
-          ],
-          color: "#000000",
-        },
-        {
-          title: "IT Engineer",
-          company: "Islington College",
+          title: "Information Technology Engineer",
+          company: "Islington College Kathmandu",
           company_url: "https://www.islington.edu.np/",
           logo_path: "islington_logo.png",
-          duration: "January 2015 - April 2016",
-          location: "Kathmandu, Nepal",
-          description: [
-            "Managed Linux systems including hardware, software, LVM, networking, and storage.",
-            "Administered VMware vSphere ESXi BareMetal hypervisor environments.",
-            "Managed cloud resources and analyzed billings to optimize costs.",
-            "Troubleshot connectivity, performance, and security issues to ensure uptime of network and servers.",
-          ],
+          duration: "Jan 2015 - Mar 2016",
+          location: "Kathmandu, Bagmati, Nepal",
+          description: `• Maintained 24/7 on-call rotation for high-priority incident response, ensuring rapid resolution and system uptime.
+• Proactively monitored infrastructure using SolarWinds to identify, diagnose, and resolve connectivity, performance, and security issues.
+• Delivered L1/L2/L3 support for mission-critical applications, minimizing downtime and achieving 99% SLA compliance.
+• Troubleshot complex issues across Java/.NET backends, databases, APIs, and middleware, implementing root cause fixes to reduce recurrence by 30%.
+• Managed Linux-based systems (hardware, LVM, networking, LDAP, storage) and VMware/Hyper-V BareMetal hypervisors for optimized virtualization.
+• Administered user and device management in Windows Server 2012 R2, enforcing access controls and policies.
+• Automated routine support tasks with Python and Shell scripts, streamlining workflows and cutting manual effort by 40%.`,
           color: "#fc1f20",
         },
       ],
