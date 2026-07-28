@@ -9,7 +9,6 @@ export default function BlogCard({ blog, theme }) {
     publishDate,
     slug,
     coverImage: imageUrl,
-    author,
     tags,
     readTime,
     likes,
