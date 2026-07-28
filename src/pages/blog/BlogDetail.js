@@ -202,9 +202,9 @@ class BlogDetail extends Component {
       readTime,
       summary,
     } = blog;
-    const displayAuthor = author || {
+    const displayAuthor = {
       name: "Amrit Bhattarai",
-      avatar: require("../../assests/images/amrit_profile.jpeg"),
+      avatar: require("../../assests/images/amrit-pp.jpg"),
     };
     const displayTags = tags || ["Engineering"];
     const displayReadTime = readTime || "5 min read";
