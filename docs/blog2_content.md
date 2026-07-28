@@ -1,8 +1,8 @@
-In my [previous post](/blogs/how-i-built-a-serverless-portfolio-on-aws), I walked through how the frontend of this portfolio is hosted on AWS using S3, CloudFront, and Route53. Today, let's go deeper — into the **backend** that powers the blog engine you are reading this on right now.
+In my [previous post](/blogs/how-i-built-a-serverless-portfolio-on-aws), I walked through how the frontend of this portfolio is hosted on AWS using S3, CloudFront, and Route53. Today, let's go deeper - into the **backend** that powers the blog engine you are reading this on right now.
 
 Every blog post, every like, every comment you see on this site is read from and written to a real database through a real REST API. And the entire thing runs on **AWS Lambda + API Gateway + DynamoDB**, with zero servers to manage.
 
-In this post, I'll show you exactly how I designed and built it — including the DynamoDB table schema, the Lambda function structure, the API Gateway configuration, and the IAM roles that tie it all together.
+In this post, I'll show you exactly how I designed and built it - including the DynamoDB table schema, the Lambda function structure, the API Gateway configuration, and the IAM roles that tie it all together.
 
 ---
 
@@ -74,11 +74,11 @@ Each blog post is identified by its **slug** (e.g., `how-i-built-a-serverless-po
 }
 ```
 
-> **Why `PAY_PER_REQUEST`?** With on-demand billing, you pay only for the read/write operations you actually use. For a low-traffic portfolio, this costs essentially nothing — typically under \$0.10/month.
+> **Why `PAY_PER_REQUEST`?** With on-demand billing, you pay only for the read/write operations you actually use. For a low-traffic portfolio, this costs essentially nothing - typically under \$0.10/month.
 
 ---
 
-## Step 2: Lambda Function — One Function, All Routes
+## Step 2: Lambda Function - One Function, All Routes
 
 Instead of creating a separate Lambda for each endpoint (which means more infrastructure to manage), I use a **single Lambda function as a router**. The function reads `rawPath` and the HTTP method to decide what to do.
 
@@ -122,7 +122,7 @@ def lambda_handler(event, context):
     return {'statusCode': 404, 'body': json.dumps({'error': 'Not found'})}
 ```
 
-This pattern keeps the infrastructure simple — one function, one deployment, one log group — while the routing logic lives cleanly in Python.
+This pattern keeps the infrastructure simple - one function, one deployment, one log group - while the routing logic lives cleanly in Python.
 
 ---
 
@@ -130,7 +130,7 @@ This pattern keeps the infrastructure simple — one function, one deployment, o
 
 Let's look at the two most important handlers: fetching all blogs and creating a comment.
 
-### `get_all_blogs()` — Reading from DynamoDB
+### `get_all_blogs()` - Reading from DynamoDB
 
 ```python
 def get_all_blogs():
@@ -162,7 +162,7 @@ def get_all_blogs():
 
 > **`decimal_serializer`**: DynamoDB returns numbers as Python `Decimal` types, which the default `json.dumps` cannot serialize. A small helper converts them to `int` or `float` before serializing.
 
-### `comment_blog(event, slug)` — Writing and Authentication
+### `comment_blog(event, slug)` - Writing and Authentication
 
 Comments require authentication. The handler first verifies the JWT token from the `Authorization` header, then appends the comment to the blog's `comments` list in DynamoDB.
 
@@ -219,12 +219,12 @@ The `list_append(if_not_exists(comments, :empty), :c)` expression is a DynamoDB 
 
 ---
 
-## Step 4: Authentication — Cognito JWT Verification
+## Step 4: Authentication - Cognito JWT Verification
 
 The `authenticate()` function supports two token types:
 
-- **Custom JWTs** — issued by the Lambda itself for admin users
-- **Cognito JWTs** — issued by AWS Cognito for Google Sign-In users
+- **Custom JWTs** - issued by the Lambda itself for admin users
+- **Cognito JWTs** - issued by AWS Cognito for Google Sign-In users
 
 ```python
 def authenticate(event):
@@ -281,7 +281,7 @@ def verify_cognito_jwt(token):
 
 ---
 
-## Step 5: API Gateway — HTTP API
+## Step 5: API Gateway - HTTP API
 
 I use the newer **HTTP API** (v2) rather than the legacy REST API (v1). HTTP APIs are cheaper, faster, and simpler:
 
@@ -304,7 +304,7 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
   integration_method = "POST"
 }
 
-# Catch-all route — Lambda handles routing internally
+# Catch-all route - Lambda handles routing internally
 resource "aws_apigatewayv2_route" "default_route" {
   api_id    = aws_apigatewayv2_api.api.id
   route_key = "$default"
@@ -322,9 +322,9 @@ The `$default` route sends **every request** to the Lambda regardless of path or
 
 ---
 
-## Step 6: IAM Role — Least Privilege
+## Step 6: IAM Role - Least Privilege
 
-The Lambda function needs permission to read and write to DynamoDB. I follow the **principle of least privilege** — only the permissions it actually needs:
+The Lambda function needs permission to read and write to DynamoDB. I follow the **principle of least privilege** - only the permissions it actually needs:
 
 ```hcl
 resource "aws_iam_role_policy" "lambda_dynamodb_policy" {
@@ -405,17 +405,17 @@ resource "aws_lambda_function" "api_lambda" {
 }
 ```
 
-> **Gotcha:** The `triggers` block in `null_resource` only runs `pip install` when `requirements.txt` changes. If you update your Python code without changing requirements, the old packages in the zip remain — which is fine. But if you ever switch package sources or versions, you must update `requirements.txt` to trigger a fresh install.
+> **Gotcha:** The `triggers` block in `null_resource` only runs `pip install` when `requirements.txt` changes. If you update your Python code without changing requirements, the old packages in the zip remain - which is fine. But if you ever switch package sources or versions, you must update `requirements.txt` to trigger a fresh install.
 
 ---
 
 ## Lessons Learned
 
-1. **A single Lambda router is simpler than many small Lambdas.** Less infrastructure, one log group, one deployment. The tradeoff is that a bug in the router affects all routes — but that is easy to mitigate with thorough testing.
+1. **A single Lambda router is simpler than many small Lambdas.** Less infrastructure, one log group, one deployment. The tradeoff is that a bug in the router affects all routes - but that is easy to mitigate with thorough testing.
 
 2. **`PAY_PER_REQUEST` DynamoDB is perfect for low-traffic apps.** No capacity planning, no wasted money on idle capacity.
 
-3. **Design your DynamoDB access patterns first.** I store comments and likes directly on the blog item. This means a single `GetItem` call returns everything — no JOINs, no extra queries.
+3. **Design your DynamoDB access patterns first.** I store comments and likes directly on the blog item. This means a single `GetItem` call returns everything - no JOINs, no extra queries.
 
 4. **HTTP API (v2) is almost always better than REST API (v1) for new projects.** It is cheaper, faster to configure in Terraform, and handles CORS natively.
 
@@ -425,6 +425,6 @@ resource "aws_lambda_function" "api_lambda" {
 
 ## What's Next?
 
-In the next post, I will cover **AWS Cognito** — how I set up user authentication with email/password sign-up, email verification, and Google OAuth, so users can sign in with one click and post comments.
+In the next post, I will cover **AWS Cognito** - how I set up user authentication with email/password sign-up, email verification, and Google OAuth, so users can sign in with one click and post comments.
 
 If you have questions about the architecture or hit any issues replicating it, drop a comment below. Happy building! :)
