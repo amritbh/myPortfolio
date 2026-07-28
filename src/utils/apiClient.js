@@ -42,6 +42,11 @@ export const clearSession = () => {
   }
 };
 
+const defaultAuthor = {
+  name: "Amrit Bhattarai",
+  avatar: require("../assests/images/amrit-pp.jpg"),
+};
+
 // Mock data in case the API isn't deployed yet or for local dev without DB
 const mockBlogs = [
   {
@@ -52,10 +57,7 @@ const mockBlogs = [
     publishDate: "2026-07-04T12:00:00Z",
     coverImage:
       "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80",
-    author: {
-      name: "Amrit",
-      avatar: "https://avatars.githubusercontent.com/u/79965355?v=4",
-    },
+    author: defaultAuthor,
     tags: ["AWS", "Terraform", "DevOps"],
     readTime: "6 min read",
     content:
@@ -70,8 +72,8 @@ const mockBlogs = [
     coverImage:
       "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80",
     author: {
-      name: "Amrit",
-      avatar: "https://avatars.githubusercontent.com/u/79965355?v=4",
+      name: "Amrit Bhattarai",
+      avatar: require("../assests/images/amrit-pp.jpg"),
     },
     tags: ["Python", "Serverless", "DynamoDB"],
     readTime: "8 min read",
@@ -87,8 +89,8 @@ const mockBlogs = [
     coverImage:
       "https://images.unsplash.com/photo-1558655146-d09347e92766?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80",
     author: {
-      name: "Amrit",
-      avatar: "https://avatars.githubusercontent.com/u/79965355?v=4",
+      name: "Amrit Bhattarai",
+      avatar: require("../assests/images/amrit-pp.jpg"),
     },
     tags: ["React", "UI/UX", "CSS"],
     readTime: "5 min read",
@@ -426,10 +428,7 @@ export const fetchMediumBlogs = async () => {
           summary,
           publishDate: item.pubDate,
           coverImage: imageUrl,
-          author: {
-            name: item.author || "Amrit Bhattarai",
-            avatar: "https://avatars.githubusercontent.com/u/79965355?v=4",
-          },
+          author: defaultAuthor,
           tags: item.categories?.length ? item.categories : ["Medium"],
           readTime: "5 min read",
           isExternal: true,

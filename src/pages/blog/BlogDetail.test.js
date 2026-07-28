@@ -30,6 +30,7 @@ const renderWithRouter = (ui) => {
 describe("BlogDetail Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    window.alert = jest.fn();
   });
 
   it("renders blog details correctly", async () => {
@@ -67,7 +68,7 @@ describe("BlogDetail Component", () => {
         screen.getByText("This is a test blog content.")
       ).toBeInTheDocument();
       expect(screen.getByText(/Great post!/i)).toBeInTheDocument();
-      expect(screen.getByText("Amrit Bhattarai")).toBeInTheDocument();
+      expect(screen.getAllByText("Amrit Bhattarai").length).toBeGreaterThan(0);
     });
 
     jest

@@ -35,7 +35,7 @@ describe("BlogCard Component", () => {
     expect(screen.getByText("Test Blog")).toBeInTheDocument();
     expect(screen.getByText("React")).toBeInTheDocument();
     expect(screen.getByText("JavaScript")).toBeInTheDocument();
-    expect(screen.getByText("Amrit")).toBeInTheDocument();
+    expect(screen.getByText("Amrit Bhattarai")).toBeInTheDocument();
     expect(screen.getByRole("img", { name: "likes" })).toBeInTheDocument();
     expect(screen.getByText(/2/)).toBeInTheDocument();
     expect(screen.getByRole("img", { name: "comments" })).toBeInTheDocument();
