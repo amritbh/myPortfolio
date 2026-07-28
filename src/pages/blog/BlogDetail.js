@@ -203,8 +203,8 @@ class BlogDetail extends Component {
       summary,
     } = blog;
     const displayAuthor = author || {
-      name: "Amrit",
-      avatar: "https://avatars.githubusercontent.com/u/79965355?v=4",
+      name: "Amrit Bhattarai",
+      avatar: require("../../assests/images/amrit_profile.jpeg"),
     };
     const displayTags = tags || ["Engineering"];
     const displayReadTime = readTime || "5 min read";
@@ -466,8 +466,7 @@ class BlogDetail extends Component {
                   className="medium-author-card-bio"
                   style={{ color: theme.secondaryText }}
                 >
-                  Software Engineer · AWS · Terraform · React. Sharing what I
-                  learn.
+                  Amrit Bhattarai, Sr. Cloud Software Engineer
                 </p>
               </div>
             </div>
@@ -489,7 +488,10 @@ class BlogDetail extends Component {
                 <form
                   onSubmit={this.handleAddComment}
                   className="medium-response-form"
-                  style={{ borderColor: theme.imageDark }}
+                  style={{
+                    backgroundColor: theme.body,
+                    boxShadow: "0 8px 30px rgba(0, 0, 0, 0.12)",
+                  }}
                 >
                   {user && user.picture ? (
                     <img
@@ -526,9 +528,8 @@ class BlogDetail extends Component {
                       placeholder="What are your thoughts?"
                       className="medium-response-textarea"
                       style={{
-                        backgroundColor: theme.body,
+                        backgroundColor: "transparent",
                         color: theme.text,
-                        borderColor: theme.imageDark,
                       }}
                       rows={3}
                       required

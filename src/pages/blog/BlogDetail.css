@@ -346,12 +346,16 @@
 
 .medium-response-form {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   align-items: flex-start;
   margin-bottom: 40px;
-  padding: 16px;
-  border: 1px solid;
-  border-radius: 4px;
+  padding: 24px;
+  border-radius: 12px;
+  transition: box-shadow 0.3s ease;
+}
+
+.medium-response-form:focus-within {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
 }
 
 .medium-response-avatar {
@@ -368,14 +372,20 @@
 
 .medium-response-textarea {
   width: 100%;
-  border: 1px solid;
-  border-radius: 4px;
-  padding: 10px 12px;
-  font-size: 0.95rem;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  border-radius: 0;
+  padding: 8px 0;
+  font-size: 1.05rem;
   font-family: inherit;
   resize: vertical;
   box-sizing: border-box;
   outline: none;
+  transition: border-bottom-color 0.2s ease;
+}
+
+.medium-response-textarea:focus {
+  border-bottom-color: #1a8917;
 }
 
 .medium-response-actions {
