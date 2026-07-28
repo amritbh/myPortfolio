@@ -197,7 +197,6 @@ class BlogDetail extends Component {
       publishDate,
       coverImage,
       content,
-      author,
       tags,
       readTime,
       summary,
@@ -577,7 +576,11 @@ class BlogDetail extends Component {
                     className="medium-no-responses-empty"
                     style={{ backgroundColor: theme.imageDark }}
                   >
-                    <div className="empty-bubble">💬</div>
+                    <div className="empty-bubble">
+                      <span role="img" aria-label="comment">
+                        💬
+                      </span>
+                    </div>
                     <p style={{ color: theme.secondaryText }}>
                       No responses yet. Be the first to share your thoughts!
                     </p>
