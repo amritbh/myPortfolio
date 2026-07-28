@@ -551,30 +551,37 @@ class BlogDetail extends Component {
                 </form>
               ) : (
                 <div
-                  className="medium-response-login"
-                  style={{ borderColor: theme.imageDark }}
+                  className="medium-response-login-box"
+                  style={{
+                    backgroundColor: theme.imageDark,
+                    border: `1px solid ${theme.imageDark}`,
+                  }}
                 >
-                  <a
-                    href="/login"
-                    style={{ color: "#1a8917", fontWeight: 600 }}
-                  >
-                    Sign in
-                  </a>{" "}
-                  <span style={{ color: theme.secondaryText }}>
-                    to respond to this story.
-                  </span>
+                  <div className="login-box-text">
+                    <h4 style={{ color: theme.text }}>Join the Conversation</h4>
+                    <p style={{ color: theme.secondaryText }}>
+                      Sign in to share your thoughts, ask questions, and engage
+                      with this story.
+                    </p>
+                  </div>
+                  <a href="/login" className="login-box-button">
+                    Sign In
+                  </a>
                 </div>
               )}
 
               {/* Comment List */}
               <div className="medium-response-list">
                 {comments.length === 0 ? (
-                  <p
-                    className="medium-no-responses"
-                    style={{ color: theme.secondaryText }}
+                  <div
+                    className="medium-no-responses-empty"
+                    style={{ backgroundColor: theme.imageDark }}
                   >
-                    Be the first to respond.
-                  </p>
+                    <div className="empty-bubble">💬</div>
+                    <p style={{ color: theme.secondaryText }}>
+                      No responses yet. Be the first to share your thoughts!
+                    </p>
+                  </div>
                 ) : (
                   comments.map((c) => (
                     <div
