@@ -15,6 +15,12 @@ This project uses **Terraform** for AWS resource management and **Terragrunt** f
 | Terragrunt   | `0.53.8`                          |
 | AWS Provider | Defined in module `main.tf` files |
 
+## AWS Profile Conventions
+
+- The primary AWS account used for this project is managed by the `amrit990` profile.
+- All local AWS CLI and Terraform commands should assume the `amrit990` credentials as the `[default]` profile or explicitly pass `--profile amrit990`.
+- Do NOT use the legacy `jaybhole` profile for this project.
+
 ## Directory Structure
 
 ```
