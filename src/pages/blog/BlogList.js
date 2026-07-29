@@ -155,7 +155,7 @@ class BlogList extends Component {
             >
               <div className="medium-sidebar-author">
                 <img
-                  src="https://avatars.githubusercontent.com/u/79965355?v=4"
+                  src={require("../../assests/images/amrit-pp.jpg")}
                   alt="Amrit Bhattarai"
                   className="medium-sidebar-avatar"
                 />
