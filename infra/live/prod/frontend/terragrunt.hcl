@@ -16,6 +16,7 @@ dependency "backend" {
   }
 
   mock_outputs_allowed_terraform_commands = ["validate", "plan"]
+  mock_outputs_merge_strategy_with_state  = "shallow"
 }
 
 inputs = {
