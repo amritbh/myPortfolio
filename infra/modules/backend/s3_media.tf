@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 # S3 Bucket for Blog Media (images, videos)
 resource "aws_s3_bucket" "media_bucket" {
   bucket = "${var.project_name}-${var.environment}-media"
@@ -31,7 +33,7 @@ resource "aws_s3_bucket_cors_configuration" "media_bucket_cors" {
 
 # S3 Bucket Policy — allow the main amrit.cloud CloudFront distribution to read objects
 # Media is served at amrit.cloud/media/* via a second origin on the existing distribution
-# The frontend_cloudfront_arn is passed in as a variable from the Terragrunt dependency
+# CloudFront distribution OAC reads are allowed for the entire account
 resource "aws_s3_bucket_policy" "media_cloudfront_policy" {
   bucket     = aws_s3_bucket.media_bucket.id
   depends_on = [aws_s3_bucket_public_access_block.media_bucket_pab]
@@ -48,8 +50,8 @@ resource "aws_s3_bucket_policy" "media_cloudfront_policy" {
         Action   = "s3:GetObject"
         Resource = "${aws_s3_bucket.media_bucket.arn}/*"
         Condition = {
-          StringEquals = {
-            "AWS:SourceArn" = var.frontend_cloudfront_arn
+          StringLike = {
+            "AWS:SourceArn" = "arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:distribution/*"
           }
         }
       }

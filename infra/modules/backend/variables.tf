@@ -65,8 +65,3 @@ variable "github_client_secret" {
   default     = ""
 }
 
-variable "frontend_cloudfront_arn" {
-  type        = string
-  description = "ARN of the main amrit.cloud CloudFront distribution — used to authorize media S3 bucket reads"
-  default     = ""
-}
