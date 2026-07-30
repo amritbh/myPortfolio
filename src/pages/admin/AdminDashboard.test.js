@@ -1,5 +1,11 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import AdminDashboard from "./AdminDashboard";
 import { MemoryRouter, Route } from "react-router-dom";
 import * as apiClient from "../../utils/apiClient";
@@ -253,5 +259,86 @@ describe("AdminDashboard Component", () => {
 
     const h2Btn = screen.getByRole("button", { name: "H2" });
     fireEvent.mouseDown(h2Btn);
+  });
+  it("handles media upload via file input", async () => {
+    const uploadSpy = jest
+      .spyOn(apiClient, "uploadMediaToS3")
+      .mockResolvedValue({
+        success: true,
+        url: "https://amrit.cloud/media/image.png",
+      });
+
+    render(
+      <MemoryRouter initialEntries={["/admin"]}>
+        <Route
+          render={(props) => <AdminDashboard theme={mockTheme} {...props} />}
+        />
+      </MemoryRouter>
+    );
+
+    const file = new File(["hello"], "hello.png", { type: "image/png" });
+    const input = document.querySelector('input[type="file"]');
+
+    await act(async () => {
+      fireEvent.change(input, { target: { files: [file] } });
+    });
+
+    expect(uploadSpy).toHaveBeenCalledWith(file, expect.any(Function));
+  });
+
+  it("handles drag and drop media upload", async () => {
+    const uploadSpy = jest
+      .spyOn(apiClient, "uploadMediaToS3")
+      .mockResolvedValue({
+        success: true,
+        url: "https://amrit.cloud/media/dropped.png",
+      });
+
+    render(
+      <MemoryRouter initialEntries={["/admin"]}>
+        <Route
+          render={(props) => <AdminDashboard theme={mockTheme} {...props} />}
+        />
+      </MemoryRouter>
+    );
+
+    const dropZone = document.querySelector(".ag-drop-zone");
+    const file = new File(["hello"], "dropped.png", { type: "image/png" });
+
+    await act(async () => {
+      fireEvent.drop(dropZone, {
+        dataTransfer: {
+          files: [file],
+        },
+      });
+    });
+
+    expect(uploadSpy).toHaveBeenCalledWith(file, expect.any(Function));
+  });
+
+  it("handles media upload failure", async () => {
+    const uploadSpy = jest
+      .spyOn(apiClient, "uploadMediaToS3")
+      .mockResolvedValue({
+        success: false,
+        error: "Upload failed",
+      });
+
+    render(
+      <MemoryRouter initialEntries={["/admin"]}>
+        <Route
+          render={(props) => <AdminDashboard theme={mockTheme} {...props} />}
+        />
+      </MemoryRouter>
+    );
+
+    const file = new File(["hello"], "error.png", { type: "image/png" });
+    const input = document.querySelector('input[type="file"]');
+
+    await act(async () => {
+      fireEvent.change(input, { target: { files: [file] } });
+    });
+
+    expect(uploadSpy).toHaveBeenCalled();
   });
 });
