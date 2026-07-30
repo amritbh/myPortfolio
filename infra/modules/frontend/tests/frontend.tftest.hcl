@@ -1,7 +1,8 @@
 variables {
-  domain_name = "test.amrit.cloud"
+  domain_name                  = "test.amrit.cloud"
+  media_bucket_arn             = "arn:aws:s3:::mock-media-bucket"
+  media_bucket_regional_domain = "mock-media-bucket.s3.us-east-1.amazonaws.com"
 }
-
 run "valid_plan" {
   command = plan
 

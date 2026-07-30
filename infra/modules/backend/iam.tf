@@ -49,6 +49,14 @@ resource "aws_iam_role_policy" "dynamodb_read_policy" {
         ],
         Effect   = "Allow",
         Resource = "*"
+      },
+      {
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject"
+        ]
+        Effect   = "Allow"
+        Resource = "${aws_s3_bucket.media_bucket.arn}/media/*"
       }
     ]
   })

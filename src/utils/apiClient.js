@@ -444,3 +444,86 @@ export const fetchMediumBlogs = async () => {
     return [];
   }
 };
+
+/**
+ * Get a presigned S3 PUT URL for direct browser upload of media files.
+ * Admin-only. Returns { presigned_url, cloudfront_url, key } on success.
+ */
+export const getMediaUploadUrl = async (filename, contentType) => {
+  if (!API_URL) {
+    // Mock: return a fake URL in local dev
+    console.warn("API URL not configured, using mock media upload URL.");
+    return {
+      success: true,
+      presigned_url: null,
+      cloudfront_url: `https://amrit.cloud/media/mock-${Date.now()}-${filename}`,
+      key: `media/mock-${Date.now()}-${filename}`,
+    };
+  }
+  const token = getStoredToken();
+  if (!token) return { success: false, error: "Not authenticated" };
+  try {
+    const response = await fetch(`${API_URL}/media/upload-url`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ filename, content_type: contentType }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      return {
+        success: false,
+        error: data.error || `Error: ${response.status}`,
+      };
+    }
+    return { success: true, ...data };
+  } catch (err) {
+    console.error("Error fetching media upload URL:", err);
+    return { success: false, error: "Network error fetching upload URL" };
+  }
+};
+
+/**
+ * Upload a file directly to S3 via presigned URL, return the CloudFront CDN URL.
+ * Orchestrates the full flow: get presigned URL then PUT to S3 then return cdn_url.
+ *
+ * @param {File} file - The browser File object
+ * @param {function} onProgress - Optional callback (0 to 100)
+ * @returns {{ success: boolean, url?: string, error?: string }}
+ */
+export const uploadMediaToS3 = async (file, onProgress = null) => {
+  const urlResult = await getMediaUploadUrl(file.name, file.type);
+  if (!urlResult.success) return urlResult;
+
+  // Mock mode: no actual upload needed
+  if (!urlResult.presigned_url) {
+    if (onProgress) onProgress(100);
+    return { success: true, url: urlResult.cloudfront_url };
+  }
+
+  try {
+    await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("PUT", urlResult.presigned_url, true);
+      xhr.setRequestHeader("Content-Type", file.type);
+      if (onProgress) {
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable)
+            onProgress(Math.round((e.loaded / e.total) * 100));
+        };
+      }
+      xhr.onload = () =>
+        xhr.status === 200
+          ? resolve()
+          : reject(new Error(`S3 upload failed: ${xhr.status}`));
+      xhr.onerror = () => reject(new Error("Network error during S3 upload"));
+      xhr.send(file);
+    });
+    if (onProgress) onProgress(100);
+    return { success: true, url: urlResult.cloudfront_url };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};

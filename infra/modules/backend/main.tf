@@ -77,10 +77,8 @@ resource "aws_lambda_function" "api_lambda" {
       COGNITO_USER_POOL_ID = aws_cognito_user_pool.pool.id
       COGNITO_REGION       = data.aws_region.current.name
       COGNITO_CLIENT_ID    = aws_cognito_user_pool_client.client.id
+      MEDIA_BUCKET_NAME    = aws_s3_bucket.media_bucket.id
+      CLOUDFRONT_MEDIA_URL = "https://amrit.cloud"
     }
   }
 }
-
-
-
-

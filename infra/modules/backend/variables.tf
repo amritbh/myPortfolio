@@ -64,3 +64,4 @@ variable "github_client_secret" {
   description = "Client Secret for GitHub OAuth"
   default     = ""
 }
+

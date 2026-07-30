@@ -397,4 +397,156 @@ describe("apiClient API unreachable", () => {
     const res = await apiClient.fetchMediumBlogs();
     expect(res).toEqual([]);
   });
+
+  it("getMediaUploadUrl success", async () => {
+    apiClient.setSession("token123", { username: "test", role: "admin" });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        presigned_url: "https://presigned.url",
+        cloudfront_url: "https://cdn.url/image.png",
+        key: "media/image.png",
+      }),
+    });
+    const res = await apiClient.getMediaUploadUrl("test.png", "image/png");
+    expect(res.success).toBe(true);
+    expect(res.presigned_url).toBe("https://presigned.url");
+  });
+
+  it("getMediaUploadUrl unauthenticated", async () => {
+    sessionStorage.clear();
+    localStorage.clear();
+    const res = await apiClient.getMediaUploadUrl("test.png", "image/png");
+    expect(res.success).toBe(false);
+    expect(res.error).toBe("Not authenticated");
+  });
+
+  it("getMediaUploadUrl returns mock when API_URL is null", async () => {
+    // temporarily unset API_URL
+    const originalApi = process.env.REACT_APP_CUSTOM_API_URL;
+    delete process.env.REACT_APP_CUSTOM_API_URL;
+
+    // We need to re-require the module to apply the null API_URL
+    jest.resetModules();
+    const newApiClient = require("./apiClient");
+
+    const res = await newApiClient.getMediaUploadUrl("test.png", "image/png");
+    expect(res.success).toBe(true);
+    expect(res.presigned_url).toBeNull();
+    expect(res.cloudfront_url).toContain("mock");
+
+    // restore
+    process.env.REACT_APP_CUSTOM_API_URL = originalApi;
+  });
+
+  it("uploadMediaToS3 mock mode", async () => {
+    const originalApi = process.env.REACT_APP_CUSTOM_API_URL;
+    delete process.env.REACT_APP_CUSTOM_API_URL;
+    jest.resetModules();
+    const newApiClient = require("./apiClient");
+
+    const file = new File(["dummy content"], "test.png", { type: "image/png" });
+    const progressSpy = jest.fn();
+    const res = await newApiClient.uploadMediaToS3(file, progressSpy);
+
+    expect(res.success).toBe(true);
+    expect(progressSpy).toHaveBeenCalledWith(100);
+    expect(res.url).toContain("mock");
+
+    process.env.REACT_APP_CUSTOM_API_URL = originalApi;
+  });
+
+  it("getMediaUploadUrl returns error if response not ok", async () => {
+    apiClient.setSession("token123", { username: "test", role: "admin" });
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      json: async () => ({ error: "Bad Request" }),
+    });
+    const res = await apiClient.getMediaUploadUrl("test.png", "image/png");
+    expect(res.success).toBe(false);
+    expect(res.error).toBe("Bad Request");
+  });
+
+  it("getMediaUploadUrl returns network error on fetch fail", async () => {
+    apiClient.setSession("token123", { username: "test", role: "admin" });
+    global.fetch.mockRejectedValueOnce(new Error("API Unreachable"));
+    const res = await apiClient.getMediaUploadUrl("test.png", "image/png");
+    expect(res.success).toBe(false);
+    expect(res.error).toBe("Network error fetching upload URL");
+  });
+
+  it("uploadMediaToS3 returns error if getMediaUploadUrl fails", async () => {
+    apiClient.setSession("token123", { username: "test", role: "admin" });
+    global.fetch.mockRejectedValueOnce(new Error("API Unreachable"));
+    const file = new File(["dummy"], "test.png", { type: "image/png" });
+    const res = await apiClient.uploadMediaToS3(file);
+    expect(res.success).toBe(false);
+  });
+
+  it("uploadMediaToS3 success with actual XHR", async () => {
+    apiClient.setSession("token123", { username: "test", role: "admin" });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        presigned_url: "https://presigned.url",
+        cloudfront_url: "https://cdn.url/image.png",
+        key: "media/image.png",
+      }),
+    });
+
+    const mockXhr = {
+      open: jest.fn(),
+      setRequestHeader: jest.fn(),
+      send: jest.fn(function () {
+        if (this.upload && this.upload.onprogress) {
+          this.upload.onprogress({
+            lengthComputable: true,
+            loaded: 50,
+            total: 100,
+          });
+        }
+        this.status = 200;
+        this.onload();
+      }),
+      upload: {},
+    };
+    window.XMLHttpRequest = jest.fn(() => mockXhr);
+
+    const file = new File(["dummy"], "test.png", { type: "image/png" });
+    const progressSpy = jest.fn();
+    const res = await apiClient.uploadMediaToS3(file, progressSpy);
+
+    expect(res.success).toBe(true);
+    expect(res.url).toBe("https://cdn.url/image.png");
+    expect(progressSpy).toHaveBeenCalledWith(50);
+  });
+
+  it("uploadMediaToS3 failure with XHR network error", async () => {
+    apiClient.setSession("token123", { username: "test", role: "admin" });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        presigned_url: "https://presigned.url",
+        cloudfront_url: "https://cdn.url/image.png",
+        key: "media/image.png",
+      }),
+    });
+
+    const mockXhr = {
+      open: jest.fn(),
+      setRequestHeader: jest.fn(),
+      send: jest.fn(function () {
+        this.onerror();
+      }),
+      upload: {},
+    };
+    window.XMLHttpRequest = jest.fn(() => mockXhr);
+
+    const file = new File(["dummy"], "test.png", { type: "image/png" });
+    const res = await apiClient.uploadMediaToS3(file);
+
+    expect(res.success).toBe(false);
+    expect(res.error).toBe("Network error during S3 upload");
+  });
 });
