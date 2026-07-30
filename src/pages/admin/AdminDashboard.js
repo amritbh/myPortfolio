@@ -413,7 +413,7 @@ class AdminDashboard extends Component {
     this.setState({
       editingSlug: blog.slug,
       previewMode: false,
-      storiesOpen: false,
+      activeTab: "editor",
       formData: {
         title: blog.title || "",
         slug: blog.slug || "",
@@ -593,6 +593,7 @@ class AdminDashboard extends Component {
     this.setState({
       editingSlug: null,
       previewMode: false,
+      activeTab: "editor",
       formData: {
         title: "",
         slug: "",
@@ -621,10 +622,10 @@ class AdminDashboard extends Component {
       previewMode,
       editingSlug,
       blogs,
-      storiesOpen,
       insertMediaUploading,
       insertMediaProgress,
       insertMediaError,
+      activeTab,
     } = this.state;
 
     if (loading) {
@@ -684,12 +685,35 @@ class AdminDashboard extends Component {
               )}
             </div>
             <div className="ag-topbar-center">
+              <div className="ag-tabs">
+                <button
+                  type="button"
+                  className={`ag-tab-btn${
+                    activeTab === "editor" ? " active" : ""
+                  }`}
+                  onClick={() => this.setState({ activeTab: "editor" })}
+                >
+                  Editor
+                </button>
+                <button
+                  type="button"
+                  className={`ag-tab-btn${
+                    activeTab === "stories" ? " active" : ""
+                  }`}
+                  onClick={() => this.setState({ activeTab: "stories" })}
+                >
+                  My Stories
+                  {blogs.length > 0 && (
+                    <span className="ag-tab-badge">{blogs.length}</span>
+                  )}
+                </button>
+              </div>
+            </div>
+            <div className="ag-topbar-right">
               <div className="ag-user-pill">
                 <div className="ag-user-dot" />
                 {user?.username}
               </div>
-            </div>
-            <div className="ag-topbar-right">
               <button
                 type="button"
                 className={`ag-preview-btn${previewMode ? " active" : ""}`}
@@ -737,214 +761,200 @@ class AdminDashboard extends Component {
             <div className="ag-status-banner error">⚠ {insertMediaError}</div>
           )}
 
-          {/* ── Main Editor Grid ── */}
-          <div className="ag-editor-grid">
-            {/* Left: Writing Area */}
-            <div className="ag-editor-pane">
-              {!previewMode && (
-                <FormatToolbar
-                  onFormat={this.applyFormat}
-                  onInsertMedia={this.handleInsertMedia}
-                />
-              )}
-
-              {previewMode ? (
-                <div
-                  className="ag-preview-body markdown-body"
-                  dangerouslySetInnerHTML={{ __html: htmlPreview }}
-                />
-              ) : (
-                <>
-                  <textarea
-                    className="ag-title-input"
-                    name="title"
-                    value={formData.title}
-                    onChange={this.handleInputChange}
-                    placeholder="Your story title…"
-                    rows={1}
-                    onInput={(e) => {
-                      e.target.style.height = "auto";
-                      e.target.style.height = e.target.scrollHeight + "px";
-                    }}
-                  />
-                  <textarea
-                    className="ag-subtitle-input"
-                    name="summary"
-                    value={formData.summary}
-                    onChange={this.handleInputChange}
-                    placeholder="Write a compelling summary…"
-                    rows={2}
-                    onInput={(e) => {
-                      e.target.style.height = "auto";
-                      e.target.style.height = e.target.scrollHeight + "px";
-                    }}
-                  />
-                  <textarea
-                    ref={this.textareaRef}
-                    className="ag-content-input"
-                    name="content"
-                    value={formData.content}
-                    onChange={this.handleInputChange}
-                    placeholder="Write your story… Markdown is supported"
-                    onInput={(e) => {
-                      e.target.style.height = "auto";
-                      e.target.style.height = e.target.scrollHeight + "px";
-                    }}
-                  />
-                </>
-              )}
-            </div>
-
-            {/* Right: Publish Sidebar */}
-            <aside className="ag-sidebar">
-              <div className="ag-sidebar-inner">
-                {/* Cover Media */}
-                <section className="ag-sidebar-section">
-                  <div className="ag-sidebar-section-header">
-                    <span className="ag-sidebar-section-icon">🖼</span>
-                    <span className="ag-sidebar-section-label">
-                      Cover Media
-                    </span>
-                  </div>
-                  <CoverMediaUploader
-                    value={formData.coverImage}
-                    onChange={(url) =>
-                      this.setState((prev) => ({
-                        formData: { ...prev.formData, coverImage: url },
-                      }))
-                    }
-                  />
-                </section>
-
-                {/* URL Slug */}
-                <section className="ag-sidebar-section">
-                  <div className="ag-sidebar-section-header">
-                    <span
-                      className="ag-sidebar-section-icon"
-                      role="img"
-                      aria-label="URL"
+          {activeTab === "stories" ? (
+            <div className="ag-stories-full-view">
+              <div className="ag-stories-grid">
+                {blogs.length === 0 ? (
+                  <div className="ag-empty-state">
+                    <h3>No stories yet</h3>
+                    <p>Start writing your first blog post!</p>
+                    <button
+                      onClick={() => this.setState({ activeTab: "editor" })}
                     >
-                      🔗
-                    </span>
-                    <span className="ag-sidebar-section-label">URL Slug</span>
+                      Write a Story
+                    </button>
                   </div>
-                  <div className="ag-slug-preview">
-                    <span className="ag-slug-base">amrit.cloud/blogs/</span>
-                    <input
-                      type="text"
-                      name="slug"
-                      className="ag-sidebar-input"
-                      value={formData.slug}
-                      onChange={this.handleInputChange}
-                      placeholder="my-post-slug"
-                      required
+                ) : (
+                  blogs.map((blog) => (
+                    <StoryCard
+                      key={blog.slug}
+                      blog={blog}
+                      onEdit={this.handleEdit}
+                      onDelete={this.handleDelete}
                     />
-                  </div>
-                </section>
-
-                {/* Topics */}
-                <section className="ag-sidebar-section">
-                  <div className="ag-sidebar-section-header">
-                    <span className="ag-sidebar-section-icon">🏷</span>
-                    <span className="ag-sidebar-section-label">
-                      Topics
-                      <span className="ag-sidebar-section-count">
-                        {" "}
-                        {
-                          formData.tags.split(",").filter((t) => t.trim())
-                            .length
-                        }
-                        /5
-                      </span>
-                    </span>
-                  </div>
-                  <TagInput
-                    tags={formData.tags}
-                    onChange={(val) =>
-                      this.setState((prev) => ({
-                        formData: { ...prev.formData, tags: val },
-                      }))
-                    }
-                  />
-                </section>
-
-                {/* Read time */}
-                <section className="ag-sidebar-section">
-                  <div className="ag-sidebar-section-header">
-                    <span className="ag-sidebar-section-icon">⏱</span>
-                    <span className="ag-sidebar-section-label">Read Time</span>
-                  </div>
-                  <input
-                    type="text"
-                    name="readTime"
-                    className="ag-sidebar-input"
-                    value={formData.readTime}
-                    onChange={this.handleInputChange}
-                    placeholder={estimateReadTime(formData.content)}
-                  />
-                  <div className="ag-sidebar-hint">
-                    Auto-calculated from word count
-                  </div>
-                </section>
-
-                {/* Publish button */}
-                <button
-                  className={`ag-publish-btn${canPublish ? "" : " disabled"}`}
-                  disabled={!canPublish}
-                  onClick={this.handlePublish}
-                >
-                  {isPublishing
-                    ? "Publishing…"
-                    : editingSlug
-                    ? "✓ Update Story"
-                    : "🚀 Publish Now"}
-                </button>
-
-                {/* Stories toggle */}
-                <button
-                  type="button"
-                  className="ag-stories-toggle"
-                  onClick={() =>
-                    this.setState((prev) => ({
-                      storiesOpen: !prev.storiesOpen,
-                    }))
-                  }
-                >
-                  <span
-                    className="ag-stories-toggle"
-                    role="img"
-                    aria-label="Stories"
-                  >
-                    📚
-                  </span>{" "}
-                  My Stories
-                  <span className="ag-stories-count">{blogs.length}</span>
-                  <span className="ag-stories-caret">
-                    {storiesOpen ? "▲" : "▼"}
-                  </span>
-                </button>
-
-                {storiesOpen && (
-                  <div className="ag-stories-list">
-                    {blogs.length === 0 ? (
-                      <p className="ag-stories-empty">
-                        No stories published yet.
-                      </p>
-                    ) : (
-                      blogs.map((blog) => (
-                        <StoryCard
-                          key={blog.slug}
-                          blog={blog}
-                          onEdit={this.handleEdit}
-                          onDelete={this.handleDelete}
-                        />
-                      ))
-                    )}
-                  </div>
+                  ))
                 )}
               </div>
-            </aside>
-          </div>
+            </div>
+          ) : (
+            <div className="ag-editor-grid">
+              {/* ── Main Editor Grid ── */}
+              {/* Left: Writing Area */}
+              <div className="ag-editor-pane">
+                {!previewMode && (
+                  <FormatToolbar
+                    onFormat={this.applyFormat}
+                    onInsertMedia={this.handleInsertMedia}
+                  />
+                )}
+
+                {previewMode ? (
+                  <div
+                    className="ag-preview-body markdown-body"
+                    dangerouslySetInnerHTML={{ __html: htmlPreview }}
+                  />
+                ) : (
+                  <>
+                    <textarea
+                      className="ag-title-input"
+                      name="title"
+                      value={formData.title}
+                      onChange={this.handleInputChange}
+                      placeholder="Your story title…"
+                      rows={1}
+                      onInput={(e) => {
+                        e.target.style.height = "auto";
+                        e.target.style.height = e.target.scrollHeight + "px";
+                      }}
+                    />
+                    <textarea
+                      className="ag-subtitle-input"
+                      name="summary"
+                      value={formData.summary}
+                      onChange={this.handleInputChange}
+                      placeholder="Write a compelling summary…"
+                      rows={2}
+                      onInput={(e) => {
+                        e.target.style.height = "auto";
+                        e.target.style.height = e.target.scrollHeight + "px";
+                      }}
+                    />
+                    <textarea
+                      ref={this.textareaRef}
+                      className="ag-content-input"
+                      name="content"
+                      value={formData.content}
+                      onChange={this.handleInputChange}
+                      placeholder="Write your story… Markdown is supported"
+                      onInput={(e) => {
+                        e.target.style.height = "auto";
+                        e.target.style.height = e.target.scrollHeight + "px";
+                      }}
+                    />
+                  </>
+                )}
+              </div>
+
+              {/* Right: Publish Sidebar */}
+              <aside className="ag-sidebar">
+                <div className="ag-sidebar-inner">
+                  {/* Cover Media */}
+                  <section className="ag-sidebar-section">
+                    <div className="ag-sidebar-section-header">
+                      <span className="ag-sidebar-section-icon">🖼</span>
+                      <span className="ag-sidebar-section-label">
+                        Cover Media
+                      </span>
+                    </div>
+                    <CoverMediaUploader
+                      value={formData.coverImage}
+                      onChange={(url) =>
+                        this.setState((prev) => ({
+                          formData: { ...prev.formData, coverImage: url },
+                        }))
+                      }
+                    />
+                  </section>
+
+                  {/* URL Slug */}
+                  <section className="ag-sidebar-section">
+                    <div className="ag-sidebar-section-header">
+                      <span
+                        className="ag-sidebar-section-icon"
+                        role="img"
+                        aria-label="URL"
+                      >
+                        🔗
+                      </span>
+                      <span className="ag-sidebar-section-label">URL Slug</span>
+                    </div>
+                    <div className="ag-slug-preview">
+                      <span className="ag-slug-base">amrit.cloud/blogs/</span>
+                      <input
+                        type="text"
+                        name="slug"
+                        className="ag-sidebar-input"
+                        value={formData.slug}
+                        onChange={this.handleInputChange}
+                        placeholder="my-post-slug"
+                        required
+                      />
+                    </div>
+                  </section>
+
+                  {/* Topics */}
+                  <section className="ag-sidebar-section">
+                    <div className="ag-sidebar-section-header">
+                      <span className="ag-sidebar-section-icon">🏷</span>
+                      <span className="ag-sidebar-section-label">
+                        Topics
+                        <span className="ag-sidebar-section-count">
+                          {" "}
+                          {
+                            formData.tags.split(",").filter((t) => t.trim())
+                              .length
+                          }
+                          /5
+                        </span>
+                      </span>
+                    </div>
+                    <TagInput
+                      tags={formData.tags}
+                      onChange={(val) =>
+                        this.setState((prev) => ({
+                          formData: { ...prev.formData, tags: val },
+                        }))
+                      }
+                    />
+                  </section>
+
+                  {/* Read time */}
+                  <section className="ag-sidebar-section">
+                    <div className="ag-sidebar-section-header">
+                      <span className="ag-sidebar-section-icon">⏱</span>
+                      <span className="ag-sidebar-section-label">
+                        Read Time
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      name="readTime"
+                      className="ag-sidebar-input"
+                      value={formData.readTime}
+                      onChange={this.handleInputChange}
+                      placeholder={estimateReadTime(formData.content)}
+                    />
+                    <div className="ag-sidebar-hint">
+                      Auto-calculated from word count
+                    </div>
+                  </section>
+
+                  {/* Publish button */}
+                  <button
+                    className={`ag-publish-btn${canPublish ? "" : " disabled"}`}
+                    disabled={!canPublish}
+                    onClick={this.handlePublish}
+                  >
+                    {isPublishing
+                      ? "Publishing…"
+                      : editingSlug
+                      ? "✓ Update Story"
+                      : "🚀 Publish Now"}
+                  </button>
+                </div>
+              </aside>
+            </div>
+          )}
         </div>
       </div>
     );
