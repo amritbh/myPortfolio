@@ -279,9 +279,7 @@ describe("AdminDashboard Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
     const input = document.querySelector('input[type="file"]');
 
-    await act(async () => {
-      fireEvent.change(input, { target: { files: [file] } });
-    });
+    await fireEvent.change(input, { target: { files: [file] } });
 
     expect(uploadSpy).toHaveBeenCalledWith(file, expect.any(Function));
   });
@@ -305,12 +303,10 @@ describe("AdminDashboard Component", () => {
     const dropZone = document.querySelector(".ag-drop-zone");
     const file = new File(["hello"], "dropped.png", { type: "image/png" });
 
-    await act(async () => {
-      fireEvent.drop(dropZone, {
-        dataTransfer: {
-          files: [file],
-        },
-      });
+    await fireEvent.drop(dropZone, {
+      dataTransfer: {
+        files: [file],
+      },
     });
 
     expect(uploadSpy).toHaveBeenCalledWith(file, expect.any(Function));
@@ -335,9 +331,7 @@ describe("AdminDashboard Component", () => {
     const file = new File(["hello"], "error.png", { type: "image/png" });
     const input = document.querySelector('input[type="file"]');
 
-    await act(async () => {
-      fireEvent.change(input, { target: { files: [file] } });
-    });
+    await fireEvent.change(input, { target: { files: [file] } });
 
     expect(uploadSpy).toHaveBeenCalled();
   });

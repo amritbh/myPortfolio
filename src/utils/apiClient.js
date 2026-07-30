@@ -480,6 +480,7 @@ export const getMediaUploadUrl = async (filename, contentType) => {
     }
     return { success: true, ...data };
   } catch (err) {
+    console.error("Error fetching media upload URL:", err);
     return { success: false, error: "Network error fetching upload URL" };
   }
 };

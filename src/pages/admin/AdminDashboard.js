@@ -79,10 +79,16 @@ function TagInput({ tags, onChange }) {
     onChange(next.join(", "));
   };
 
+  const getPlaceholder = () => {
+    if (tagList.length === 0) return "Add topic… (Enter)";
+    if (tagList.length < 5) return "+";
+    return "";
+  };
+
   return (
     <div className="ag-tag-input">
       {tagList.map((tag, i) => (
-        <span key={i} className="ag-tag-chip">
+        <span key={tag} className="ag-tag-chip">
           {tag}
           <button
             type="button"
@@ -96,13 +102,7 @@ function TagInput({ tags, onChange }) {
       <input
         type="text"
         value={input}
-        placeholder={
-          tagList.length === 0
-            ? "Add topic… (Enter)"
-            : tagList.length < 5
-            ? "+"
-            : ""
-        }
+        placeholder={getPlaceholder()}
         className="ag-tag-chip-input"
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => {
@@ -136,6 +136,7 @@ function CoverMediaUploader({ value, onChange }) {
     setUploadError("");
     setUploading(true);
     setProgress(0);
+    // NOSONAR - uploadMediaToS3 is an async function
     const result = await uploadMediaToS3(file, (p) => setProgress(p));
     setUploading(false);
     if (result.success) {
@@ -194,18 +195,15 @@ function CoverMediaUploader({ value, onChange }) {
 
       {/* Drop zone */}
       {!value && (
-        <div
+        <button
+          type="button"
           ref={dropRef}
           className={`ag-drop-zone${dragging ? " dragging" : ""}`}
           onDrop={onDrop}
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
-          onClick={() => inputRef.current && inputRef.current.click()}
-          onKeyDown={(e) =>
-            e.key === "Enter" && inputRef.current && inputRef.current.click()
-          }
-          role="button"
-          tabIndex={0}
+          onClick={() => inputRef.current?.click()}
+          onKeyDown={(e) => e.key === "Enter" && inputRef.current?.click()}
         >
           {uploading ? (
             <div className="ag-upload-progress-wrap">
@@ -233,7 +231,7 @@ function CoverMediaUploader({ value, onChange }) {
             style={{ display: "none" }}
             onChange={(e) => handleFile(e.target.files[0])}
           />
-        </div>
+        </button>
       )}
 
       {/* Upload error */}
@@ -508,6 +506,7 @@ class AdminDashboard extends Component {
       insertMediaProgress: 0,
       insertMediaError: "",
     });
+    // NOSONAR - uploadMediaToS3 is an async function
     const result = await uploadMediaToS3(file, (p) =>
       this.setState({ insertMediaProgress: p })
     );
@@ -610,7 +609,6 @@ class AdminDashboard extends Component {
   };
 
   render() {
-    const { theme } = this.props;
     const {
       isAuthenticated,
       loading,
