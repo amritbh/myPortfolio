@@ -10,6 +10,8 @@ In this post, I'll show you exactly how I designed and built it - including the 
 
 Here is how a request flows from your browser to the database and back:
 
+![AWS Serverless Backend Architecture](https://amrit.cloud/media/blog2_architecture.png)
+
 ```
 Browser
   |

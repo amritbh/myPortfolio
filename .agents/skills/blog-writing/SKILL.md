@@ -16,7 +16,11 @@ This project maintains a series of technical blog posts describing its own archi
 ## 2. Formatting & Structure
 
 - **No Markdown Titles:** Do not include a top-level heading (e.g., `# Blog Title`) at the very beginning of the file. The file should start directly with the introductory paragraph, as titles are managed separately in the Admin UI/Database.
-- **Images:** Use clear markdown placeholders for images (e.g., `![Cognito Architecture](https://amrit.cloud/media/media/mock-placeholder-architecture.png)`). This allows the user to easily find where to drag-and-drop their actual screenshots using the React Admin Dashboard.
+- **Images & Architecture Diagrams:**
+  - The correct S3 media URL format is `https://amrit.cloud/media/{filename.png}` (do not use double `/media/media/`).
+  - When drafting a new blog, proactively generate high-quality AI images for the **Blog Cover** and any **Architecture Diagrams** using the image generation tool.
+  - Upload these generated images directly to the S3 bucket (`s3://amrit-portfolio-prod-media/media/`) using `aws s3 cp`.
+  - **Important**: For architecture diagrams, always **retain the original ASCII text diagram** directly below the image tag in the markdown file. This ensures the raw technical flow is preserved alongside the visual diagram.
 - **Syntax:** Use standard GitHub-flavored Markdown for code blocks (specifying the language, e.g., ```python) and blockquotes.
 
 ## 3. Blog Content Plan
