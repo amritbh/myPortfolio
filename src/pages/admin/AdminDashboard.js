@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import Header from "../../components/header/Header";
-import Footer from "../../components/footer/Footer";
-import TopButton from "../../components/topButton/TopButton";
+import { Link } from "react-router-dom";
 import {
   createBlog,
   updateBlog,
@@ -631,13 +629,11 @@ class AdminDashboard extends Component {
 
     if (loading) {
       return (
-        <div className="ag-root" style={{ backgroundColor: theme.body }}>
-          <Header theme={theme} />
+        <div className="ag-root">
           <div className="ag-loading">
             <div className="ag-spinner" />
             <div className="ag-loading-text">Loading editor…</div>
           </div>
-          <Footer theme={theme} onToggle={this.props.onToggle} />
         </div>
       );
     }
@@ -652,8 +648,6 @@ class AdminDashboard extends Component {
 
     return (
       <div className="ag-root">
-        <Header theme={theme} />
-
         {/* Hidden file input for inline media insertion */}
         <input
           ref={this.insertMediaInputRef}
@@ -667,6 +661,9 @@ class AdminDashboard extends Component {
           {/* ── Top Action Bar ── */}
           <div className="ag-topbar">
             <div className="ag-topbar-left">
+              <Link to="/" className="ag-back-btn" title="Back to site">
+                &larr;
+              </Link>
               <div className="ag-topbar-brand">
                 <span className="ag-topbar-icon" role="img" aria-label="Editor">
                   ✍
@@ -949,9 +946,6 @@ class AdminDashboard extends Component {
             </aside>
           </div>
         </div>
-
-        <Footer theme={theme} onToggle={this.props.onToggle} />
-        <TopButton theme={theme} />
       </div>
     );
   }
