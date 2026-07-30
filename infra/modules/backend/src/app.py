@@ -31,7 +31,7 @@ ses = boto3.client('ses', region_name=os.environ.get('AWS_REGION', 'us-east-1'),
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'admin@amrit.cloud')
 
 # S3 client for media uploads
-s3_client = boto3.client('s3', region_name=os.environ.get('AWS_REGION', 'us-east-1'))
+s3_client = boto3.client('s3', region_name=os.environ.get('AWS_REGION', 'us-east-1'), config=config)
 MEDIA_BUCKET_NAME = os.environ.get('MEDIA_BUCKET_NAME', '')
 CLOUDFRONT_MEDIA_URL = os.environ.get('CLOUDFRONT_MEDIA_URL', '')
 

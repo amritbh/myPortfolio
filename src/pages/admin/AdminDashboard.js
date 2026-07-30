@@ -203,6 +203,11 @@ function CoverMediaUploader({ value, onChange }) {
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
           onClick={() => inputRef.current && inputRef.current.click()}
+          onKeyDown={(e) =>
+            e.key === "Enter" && inputRef.current && inputRef.current.click()
+          }
+          role="button"
+          tabIndex={0}
         >
           {uploading ? (
             <div className="ag-upload-progress-wrap">
