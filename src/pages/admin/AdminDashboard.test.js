@@ -32,6 +32,7 @@ const mockBlogs = [
 describe("AdminDashboard Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(window, "scrollTo").mockImplementation(() => {});
     jest.spyOn(apiClient, "getStoredToken").mockReturnValue("token");
     jest
       .spyOn(apiClient, "getStoredUser")
@@ -62,7 +63,7 @@ describe("AdminDashboard Component", () => {
     expect(testHistory.location.pathname).toBe("/login");
   });
 
-  it("renders CMS if user is admin and handles form input and publish", async () => {
+  it("renders unified dashboard and handles new blog creation", async () => {
     jest.spyOn(apiClient, "createBlog").mockResolvedValue({ success: true });
 
     render(
@@ -73,34 +74,41 @@ describe("AdminDashboard Component", () => {
       </MemoryRouter>
     );
 
-    // New story tab should be visible
-    expect(screen.getByText(/New story/i)).toBeInTheDocument();
-
-    // The title textarea is the first textbox in the editor
-    const titleInput = screen.getAllByRole("textbox")[0];
+    // The title textarea
+    const titleInput = screen.getByPlaceholderText(/Your story title/i);
     fireEvent.change(titleInput, {
       target: { name: "title", value: "My New Blog" },
     });
 
-    // Open publish panel
-    const publishBtn = screen.getByRole("button", { name: /^Publish$/i });
-    fireEvent.click(publishBtn);
-
-    // Add a slug in the panel
-    await waitFor(() => {
-      expect(screen.getByText(/Story Preview/i)).toBeInTheDocument();
+    // Sidebar inputs
+    const slugInput = screen.getByPlaceholderText("my-post-slug");
+    fireEvent.change(slugInput, {
+      target: { name: "slug", value: "my-new-blog" },
     });
 
-    // Click publish now
-    const publishNowBtn = screen.getByRole("button", { name: /Publish now/i });
-    fireEvent.click(publishNowBtn);
+    // Content area
+    const contentArea = screen.getByPlaceholderText(/Write your story/i);
+    fireEvent.change(contentArea, {
+      target: { name: "content", value: "This is my story." },
+    });
+
+    // Click publish now (it starts disabled, so we have to ensure it's enabled by having all required fields, which we do)
+    const publishBtn = screen.getByRole("button", { name: /Publish Now/i });
+    fireEvent.click(publishBtn);
 
     await waitFor(() => {
-      expect(apiClient.createBlog).toHaveBeenCalled();
+      expect(apiClient.createBlog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "My New Blog",
+          slug: "my-new-blog",
+          content: "This is my story.",
+        }),
+        "token"
+      );
     });
   });
 
-  it("handles edit flow from manage tab", async () => {
+  it("handles edit flow from My Stories sidebar", async () => {
     jest.spyOn(apiClient, "updateBlog").mockResolvedValue({ success: true });
 
     render(
@@ -111,49 +119,43 @@ describe("AdminDashboard Component", () => {
       </MemoryRouter>
     );
 
-    // Switch to Stories tab
-    const manageTab = screen.getByText("Stories");
-    fireEvent.click(manageTab);
+    // Open My Stories toggle
+    const toggleBtn = screen.getByRole("button", { name: /My Stories/i });
+    fireEvent.click(toggleBtn);
 
-    // Wait for blogs to load
+    // Wait for blogs to load and be visible in the dropdown
     await waitFor(() => {
       expect(screen.getByText("Test Blog 1")).toBeInTheDocument();
     });
 
-    // Click edit on the first blog
-    const editBtns = screen.getAllByText("Edit");
+    // Click the edit button for the first blog
+    const editBtns = screen.getAllByText(/✎ Edit/i);
     fireEvent.click(editBtns[0]);
 
-    // Should switch to write tab with "Edit story" label
-    expect(screen.getByText(/Edit story/i)).toBeInTheDocument();
+    // Should switch back to editor and update publish button to "✓ Update Story"
+    expect(
+      screen.getByRole("button", { name: /Update Story/i })
+    ).toBeInTheDocument();
 
-    // Open publish panel to trigger update
-    const updateStoryBtns = screen.getAllByRole("button", {
-      name: /Update story/i,
-    });
-    // The first one is in the topbar
-    fireEvent.click(updateStoryBtns[0]);
-
-    await waitFor(() => {
-      expect(screen.getByText(/Story Preview/i)).toBeInTheDocument();
+    const titleInput = screen.getByPlaceholderText(/Your story title/i);
+    fireEvent.change(titleInput, {
+      target: { name: "title", value: "Updated Title" },
     });
 
-    const updateNowBtns = screen.getAllByRole("button", {
-      name: /Update story/i,
-    });
-    // The second one is in the publish panel (confirm)
-    fireEvent.click(updateNowBtns[1]);
+    // Click Update Story
+    const updateBtn = screen.getByRole("button", { name: /Update Story/i });
+    fireEvent.click(updateBtn);
 
     await waitFor(() => {
       expect(apiClient.updateBlog).toHaveBeenCalledWith(
         "test-blog-1",
-        expect.any(Object),
+        expect.objectContaining({ title: "Updated Title" }),
         "token"
       );
     });
   });
 
-  it("handles delete flow from manage tab", async () => {
+  it("handles delete flow from My Stories sidebar", async () => {
     jest.spyOn(apiClient, "deleteBlog").mockResolvedValue({ success: true });
     jest.spyOn(window, "confirm").mockReturnValue(true);
 
@@ -165,16 +167,16 @@ describe("AdminDashboard Component", () => {
       </MemoryRouter>
     );
 
-    // Switch to Stories tab
-    const manageTab = screen.getByText("Stories");
-    fireEvent.click(manageTab);
+    // Open My Stories toggle
+    const toggleBtn = screen.getByRole("button", { name: /My Stories/i });
+    fireEvent.click(toggleBtn);
 
     await waitFor(() => {
       expect(screen.getByText("Test Blog 1")).toBeInTheDocument();
     });
 
-    // Click delete
-    const deleteBtns = screen.getAllByText("Delete");
+    // Find all delete buttons in the dropdown list and click the first one
+    const deleteBtns = screen.getAllByText(/Delete/i);
     fireEvent.click(deleteBtns[0]);
 
     expect(window.confirm).toHaveBeenCalled();
@@ -201,8 +203,8 @@ describe("AdminDashboard Component", () => {
       </MemoryRouter>
     );
 
-    // "Sign out" is the new logout button text
-    const logoutBtn = screen.getByRole("button", { name: /Sign out/i });
+    // Click Sign Out
+    const logoutBtn = screen.getByRole("button", { name: /Sign Out/i });
     fireEvent.click(logoutBtn);
 
     expect(clearSessionSpy).toHaveBeenCalled();
@@ -220,22 +222,13 @@ describe("AdminDashboard Component", () => {
     );
 
     // 1. Tag input tests
-    const tagInputs = screen.queryAllByPlaceholderText(/Add a topic/i);
-    // Open publish panel first to see tag inputs
-    fireEvent.change(screen.getAllByRole("textbox")[0], {
-      target: { name: "title", value: "T" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: /^Publish$/i }));
+    const activeTagInput = screen.getByPlaceholderText(/Add topic/i);
 
-    await waitFor(() => {
-      expect(screen.getByText(/Topics \(up to 5\)/i)).toBeInTheDocument();
-    });
-
-    const activeTagInput = screen.getByPlaceholderText(/Add a topic/i);
+    // Add tag via Enter
     fireEvent.change(activeTagInput, { target: { value: "react" } });
     fireEvent.keyDown(activeTagInput, { key: "Enter", code: "Enter" });
 
-    // Add second tag via comma
+    // Add tag via comma
     fireEvent.change(activeTagInput, { target: { value: "javascript" } });
     fireEvent.keyDown(activeTagInput, { key: ",", code: "Comma" });
 
@@ -243,24 +236,14 @@ describe("AdminDashboard Component", () => {
     expect(screen.getByText("react")).toBeInTheDocument();
     expect(screen.getByText("javascript")).toBeInTheDocument();
 
-    // Remove tag
-    const removeBtns = document.querySelectorAll(".medium-tag-chip-remove");
+    // Remove tag via button
+    const removeBtns = document.querySelectorAll(".ag-tag-chip-remove");
     if (removeBtns.length > 0) {
       fireEvent.click(removeBtns[0]);
     }
 
-    // Cancel publish
-    fireEvent.click(screen.getByText("Cancel"));
-
     // 2. Toolbar formatting
-    // The main editor textarea is rendered in renderEditor
-    const textareas = screen.getAllByRole("textbox");
-    // Find the textarea for content
-    const contentArea = textareas.find(
-      (ta) => ta.placeholder && ta.placeholder.includes("Tell your story")
-    );
-
-    // Select some text
+    const contentArea = screen.getByPlaceholderText(/Write your story/i);
     contentArea.value = "my text";
     contentArea.selectionStart = 0;
     contentArea.selectionEnd = 7;
@@ -268,7 +251,6 @@ describe("AdminDashboard Component", () => {
     const boldBtn = screen.getByRole("button", { name: "B" });
     fireEvent.mouseDown(boldBtn);
 
-    // Test header formatting
     const h2Btn = screen.getByRole("button", { name: "H2" });
     fireEvent.mouseDown(h2Btn);
   });
