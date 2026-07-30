@@ -7,6 +7,6 @@ terraform {
 }
 
 inputs = {
-  project_name            = "amrit-portfolio"
-  environment             = "prod"
+  project_name = "amrit-portfolio"
+  environment  = "prod"
 }
