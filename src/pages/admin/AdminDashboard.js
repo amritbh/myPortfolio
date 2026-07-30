@@ -10,29 +10,30 @@ import {
   getStoredToken,
   getStoredUser,
   clearSession,
+  uploadMediaToS3,
 } from "../../utils/apiClient";
 import { marked } from "marked";
 import "./AdminDashboard.css";
 
-// ── Tiny Rich-Text Toolbar ───────────────────────────────────────────────────
-function FormatToolbar({ onFormat }) {
+// ── Tiny Rich-Text Toolbar ─────────────────────────────────────────────────────
+function FormatToolbar({ onFormat, onInsertMedia }) {
   const tools = [
     { label: "B", title: "Bold", syntax: "**", wrap: true },
     { label: "I", title: "Italic", syntax: "_", wrap: true },
     { label: "H2", title: "Heading 2", syntax: "## ", wrap: false },
     { label: "H3", title: "Heading 3", syntax: "### ", wrap: false },
     { label: "❝", title: "Blockquote", syntax: "> ", wrap: false },
-    { label: "</>", title: "Code", syntax: "`", wrap: true },
+    { label: "</\u003e", title: "Code", syntax: "`", wrap: true },
     { label: "—", title: "Divider", syntax: "\n---\n", wrap: false },
   ];
   return (
-    <div className="medium-editor-toolbar">
+    <div className="ag-editor-toolbar">
       {tools.map((t) => (
         <button
           key={t.label}
           type="button"
           title={t.title}
-          className="medium-editor-tool-btn"
+          className="ag-toolbar-btn"
           onMouseDown={(e) => {
             e.preventDefault();
             onFormat(t.syntax, t.wrap);
@@ -41,12 +42,27 @@ function FormatToolbar({ onFormat }) {
           {t.label}
         </button>
       ))}
+      <div className="ag-toolbar-divider" />
+      <button
+        type="button"
+        title="Insert Image or Video"
+        className="ag-toolbar-btn ag-toolbar-media-btn"
+        onMouseDown={(e) => {
+          e.preventDefault();
+          onInsertMedia();
+        }}
+      >
+        <span role="img" aria-label="Insert media">
+          📎
+        </span>{" "}
+        Media
+      </button>
     </div>
   );
 }
 
-// ── Tag Chip Input ────────────────────────────────────────────────────────────
-function TagInput({ tags, onChange, theme }) {
+// ── Tag Chip Input ─────────────────────────────────────────────────────────────
+function TagInput({ tags, onChange }) {
   const [input, setInput] = React.useState("");
   const tagList = tags
     .split(",")
@@ -55,7 +71,7 @@ function TagInput({ tags, onChange, theme }) {
 
   const addTag = (val) => {
     const newTag = val.trim();
-    if (!newTag || tagList.includes(newTag)) return;
+    if (!newTag || tagList.includes(newTag) || tagList.length >= 5) return;
     onChange([...tagList, newTag].join(", "));
     setInput("");
   };
@@ -66,20 +82,13 @@ function TagInput({ tags, onChange, theme }) {
   };
 
   return (
-    <div
-      className="medium-tag-input"
-      style={{ borderColor: theme.imageDark, backgroundColor: theme.body }}
-    >
+    <div className="ag-tag-input">
       {tagList.map((tag, i) => (
-        <span
-          key={i}
-          className="medium-tag-chip"
-          style={{ backgroundColor: theme.imageDark, color: theme.text }}
-        >
+        <span key={i} className="ag-tag-chip">
           {tag}
           <button
             type="button"
-            className="medium-tag-chip-remove"
+            className="ag-tag-chip-remove"
             onClick={() => removeTag(i)}
           >
             ×
@@ -89,9 +98,14 @@ function TagInput({ tags, onChange, theme }) {
       <input
         type="text"
         value={input}
-        placeholder={tagList.length === 0 ? "Add a topic… (press Enter)" : ""}
-        className="medium-tag-chip-input"
-        style={{ color: theme.text }}
+        placeholder={
+          tagList.length === 0
+            ? "Add topic… (Enter)"
+            : tagList.length < 5
+            ? "+"
+            : ""
+        }
+        className="ag-tag-chip-input"
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === ",") {
@@ -107,14 +121,218 @@ function TagInput({ tags, onChange, theme }) {
   );
 }
 
-// ── Word count → read time ────────────────────────────────────────────────────
+// ── Cover Media Uploader ───────────────────────────────────────────────────────
+function CoverMediaUploader({ value, onChange }) {
+  const [dragging, setDragging] = React.useState(false);
+  const [uploading, setUploading] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
+  const [uploadError, setUploadError] = React.useState("");
+  const [previewMode, setPreviewMode] = React.useState("url"); // "url" | "file"
+  const dropRef = React.useRef(null);
+  const inputRef = React.useRef(null);
+
+  const isVideo = value && /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(value);
+
+  const handleFile = async (file) => {
+    if (!file) return;
+    setUploadError("");
+    setUploading(true);
+    setProgress(0);
+    const result = await uploadMediaToS3(file, (p) => setProgress(p));
+    setUploading(false);
+    if (result.success) {
+      onChange(result.url);
+      setPreviewMode("file");
+    } else {
+      setUploadError(result.error || "Upload failed");
+    }
+  };
+
+  const onDrop = (e) => {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  };
+
+  const onDragOver = (e) => {
+    e.preventDefault();
+    setDragging(true);
+  };
+  const onDragLeave = () => setDragging(false);
+
+  return (
+    <div className="ag-cover-uploader">
+      {/* Preview */}
+      {value && !uploading && (
+        <div className="ag-cover-preview-wrap">
+          {isVideo ? (
+            <video
+              src={value}
+              className="ag-cover-preview"
+              controls={false}
+              muted
+              loop
+              autoPlay
+            />
+          ) : (
+            <img
+              src={value}
+              alt="Cover"
+              className="ag-cover-preview"
+              onError={(e) => (e.target.style.display = "none")}
+            />
+          )}
+          <button
+            type="button"
+            className="ag-cover-remove-btn"
+            onClick={() => onChange("")}
+            title="Remove cover"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* Drop zone */}
+      {!value && (
+        <div
+          ref={dropRef}
+          className={`ag-drop-zone${dragging ? " dragging" : ""}`}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          onClick={() => inputRef.current && inputRef.current.click()}
+        >
+          {uploading ? (
+            <div className="ag-upload-progress-wrap">
+              <div className="ag-upload-progress-label">
+                Uploading… {progress}%
+              </div>
+              <div className="ag-upload-progress-bar">
+                <div
+                  className="ag-upload-progress-fill"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="ag-drop-icon">🖼</div>
+              <div className="ag-drop-label">Drop image or video here</div>
+              <div className="ag-drop-sublabel">or click to browse</div>
+            </>
+          )}
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*,video/*"
+            style={{ display: "none" }}
+            onChange={(e) => handleFile(e.target.files[0])}
+          />
+        </div>
+      )}
+
+      {/* Upload error */}
+      {uploadError && <div className="ag-upload-error">{uploadError}</div>}
+
+      {/* URL fallback */}
+      <div className="ag-cover-url-row">
+        <span className="ag-cover-url-label">or paste URL</span>
+        <input
+          type="url"
+          className="ag-cover-url-input"
+          placeholder="https://..."
+          value={previewMode === "url" ? value : ""}
+          onChange={(e) => {
+            setPreviewMode("url");
+            onChange(e.target.value);
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ── Word count → read time ─────────────────────────────────────────────────────
 function estimateReadTime(text) {
   const words = text.trim().split(/\s+/).filter(Boolean).length;
   const minutes = Math.max(1, Math.round(words / 220));
   return `${minutes} min read`;
 }
 
-// ── Main Component ────────────────────────────────────────────────────────────
+// ── Story Card in manage list ──────────────────────────────────────────────────
+function StoryCard({ blog, onEdit, onDelete }) {
+  return (
+    <div className="ag-story-card">
+      {blog.coverImage && (
+        <div className="ag-story-card-thumb-wrap">
+          <img
+            src={blog.coverImage}
+            alt={blog.title}
+            className="ag-story-card-thumb"
+          />
+        </div>
+      )}
+      <div className="ag-story-card-body">
+        <div className="ag-story-card-title">{blog.title}</div>
+        <div className="ag-story-card-meta">
+          <span>
+            {new Date(blog.publishDate).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </span>
+          <span className="ag-story-meta-dot">·</span>
+          <span>{blog.readTime || "5 min read"}</span>
+          <span className="ag-story-meta-dot">·</span>
+          <span>
+            <span role="img" aria-label="likes">
+              ❤
+            </span>{" "}
+            {Array.isArray(blog.likes) ? blog.likes.length : 0}
+          </span>
+          <span className="ag-story-meta-dot">·</span>
+          <span>
+            <span role="img" aria-label="comments">
+              💬
+            </span>{" "}
+            {Array.isArray(blog.comments) ? blog.comments.length : 0}
+          </span>
+        </div>
+        {blog.tags && blog.tags.length > 0 && (
+          <div className="ag-story-card-tags">
+            {blog.tags.slice(0, 3).map((tag) => (
+              <span key={tag} className="ag-story-tag-badge">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="ag-story-card-actions">
+        <button
+          className="ag-story-action-btn edit"
+          onClick={() => onEdit(blog)}
+        >
+          ✎ Edit
+        </button>
+        <button
+          className="ag-story-action-btn delete"
+          onClick={() => onDelete(blog.slug)}
+        >
+          <span role="img" aria-label="Delete">
+            🗑
+          </span>{" "}
+          Delete
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Main Component ─────────────────────────────────────────────────────────────
 class AdminDashboard extends Component {
   state = {
     isAuthenticated: false,
@@ -132,15 +350,20 @@ class AdminDashboard extends Component {
       content: "",
     },
     statusMessage: "",
+    statusType: "success",
     isPublishing: false,
-    activeTab: "write",
+    previewMode: false,
     blogs: [],
     editingSlug: null,
-    publishPanelOpen: false,
-    previewMode: false,
+    storiesOpen: false,
+    // Inline media insert
+    insertMediaUploading: false,
+    insertMediaProgress: 0,
+    insertMediaError: "",
   };
 
   textareaRef = React.createRef();
+  insertMediaInputRef = React.createRef();
 
   componentDidMount() {
     this.handleUrlParams();
@@ -163,7 +386,6 @@ class AdminDashboard extends Component {
     const user = getStoredUser();
     clearSession();
     this.setState({ isAuthenticated: false, user: null });
-
     if (user && user.type === "cognito") {
       const domain =
         process.env.REACT_APP_COGNITO_DOMAIN ||
@@ -184,11 +406,11 @@ class AdminDashboard extends Component {
   };
 
   handleEdit = (blog) => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     this.setState({
-      activeTab: "write",
       editingSlug: blog.slug,
-      publishPanelOpen: false,
       previewMode: false,
+      storiesOpen: false,
       formData: {
         title: blog.title || "",
         slug: blog.slug || "",
@@ -213,10 +435,14 @@ class AdminDashboard extends Component {
     if (response.success) {
       this.setState((prev) => ({
         statusMessage: "Story deleted.",
+        statusType: "success",
         blogs: prev.blogs.filter((b) => b.slug !== slug),
       }));
     } else {
-      this.setState({ statusMessage: `Error: ${response.error}` });
+      this.setState({
+        statusMessage: `Error: ${response.error}`,
+        statusType: "error",
+      });
     }
   };
 
@@ -237,7 +463,6 @@ class AdminDashboard extends Component {
     }));
   };
 
-  // Apply markdown formatting to selected text in the textarea
   applyFormat = (syntax, wrap) => {
     const ta = this.textareaRef.current;
     if (!ta) return;
@@ -264,9 +489,50 @@ class AdminDashboard extends Component {
     );
   };
 
+  // Insert media file inline into editor content at cursor position
+  handleInsertMedia = () => {
+    if (this.insertMediaInputRef.current) {
+      this.insertMediaInputRef.current.click();
+    }
+  };
+
+  handleInsertMediaFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    e.target.value = "";
+    this.setState({
+      insertMediaUploading: true,
+      insertMediaProgress: 0,
+      insertMediaError: "",
+    });
+    const result = await uploadMediaToS3(file, (p) =>
+      this.setState({ insertMediaProgress: p })
+    );
+    this.setState({ insertMediaUploading: false });
+    if (!result.success) {
+      this.setState({ insertMediaError: result.error || "Upload failed" });
+      return;
+    }
+    // Insert markdown/html at cursor
+    const ta = this.textareaRef.current;
+    const isVideo = /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(result.url);
+    const markdown = isVideo
+      ? `\n<video src="${result.url}" controls style="max-width:100%"></video>\n`
+      : `\n![Image](${result.url})\n`;
+    if (ta) {
+      const start = ta.selectionStart;
+      const newContent =
+        ta.value.slice(0, start) + markdown + ta.value.slice(start);
+      this.setState((prev) => ({
+        formData: { ...prev.formData, content: newContent },
+        insertMediaError: "",
+      }));
+    }
+  };
+
   handlePublish = async (e) => {
     e.preventDefault();
-    this.setState({ isPublishing: true, statusMessage: "Publishing..." });
+    this.setState({ isPublishing: true, statusMessage: "Publishing…" });
     const { formData, editingSlug } = this.state;
     const token = getStoredToken();
     const payload = {
@@ -294,10 +560,9 @@ class AdminDashboard extends Component {
     if (response.success) {
       this.setState((prev) => ({
         statusMessage: editingSlug ? "Story updated!" : "Story published!",
+        statusType: "success",
         isPublishing: false,
         editingSlug: null,
-        publishPanelOpen: false,
-        activeTab: "manage",
         formData: {
           ...prev.formData,
           title: "",
@@ -315,364 +580,57 @@ class AdminDashboard extends Component {
         this.handleLogout();
       this.setState({
         statusMessage: `Error: ${response.error}`,
+        statusType: "error",
         isPublishing: false,
       });
     }
   };
 
-  // ── Render: Manage Posts ─────────────────────────────────────────────────
-  renderManage() {
-    const { theme } = this.props;
-    const { blogs } = this.state;
-    return (
-      <div className="medium-stories-list">
-        {blogs.length === 0 ? (
-          <p style={{ color: theme.secondaryText }}>
-            You haven't published any stories yet.
-          </p>
-        ) : (
-          blogs.map((blog) => (
-            <div
-              key={blog.slug}
-              className="medium-story-manage-row"
-              style={{ borderBottomColor: theme.imageDark }}
-            >
-              {blog.coverImage && (
-                <img
-                  src={blog.coverImage}
-                  alt={blog.title}
-                  className="medium-story-manage-thumb"
-                />
-              )}
-              <div className="medium-story-manage-info">
-                <h3
-                  className="medium-story-manage-title"
-                  style={{ color: theme.text }}
-                >
-                  {blog.title}
-                </h3>
-                <div
-                  className="medium-story-manage-meta"
-                  style={{ color: theme.secondaryText }}
-                >
-                  <span>
-                    {new Date(blog.publishDate).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </span>
-                  <span>·</span>
-                  <span>{blog.readTime || "5 min read"}</span>
-                  <span>·</span>
-                  <span>
-                    <span role="img" aria-label="likes">
-                      ❤
-                    </span>{" "}
-                    {Array.isArray(blog.likes) ? blog.likes.length : 0}
-                  </span>
-                  <span>·</span>
-                  <span>
-                    <span role="img" aria-label="comments">
-                      💬
-                    </span>{" "}
-                    {Array.isArray(blog.comments) ? blog.comments.length : 0}
-                  </span>
-                </div>
-              </div>
-              <div className="medium-story-manage-actions">
-                <button
-                  className="medium-manage-btn edit"
-                  onClick={() => this.handleEdit(blog)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="medium-manage-btn delete"
-                  onClick={() => this.handleDelete(blog.slug)}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-    );
-  }
+  resetForm = () => {
+    this.setState({
+      editingSlug: null,
+      previewMode: false,
+      formData: {
+        title: "",
+        slug: "",
+        summary: "",
+        coverImage: "",
+        tags: "",
+        readTime: "",
+        authorName: "Amrit",
+        authorAvatar: "https://avatars.githubusercontent.com/u/79965355?v=4",
+        content: "",
+      },
+      statusMessage: "",
+    });
+  };
 
-  // ── Render: Writing Editor ────────────────────────────────────────────────
-  renderEditor() {
-    const { theme } = this.props;
-    const {
-      formData,
-      isPublishing,
-      editingSlug,
-      previewMode,
-      publishPanelOpen,
-    } = this.state;
-    const htmlPreview = marked(
-      formData.content || "_Start writing to see preview..._"
-    );
-
-    return (
-      <div className="medium-editor-root">
-        {/* Editor Top Bar */}
-        <div
-          className="medium-editor-topbar"
-          style={{ borderBottomColor: theme.imageDark }}
-        >
-          <div className="medium-editor-topbar-left">
-            {/* Draft indicator */}
-            <span
-              className="medium-editor-draft-label"
-              style={{ color: theme.secondaryText }}
-            >
-              {editingSlug ? `Editing: ${editingSlug}` : "Draft"}
-            </span>
-          </div>
-          <div className="medium-editor-topbar-right">
-            <button
-              type="button"
-              className="medium-editor-preview-toggle"
-              style={{
-                color: previewMode ? "#1a8917" : theme.secondaryText,
-                borderColor: previewMode ? "#1a8917" : theme.imageDark,
-              }}
-              onClick={() =>
-                this.setState((prev) => ({ previewMode: !prev.previewMode }))
-              }
-            >
-              {previewMode ? "✎ Edit" : "👁 Preview"}
-            </button>
-            <button
-              type="button"
-              className="medium-editor-publish-btn"
-              onClick={() =>
-                this.setState((prev) => ({
-                  publishPanelOpen: !prev.publishPanelOpen,
-                }))
-              }
-            >
-              {editingSlug ? "Update story" : "Publish"}
-            </button>
-          </div>
-        </div>
-
-        <div className="medium-editor-layout">
-          {/* Main Editor / Preview */}
-          <div className="medium-editor-main">
-            {/* Formatting toolbar */}
-            {!previewMode && <FormatToolbar onFormat={this.applyFormat} />}
-
-            {previewMode ? (
-              <div
-                className="medium-editor-preview markdown-body"
-                style={{ color: theme.text }}
-                dangerouslySetInnerHTML={{ __html: htmlPreview }}
-              />
-            ) : (
-              <>
-                {/* Title */}
-                <textarea
-                  className="medium-editor-title-input"
-                  style={{ color: theme.text }}
-                  name="title"
-                  value={formData.title}
-                  onChange={this.handleInputChange}
-                  placeholder="Title"
-                  rows={1}
-                  onInput={(e) => {
-                    e.target.style.height = "auto";
-                    e.target.style.height = e.target.scrollHeight + "px";
-                  }}
-                />
-                {/* Summary / Subtitle */}
-                <textarea
-                  className="medium-editor-subtitle-input"
-                  style={{ color: theme.secondaryText }}
-                  name="summary"
-                  value={formData.summary}
-                  onChange={this.handleInputChange}
-                  placeholder="Tell your story..."
-                  rows={2}
-                  onInput={(e) => {
-                    e.target.style.height = "auto";
-                    e.target.style.height = e.target.scrollHeight + "px";
-                  }}
-                />
-                {/* Content */}
-                <textarea
-                  ref={this.textareaRef}
-                  className="medium-editor-content-input"
-                  style={{ color: theme.text }}
-                  name="content"
-                  value={formData.content}
-                  onChange={this.handleInputChange}
-                  placeholder="Write your story... (Markdown supported)"
-                  onInput={(e) => {
-                    e.target.style.height = "auto";
-                    e.target.style.height = e.target.scrollHeight + "px";
-                  }}
-                />
-              </>
-            )}
-          </div>
-
-          {/* Publish Slide-out Panel */}
-          {publishPanelOpen && (
-            <div
-              className="medium-publish-panel"
-              style={{
-                backgroundColor: theme.body,
-                borderLeftColor: theme.imageDark,
-              }}
-            >
-              <h2
-                className="medium-publish-panel-heading"
-                style={{ color: theme.text }}
-              >
-                Story Preview
-              </h2>
-
-              {/* Cover Image */}
-              <div className="medium-publish-field">
-                <label style={{ color: theme.secondaryText }}>
-                  Cover Image URL
-                </label>
-                {formData.coverImage && (
-                  <img
-                    src={formData.coverImage}
-                    alt="Cover"
-                    className="medium-publish-cover-preview"
-                    onError={(e) => (e.target.style.display = "none")}
-                  />
-                )}
-                <input
-                  type="url"
-                  name="coverImage"
-                  value={formData.coverImage}
-                  onChange={this.handleInputChange}
-                  placeholder="https://..."
-                  className="medium-publish-input"
-                  style={{
-                    backgroundColor: theme.imageDark,
-                    color: theme.text,
-                    borderColor: theme.imageDark,
-                  }}
-                />
-              </div>
-
-              {/* Slug */}
-              <div className="medium-publish-field">
-                <label style={{ color: theme.secondaryText }}>URL slug</label>
-                <input
-                  type="text"
-                  name="slug"
-                  value={formData.slug}
-                  onChange={this.handleInputChange}
-                  required
-                  className="medium-publish-input"
-                  style={{
-                    backgroundColor: theme.imageDark,
-                    color: theme.text,
-                    borderColor: theme.imageDark,
-                  }}
-                />
-              </div>
-
-              {/* Tags */}
-              <div className="medium-publish-field">
-                <label style={{ color: theme.secondaryText }}>
-                  Topics (up to 5)
-                </label>
-                <TagInput
-                  tags={formData.tags}
-                  onChange={(val) =>
-                    this.setState((prev) => ({
-                      formData: { ...prev.formData, tags: val },
-                    }))
-                  }
-                  theme={theme}
-                />
-              </div>
-
-              {/* Read time */}
-              <div className="medium-publish-field">
-                <label style={{ color: theme.secondaryText }}>
-                  Read time (auto-calculated)
-                </label>
-                <input
-                  type="text"
-                  name="readTime"
-                  value={formData.readTime}
-                  onChange={this.handleInputChange}
-                  placeholder={estimateReadTime(formData.content)}
-                  className="medium-publish-input"
-                  style={{
-                    backgroundColor: theme.imageDark,
-                    color: theme.text,
-                    borderColor: theme.imageDark,
-                  }}
-                />
-              </div>
-
-              <button
-                className="medium-publish-confirm-btn"
-                disabled={isPublishing || !formData.title || !formData.slug}
-                onClick={this.handlePublish}
-                style={{
-                  opacity:
-                    isPublishing || !formData.title || !formData.slug ? 0.5 : 1,
-                }}
-              >
-                {isPublishing
-                  ? "Publishing..."
-                  : editingSlug
-                  ? "Update story"
-                  : "Publish now"}
-              </button>
-              <button
-                type="button"
-                className="medium-publish-cancel-btn"
-                onClick={() => this.setState({ publishPanelOpen: false })}
-                style={{ color: theme.secondaryText }}
-              >
-                Cancel
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // ── Main Render ────────────────────────────────────────────────────────────
   render() {
     const { theme } = this.props;
     const {
       isAuthenticated,
       loading,
-      activeTab,
       user,
       statusMessage,
+      statusType,
+      formData,
+      isPublishing,
+      previewMode,
+      editingSlug,
+      blogs,
+      storiesOpen,
+      insertMediaUploading,
+      insertMediaProgress,
+      insertMediaError,
     } = this.state;
 
     if (loading) {
       return (
-        <div
-          className="medium-admin-root"
-          style={{ backgroundColor: theme.body }}
-        >
+        <div className="ag-root" style={{ backgroundColor: theme.body }}>
           <Header theme={theme} />
-          <div className="medium-admin-loading">
-            <div
-              className="medium-admin-spinner"
-              style={{
-                borderColor: theme.imageDark,
-                borderTopColor: theme.text,
-              }}
-            />
+          <div className="ag-loading">
+            <div className="ag-spinner" />
+            <div className="ag-loading-text">Loading editor…</div>
           </div>
           <Footer theme={theme} onToggle={this.props.onToggle} />
         </div>
@@ -681,80 +639,310 @@ class AdminDashboard extends Component {
 
     if (!isAuthenticated) return null;
 
+    const htmlPreview = marked(
+      formData.content || "_Start writing to see preview…_"
+    );
+
+    const canPublish = !isPublishing && formData.title && formData.slug;
+
     return (
-      <div
-        className="medium-admin-root"
-        style={{ backgroundColor: theme.body }}
-      >
+      <div className="ag-root">
         <Header theme={theme} />
 
-        <div className="medium-admin-layout">
-          {/* Top Nav */}
-          <div
-            className="medium-admin-nav"
-            style={{ borderBottomColor: theme.imageDark }}
-          >
-            <div className="medium-admin-nav-left">
-              <button
-                className={`medium-admin-nav-tab ${
-                  activeTab === "write" ? "active" : ""
-                }`}
-                style={{
-                  color:
-                    activeTab === "write" ? theme.text : theme.secondaryText,
-                  borderBottomColor:
-                    activeTab === "write" ? "#1a8917" : "transparent",
-                }}
-                onClick={() => this.setState({ activeTab: "write" })}
-              >
-                {this.state.editingSlug ? "Edit story" : "New story"}
-              </button>
-              <button
-                className={`medium-admin-nav-tab ${
-                  activeTab === "manage" ? "active" : ""
-                }`}
-                style={{
-                  color:
-                    activeTab === "manage" ? theme.text : theme.secondaryText,
-                  borderBottomColor:
-                    activeTab === "manage" ? "#1a8917" : "transparent",
-                }}
-                onClick={() => this.setState({ activeTab: "manage" })}
-              >
-                Stories
-              </button>
+        {/* Hidden file input for inline media insertion */}
+        <input
+          ref={this.insertMediaInputRef}
+          type="file"
+          accept="image/*,video/*"
+          style={{ display: "none" }}
+          onChange={this.handleInsertMediaFile}
+        />
+
+        <div className="ag-workspace">
+          {/* ── Top Action Bar ── */}
+          <div className="ag-topbar">
+            <div className="ag-topbar-left">
+              <div className="ag-topbar-brand">
+                <span className="ag-topbar-icon" role="img" aria-label="Editor">
+                  ✍
+                </span>
+                <span className="ag-topbar-title">
+                  {editingSlug ? `Editing: ${editingSlug}` : "New Story"}
+                </span>
+              </div>
+              {editingSlug && (
+                <button
+                  type="button"
+                  className="ag-topbar-new-btn"
+                  onClick={this.resetForm}
+                  title="Start a new story"
+                >
+                  + New
+                </button>
+              )}
             </div>
-            <div className="medium-admin-nav-right">
-              <span
-                className="medium-admin-user-label"
-                style={{ color: theme.secondaryText }}
-              >
+            <div className="ag-topbar-center">
+              <div className="ag-user-pill">
+                <div className="ag-user-dot" />
                 {user?.username}
-              </span>
+              </div>
+            </div>
+            <div className="ag-topbar-right">
               <button
-                className="medium-admin-logout-btn"
+                type="button"
+                className={`ag-preview-btn${previewMode ? " active" : ""}`}
+                onClick={() =>
+                  this.setState((prev) => ({ previewMode: !prev.previewMode }))
+                }
+              >
+                {previewMode ? "✎ Edit" : "👁 Preview"}
+              </button>
+              <button
+                type="button"
+                className="ag-logout-btn"
                 onClick={this.handleLogout}
-                style={{
-                  color: theme.secondaryText,
-                  borderColor: theme.imageDark,
-                }}
               >
                 Sign out
               </button>
             </div>
           </div>
 
+          {/* ── Status Banner ── */}
           {statusMessage && (
             <div
-              className={`medium-admin-status ${
-                statusMessage.includes("Error") ? "error" : "success"
+              className={`ag-status-banner${
+                statusType === "error" ? " error" : ""
               }`}
             >
+              {statusType === "error" ? "⚠ " : "✓ "}
               {statusMessage}
             </div>
           )}
 
-          {activeTab === "manage" ? this.renderManage() : this.renderEditor()}
+          {/* ── Insert Media Progress (inline) ── */}
+          {insertMediaUploading && (
+            <div className="ag-inline-upload-banner">
+              <span>Uploading media… {insertMediaProgress}%</span>
+              <div className="ag-inline-upload-bar">
+                <div
+                  className="ag-inline-upload-fill"
+                  style={{ width: `${insertMediaProgress}%` }}
+                />
+              </div>
+            </div>
+          )}
+          {insertMediaError && (
+            <div className="ag-status-banner error">⚠ {insertMediaError}</div>
+          )}
+
+          {/* ── Main Editor Grid ── */}
+          <div className="ag-editor-grid">
+            {/* Left: Writing Area */}
+            <div className="ag-editor-pane">
+              {!previewMode && (
+                <FormatToolbar
+                  onFormat={this.applyFormat}
+                  onInsertMedia={this.handleInsertMedia}
+                />
+              )}
+
+              {previewMode ? (
+                <div
+                  className="ag-preview-body markdown-body"
+                  dangerouslySetInnerHTML={{ __html: htmlPreview }}
+                />
+              ) : (
+                <>
+                  <textarea
+                    className="ag-title-input"
+                    name="title"
+                    value={formData.title}
+                    onChange={this.handleInputChange}
+                    placeholder="Your story title…"
+                    rows={1}
+                    onInput={(e) => {
+                      e.target.style.height = "auto";
+                      e.target.style.height = e.target.scrollHeight + "px";
+                    }}
+                  />
+                  <textarea
+                    className="ag-subtitle-input"
+                    name="summary"
+                    value={formData.summary}
+                    onChange={this.handleInputChange}
+                    placeholder="Write a compelling summary…"
+                    rows={2}
+                    onInput={(e) => {
+                      e.target.style.height = "auto";
+                      e.target.style.height = e.target.scrollHeight + "px";
+                    }}
+                  />
+                  <textarea
+                    ref={this.textareaRef}
+                    className="ag-content-input"
+                    name="content"
+                    value={formData.content}
+                    onChange={this.handleInputChange}
+                    placeholder="Write your story… Markdown is supported"
+                    onInput={(e) => {
+                      e.target.style.height = "auto";
+                      e.target.style.height = e.target.scrollHeight + "px";
+                    }}
+                  />
+                </>
+              )}
+            </div>
+
+            {/* Right: Publish Sidebar */}
+            <aside className="ag-sidebar">
+              <div className="ag-sidebar-inner">
+                {/* Cover Media */}
+                <section className="ag-sidebar-section">
+                  <div className="ag-sidebar-section-header">
+                    <span className="ag-sidebar-section-icon">🖼</span>
+                    <span className="ag-sidebar-section-label">
+                      Cover Media
+                    </span>
+                  </div>
+                  <CoverMediaUploader
+                    value={formData.coverImage}
+                    onChange={(url) =>
+                      this.setState((prev) => ({
+                        formData: { ...prev.formData, coverImage: url },
+                      }))
+                    }
+                  />
+                </section>
+
+                {/* URL Slug */}
+                <section className="ag-sidebar-section">
+                  <div className="ag-sidebar-section-header">
+                    <span
+                      className="ag-sidebar-section-icon"
+                      role="img"
+                      aria-label="URL"
+                    >
+                      🔗
+                    </span>
+                    <span className="ag-sidebar-section-label">URL Slug</span>
+                  </div>
+                  <div className="ag-slug-preview">
+                    <span className="ag-slug-base">amrit.cloud/blogs/</span>
+                    <input
+                      type="text"
+                      name="slug"
+                      className="ag-sidebar-input"
+                      value={formData.slug}
+                      onChange={this.handleInputChange}
+                      placeholder="my-post-slug"
+                      required
+                    />
+                  </div>
+                </section>
+
+                {/* Topics */}
+                <section className="ag-sidebar-section">
+                  <div className="ag-sidebar-section-header">
+                    <span className="ag-sidebar-section-icon">🏷</span>
+                    <span className="ag-sidebar-section-label">
+                      Topics
+                      <span className="ag-sidebar-section-count">
+                        {" "}
+                        {
+                          formData.tags.split(",").filter((t) => t.trim())
+                            .length
+                        }
+                        /5
+                      </span>
+                    </span>
+                  </div>
+                  <TagInput
+                    tags={formData.tags}
+                    onChange={(val) =>
+                      this.setState((prev) => ({
+                        formData: { ...prev.formData, tags: val },
+                      }))
+                    }
+                  />
+                </section>
+
+                {/* Read time */}
+                <section className="ag-sidebar-section">
+                  <div className="ag-sidebar-section-header">
+                    <span className="ag-sidebar-section-icon">⏱</span>
+                    <span className="ag-sidebar-section-label">Read Time</span>
+                  </div>
+                  <input
+                    type="text"
+                    name="readTime"
+                    className="ag-sidebar-input"
+                    value={formData.readTime}
+                    onChange={this.handleInputChange}
+                    placeholder={estimateReadTime(formData.content)}
+                  />
+                  <div className="ag-sidebar-hint">
+                    Auto-calculated from word count
+                  </div>
+                </section>
+
+                {/* Publish button */}
+                <button
+                  className={`ag-publish-btn${canPublish ? "" : " disabled"}`}
+                  disabled={!canPublish}
+                  onClick={this.handlePublish}
+                >
+                  {isPublishing
+                    ? "Publishing…"
+                    : editingSlug
+                    ? "✓ Update Story"
+                    : "🚀 Publish Now"}
+                </button>
+
+                {/* Stories toggle */}
+                <button
+                  type="button"
+                  className="ag-stories-toggle"
+                  onClick={() =>
+                    this.setState((prev) => ({
+                      storiesOpen: !prev.storiesOpen,
+                    }))
+                  }
+                >
+                  <span
+                    className="ag-stories-toggle"
+                    role="img"
+                    aria-label="Stories"
+                  >
+                    📚
+                  </span>{" "}
+                  My Stories
+                  <span className="ag-stories-count">{blogs.length}</span>
+                  <span className="ag-stories-caret">
+                    {storiesOpen ? "▲" : "▼"}
+                  </span>
+                </button>
+
+                {storiesOpen && (
+                  <div className="ag-stories-list">
+                    {blogs.length === 0 ? (
+                      <p className="ag-stories-empty">
+                        No stories published yet.
+                      </p>
+                    ) : (
+                      blogs.map((blog) => (
+                        <StoryCard
+                          key={blog.slug}
+                          blog={blog}
+                          onEdit={this.handleEdit}
+                          onDelete={this.handleDelete}
+                        />
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+            </aside>
+          </div>
         </div>
 
         <Footer theme={theme} onToggle={this.props.onToggle} />

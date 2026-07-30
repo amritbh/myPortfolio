@@ -30,6 +30,11 @@ config = Config(connect_timeout=5, read_timeout=5)
 ses = boto3.client('ses', region_name=os.environ.get('AWS_REGION', 'us-east-1'), config=config)
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'admin@amrit.cloud')
 
+# S3 client for media uploads
+s3_client = boto3.client('s3', region_name=os.environ.get('AWS_REGION', 'us-east-1'))
+MEDIA_BUCKET_NAME = os.environ.get('MEDIA_BUCKET_NAME', '')
+CLOUDFRONT_MEDIA_URL = os.environ.get('CLOUDFRONT_MEDIA_URL', '')
+
 # Super simple JWT implementation without external dependencies
 JWT_SECRET = os.environ.get('JWT_SECRET', os.environ.get('ADMIN_PASSWORD', 'amrit123'))
 TOKEN_EXPIRATION_SECONDS = 8 * 60 * 60 # 8 hours
@@ -583,6 +588,68 @@ def delete_comment(event, slug):
         print(e)
         return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
 
+def get_media_upload_url(event):
+    """Generate a presigned S3 PUT URL for direct browser uploads.
+    Admin-only. Returns both the presigned URL and the resulting CloudFront CDN URL.
+    """
+    try:
+        payload = authenticate(event)
+        if not payload:
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+        if isinstance(payload, dict) and payload.get('__auth_error'):
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': payload['__auth_error']})}
+        if payload.get('role') != 'admin':
+            return {'statusCode': 403, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Admin access required'})}
+
+        if not MEDIA_BUCKET_NAME:
+            return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Media bucket not configured'})}
+
+        body = json.loads(event.get('body', '{}'))
+        filename = body.get('filename', 'upload').strip()
+        content_type = body.get('content_type', 'application/octet-stream').strip()
+
+        # Validate content type — only allow images and videos
+        allowed_types = (
+            'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+            'video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'
+        )
+        if content_type not in allowed_types:
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': f'Unsupported content type: {content_type}. Allowed: images and videos only.'})}
+
+        # Sanitize filename and generate unique content-addressed key
+        import uuid
+        import re
+        safe_name = re.sub(r'[^a-zA-Z0-9._-]', '_', filename)[:80]
+        unique_key = f"media/{uuid.uuid4().hex}-{safe_name}"
+
+        # Generate 5-minute presigned PUT URL
+        presigned_url = s3_client.generate_presigned_url(
+            'put_object',
+            Params={
+                'Bucket': MEDIA_BUCKET_NAME,
+                'Key': unique_key,
+                'ContentType': content_type,
+            },
+            ExpiresIn=300  # 5 minutes
+        )
+
+        # The final public URL served via CloudFront
+        cdn_url = f"{CLOUDFRONT_MEDIA_URL}/{unique_key}" if CLOUDFRONT_MEDIA_URL else f"https://{MEDIA_BUCKET_NAME}.s3.amazonaws.com/{unique_key}"
+
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({
+                'presigned_url': presigned_url,
+                'cloudfront_url': cdn_url,
+                'key': unique_key
+            })
+        }
+    except Exception as e:
+        print(f"Error generating presigned URL: {e}")
+        return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
+
+
 def lambda_handler(event, context):
     print("EVENT:", json.dumps(event))
     path = event.get('rawPath', event.get('path', ''))
@@ -603,7 +670,10 @@ def lambda_handler(event, context):
         return reset_password_route(event)
     if path in ['/portfolio', '/api/portfolio'] and method == 'POST':
         return contact_portfolio(event)
-            
+
+    if path == '/media/upload-url' and method == 'POST':
+        return get_media_upload_url(event)
+
     if path == '/blogs':
         if method == 'POST':
             return create_blog(event)

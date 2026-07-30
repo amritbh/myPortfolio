@@ -397,4 +397,62 @@ describe("apiClient API unreachable", () => {
     const res = await apiClient.fetchMediumBlogs();
     expect(res).toEqual([]);
   });
+
+  it("getMediaUploadUrl success", async () => {
+    apiClient.setSession("token123", { username: "test", role: "admin" });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        presigned_url: "https://presigned.url",
+        cloudfront_url: "https://cdn.url/image.png",
+        key: "media/image.png",
+      }),
+    });
+    const res = await apiClient.getMediaUploadUrl("test.png", "image/png");
+    expect(res.success).toBe(true);
+    expect(res.presigned_url).toBe("https://presigned.url");
+  });
+
+  it("getMediaUploadUrl unauthenticated", async () => {
+    sessionStorage.clear();
+    localStorage.clear();
+    const res = await apiClient.getMediaUploadUrl("test.png", "image/png");
+    expect(res.success).toBe(false);
+    expect(res.error).toBe("Not authenticated");
+  });
+
+  it("getMediaUploadUrl returns mock when API_URL is null", async () => {
+    // temporarily unset API_URL
+    const originalApi = process.env.REACT_APP_CUSTOM_API_URL;
+    delete process.env.REACT_APP_CUSTOM_API_URL;
+
+    // We need to re-require the module to apply the null API_URL
+    jest.resetModules();
+    const newApiClient = require("./apiClient");
+
+    const res = await newApiClient.getMediaUploadUrl("test.png", "image/png");
+    expect(res.success).toBe(true);
+    expect(res.presigned_url).toBeNull();
+    expect(res.cloudfront_url).toContain("mock");
+
+    // restore
+    process.env.REACT_APP_CUSTOM_API_URL = originalApi;
+  });
+
+  it("uploadMediaToS3 mock mode", async () => {
+    const originalApi = process.env.REACT_APP_CUSTOM_API_URL;
+    delete process.env.REACT_APP_CUSTOM_API_URL;
+    jest.resetModules();
+    const newApiClient = require("./apiClient");
+
+    const file = new File(["dummy content"], "test.png", { type: "image/png" });
+    const progressSpy = jest.fn();
+    const res = await newApiClient.uploadMediaToS3(file, progressSpy);
+
+    expect(res.success).toBe(true);
+    expect(progressSpy).toHaveBeenCalledWith(100);
+    expect(res.url).toContain("mock");
+
+    process.env.REACT_APP_CUSTOM_API_URL = originalApi;
+  });
 });

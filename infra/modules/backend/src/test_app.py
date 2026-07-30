@@ -799,3 +799,48 @@ def test_contact_portfolio_success(mock_send_email, setup_dynamodb):
         'Portfolio Contact: Inquiry', 
         'Name: Test User\nEmail: test@example.com\nPhone: 1234567890\n\nMessage:\nHello there!'
     )
+
+@patch('app.s3_client.generate_presigned_url')
+def test_get_media_upload_url_admin_success(mock_presign, setup_dynamodb):
+    import app
+    app.MEDIA_BUCKET_NAME = 'test-media-bucket'
+    app.CLOUDFRONT_MEDIA_URL = 'https://amrit.cloud/media'
+    
+    token = app.generate_jwt({'username': 'amrit', 'role': 'admin'})
+    mock_presign.return_value = 'https://presigned.url'
+
+    event = {
+        'rawPath': '/media/upload-url',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {'Authorization': f'Bearer {token}'},
+        'body': json.dumps({'filename': 'test image.png', 'content_type': 'image/png'})
+    }
+    response = app.get_media_upload_url(event)
+    assert response['statusCode'] == 200
+    body = json.loads(response['body'])
+    assert body['presigned_url'] == 'https://presigned.url'
+    assert body['cloudfront_url'].startswith('https://amrit.cloud/media/')
+    assert 'test_image.png' in body['key']
+
+def test_get_media_upload_url_unauthorized(setup_dynamodb):
+    import app
+    event = {
+        'rawPath': '/media/upload-url',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {},
+        'body': json.dumps({'filename': 'test.png', 'content_type': 'image/png'})
+    }
+    response = app.get_media_upload_url(event)
+    assert response['statusCode'] == 401
+
+def test_get_media_upload_url_invalid_type(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'amrit', 'role': 'admin'})
+    event = {
+        'rawPath': '/media/upload-url',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {'Authorization': f'Bearer {token}'},
+        'body': json.dumps({'filename': 'test.exe', 'content_type': 'application/x-msdownload'})
+    }
+    response = app.get_media_upload_url(event)
+    assert response['statusCode'] == 400

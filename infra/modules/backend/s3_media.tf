@@ -1,0 +1,58 @@
+# S3 Bucket for Blog Media (images, videos)
+resource "aws_s3_bucket" "media_bucket" {
+  bucket = "${var.project_name}-${var.environment}-media"
+}
+
+# Block all public access — CloudFront OAC handles reads, presigned URLs handle writes
+resource "aws_s3_bucket_public_access_block" "media_bucket_pab" {
+  bucket                  = aws_s3_bucket.media_bucket.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# CORS policy — allow browser PUT uploads via presigned URLs from the portfolio domain
+resource "aws_s3_bucket_cors_configuration" "media_bucket_cors" {
+  bucket = aws_s3_bucket.media_bucket.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["PUT", "GET", "HEAD"]
+    allowed_origins = [
+      "https://amrit.cloud",
+      "https://www.amrit.cloud",
+      "http://localhost:3000"
+    ]
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000
+  }
+}
+
+# S3 Bucket Policy — allow the main amrit.cloud CloudFront distribution to read objects
+# Media is served at amrit.cloud/media/* via a second origin on the existing distribution
+# The frontend_cloudfront_arn is passed in as a variable from the Terragrunt dependency
+resource "aws_s3_bucket_policy" "media_cloudfront_policy" {
+  bucket     = aws_s3_bucket.media_bucket.id
+  depends_on = [aws_s3_bucket_public_access_block.media_bucket_pab]
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowMainCloudFrontOACRead"
+        Effect = "Allow"
+        Principal = {
+          Service = "cloudfront.amazonaws.com"
+        }
+        Action   = "s3:GetObject"
+        Resource = "${aws_s3_bucket.media_bucket.arn}/*"
+        Condition = {
+          StringEquals = {
+            "AWS:SourceArn" = var.frontend_cloudfront_arn
+          }
+        }
+      }
+    ]
+  })
+}
