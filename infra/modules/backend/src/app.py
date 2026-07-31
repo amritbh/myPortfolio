@@ -213,7 +213,7 @@ def signup_admin(event):
             
         token = generate_jwt({'username': username, 'type': 'verify'}, expires_in=900) # 15 minutes
         origin = event.get('headers', {}).get('origin', 'https://amrit.cloud')
-        verification_link = f"{origin}/admin?verifyToken={token}"
+        verification_link = f"{origin}/login?verifyToken={token}"
         send_email(email, "Verify your Admin Account", f"Click here to verify your account: {verification_link}")
         
         return {
