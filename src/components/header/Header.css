@@ -134,9 +134,26 @@
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
+    overflow: visible;
   }
   .header .menu-icon {
     display: none;
+  }
+
+  .account-dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+  }
+}
+
+@media (max-width: 47.99em) {
+  .account-dropdown-menu {
+    position: static;
+    box-shadow: none !important;
+    border: none !important;
+    padding-left: 10px;
+    background-color: transparent !important;
   }
 }
 @media (max-width: 960px) and (min-width: 768px) {
