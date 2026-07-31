@@ -13,11 +13,19 @@ variable "environment" {
 variable "admin_email" {
   description = "Email address for the admin user"
   type        = string
+  validation {
+    condition     = length(var.admin_email) > 0
+    error_message = "The admin_email variable cannot be empty. If running in CI/CD, ensure the ADMIN_EMAIL GitHub secret is set."
+  }
 }
 
 variable "system_email" {
   description = "Email address for system notifications and Cognito emails"
   type        = string
+  validation {
+    condition     = length(var.system_email) > 0
+    error_message = "The system_email variable cannot be empty. If running in CI/CD, ensure the SYSTEM_EMAIL GitHub secret is set."
+  }
 }
 
 
