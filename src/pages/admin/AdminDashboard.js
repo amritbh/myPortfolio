@@ -378,8 +378,14 @@ class AdminDashboard extends Component {
         this.loadBlogs();
       });
     } else {
-      if (this.props.history) this.props.history.push("/login");
-      else window.location.href = "/login";
+      if (this.props.history) {
+        this.props.history.push({
+          pathname: "/login",
+          search: window.location.search,
+        });
+      } else {
+        window.location.href = `/login${window.location.search}`;
+      }
     }
   };
 
