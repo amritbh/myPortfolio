@@ -13,7 +13,11 @@ variable "environment" {
 variable "admin_email" {
   description = "Email address for the admin user"
   type        = string
-  default     = "amrit.bhattarai990@gmail.com"
+}
+
+variable "system_email" {
+  description = "Email address for system notifications and Cognito emails"
+  type        = string
 }
 
 

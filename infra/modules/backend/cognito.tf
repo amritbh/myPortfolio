@@ -11,6 +11,12 @@ resource "aws_cognito_user_pool" "pool" {
     require_symbols   = true
     require_uppercase = true
   }
+
+  email_configuration {
+    email_sending_account = "DEVELOPER"
+    from_email_address    = "Admin <${var.system_email}>"
+    source_arn            = "arn:aws:ses:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:identity/amrit.cloud"
+  }
 }
 
 resource "aws_cognito_user_pool_domain" "main" {
