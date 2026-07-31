@@ -191,6 +191,21 @@ def signup_admin(event):
         try:
             existing_user = users_table.get_item(Key={'username': username}).get('Item')
             if existing_user:
+                if existing_user.get('verified') == False:
+                    # User exists but isn't verified. Resend the verification email.
+                    token = generate_jwt({'username': username, 'type': 'verify'}, expires_in=900)
+                    origin = event.get('headers', {}).get('origin', 'https://amrit.cloud')
+                    verification_link = f"{origin}/login?verifyToken={token}"
+                    send_email(email, "Verify your Account", f"Click here to verify your account: {verification_link}")
+                    
+                    return {
+                        'statusCode': 201,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({
+                            'message': 'Account exists but is unverified. A new verification email has been sent.',
+                            'user': {'username': username, 'email': email, 'role': 'user'}
+                        })
+                    }
                 return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Username is already registered'})}
         except Exception as err:
             print("Users table lookup warning:", err)
