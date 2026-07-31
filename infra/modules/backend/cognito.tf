@@ -30,10 +30,12 @@ resource "aws_cognito_user_pool_client" "client" {
 
   callback_urls = [
     "https://amrit.cloud/login",
+    "https://www.amrit.cloud/login",
     "http://localhost:3000/login"
   ]
   logout_urls = [
     "https://amrit.cloud/",
+    "https://www.amrit.cloud/",
     "http://localhost:3000/"
   ]
 
