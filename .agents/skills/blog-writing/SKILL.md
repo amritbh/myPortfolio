@@ -18,7 +18,7 @@ This project maintains a series of technical blog posts describing its own archi
 - **No Markdown Titles:** Do not include a top-level heading (e.g., `# Blog Title`) at the very beginning of the file. The file should start directly with the introductory paragraph, as titles are managed separately in the Admin UI/Database.
 - **Images & Architecture Diagrams:**
   - The correct S3 media URL format is `https://amrit.cloud/media/{filename.png}` (do not use double `/media/media/`).
-  - When drafting a new blog, proactively generate high-quality AI images for the **Blog Cover** and any **Architecture Diagrams** using the image generation tool.
+  - When drafting a new blog, proactively generate high-quality AI images for the **Blog Cover** and any **Architecture Diagrams** using the image generation tool. **CRITICAL**: For BOTH cover images and architecture diagrams, ALWAYS instruct the image generator to create a "minimalist, flat, and professional draw.io / Excalidraw-style diagram using standard AWS icons. Avoid all complex 3D rendering and glowing neon effects so it looks exactly like a natural, hand-crafted system design chart drawn up by an engineer." Additionally, instruct the generator to embed the diagram's title EXACTLY ONCE at the top center of the image.
   - Upload these generated images directly to the S3 bucket (`s3://amrit-portfolio-prod-media/media/`) using `aws s3 cp`.
   - **Important**: For architecture diagrams, always **retain the original ASCII text diagram** directly below the image tag in the markdown file. This ensures the raw technical flow is preserved alongside the visual diagram.
 - **Syntax:** Use standard GitHub-flavored Markdown for code blocks (specifying the language, e.g., ```python) and blockquotes.
@@ -29,7 +29,12 @@ This project maintains a series of technical blog posts describing its own archi
 - Maintain the table format in the content plan for topics, read time, tags, and the expected publishing schedule.
 - Unlike individual blog drafts, the `docs/blog-content-plan.md` file _is_ typically committed to the repository (if not ignored), so ensure it is tracked appropriately.
 
-## 4. Typography Rules (From AGENTS.md)
+## 4. Content Guidelines
 
-- Avoid using hyphens (`-`) or double underscores (`__`) in sentences as punctuation (e.g., as em dashes). These can cause rendering conflicts with the custom UI parser.
+- **Keywords:** Always weave the terms "serverless portfolio", "technical blogging", and "dynamic blogging" into the narrative of the blog content to reinforce the overarching theme of this series.
+- **Title Numbering:** When publishing or registering a new blog post in DynamoDB, ensure the title is prepended with its sequential number (e.g., "6. Title Goes Here").
+
+## 5. Typography Rules (From AGENTS.md)
+
+- Avoid using hyphens (`-`), double underscores (`__`), or em dashes (`—`) in sentences as punctuation AND completely avoid them in blog headings. These can cause rendering conflicts with the custom UI parser.
 - Standard markdown lists using hyphens are completely fine. Use commas, parentheses, or rephrase sentences to avoid inline punctuation issues.
