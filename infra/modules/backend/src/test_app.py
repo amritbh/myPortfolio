@@ -82,7 +82,7 @@ def test_signup_admin_success(setup_dynamodb):
     assert 'Account created successfully' in body['message']
     assert body['user']['username'] == 'newuser'
 
-def test_signup_duplicate_username(setup_dynamodb):
+def test_signup_duplicate_username_verified(setup_dynamodb):
     import app
     app.users_table = boto3.resource('dynamodb', region_name='us-east-1').Table(os.environ['USERS_TABLE_NAME'])
 
@@ -97,10 +97,37 @@ def test_signup_duplicate_username(setup_dynamodb):
     }
     app.lambda_handler(event, None)
     
-    # Try creating same user again
+    # Manually verify the user in the mock DB
+    app.users_table.update_item(
+        Key={'username': 'dupuser'},
+        UpdateExpression="SET verified = :v",
+        ExpressionAttributeValues={':v': True}
+    )
+    
+    # Try creating same user again when already verified
     res2 = app.lambda_handler(event, None)
     assert res2['statusCode'] == 400
     assert 'already registered' in json.loads(res2['body'])['error']
+
+def test_signup_resend_verification_unverified(setup_dynamodb):
+    import app
+    app.users_table = boto3.resource('dynamodb', region_name='us-east-1').Table(os.environ['USERS_TABLE_NAME'])
+
+    event = {
+        'rawPath': '/auth/signup',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({
+            'username': 'unverifieduser',
+            'email': 'unverified@example.com',
+            'password': 'SecurePassword123!'
+        })
+    }
+    app.lambda_handler(event, None)
+    
+    # Try creating same user again while unverified
+    res2 = app.lambda_handler(event, None)
+    assert res2['statusCode'] == 201
+    assert 'unverified' in json.loads(res2['body'])['message']
 
 def test_login_with_registered_dynamodb_user(setup_dynamodb):
     import app
