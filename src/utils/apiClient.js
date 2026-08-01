@@ -159,6 +159,10 @@ export const loginAdmin = async (username, password) => {
       };
     }
 
+    if (data.requires_2fa) {
+      return { success: true, requires_2fa: true, temp_token: data.temp_token };
+    }
+
     setSession(data.token, data.user);
     return { success: true, token: data.token, user: data.user };
   } catch (error) {
@@ -524,6 +528,146 @@ export const uploadMediaToS3 = async (file, onProgress = null) => {
     if (onProgress) onProgress(100);
     return { success: true, url: urlResult.cloudfront_url };
   } catch (err) {
+    console.error("API Error:", err);
     return { success: false, error: err.message };
+  }
+};
+
+export const deleteAccount = async () => {
+  if (!API_URL) return { success: true, message: "Mock account deleted." };
+  const token = getStoredToken();
+  if (!token) return { success: false, error: "Not authenticated" };
+
+  try {
+    const response = await fetch(`${API_URL}/auth/account`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.ok) {
+      return { success: true };
+    }
+    const data = await response.json();
+    return { success: false, error: data.error || "Failed to delete account" };
+  } catch (err) {
+    console.error("Error deleting account:", err);
+    return { success: false, error: "Network error while deleting account" };
+  }
+};
+
+export const setup2FA = async () => {
+  if (!API_URL)
+    return {
+      success: true,
+      uri: "otpauth://totp/mock?secret=JBSWY3DPEHPK3PXP",
+    };
+  const token = getStoredToken();
+  if (!token) return { success: false, error: "Not authenticated" };
+
+  try {
+    const response = await fetch(`${API_URL}/auth/2fa/setup`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+    if (response.ok) return { success: true, ...data };
+    return { success: false, error: data.error || "Failed to setup 2FA" };
+  } catch (err) {
+    console.error("API Error:", err);
+    return { success: false, error: "Network error" };
+  }
+};
+
+export const verify2FA = async (code) => {
+  if (!API_URL) return { success: true };
+  const token = getStoredToken();
+  if (!token) return { success: false, error: "Not authenticated" };
+
+  try {
+    const response = await fetch(`${API_URL}/auth/2fa/verify`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ code }),
+    });
+    const data = await response.json();
+    if (response.ok) return { success: true, ...data };
+    return { success: false, error: data.error || "Failed to verify 2FA" };
+  } catch (err) {
+    console.error("API Error:", err);
+    return { success: false, error: "Network error" };
+  }
+};
+
+export const login2FA = async (tempToken, code) => {
+  if (!API_URL)
+    return {
+      success: true,
+      token: "mock-token",
+      user: { username: "admin", role: "admin" },
+    };
+  try {
+    const response = await fetch(`${API_URL}/auth/login/2fa`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ temp_token: tempToken, code }),
+    });
+    const data = await response.json();
+    if (response.ok) return { success: true, ...data };
+    return { success: false, error: data.error || "Invalid 2FA code" };
+  } catch (err) {
+    console.error("API Error:", err);
+    return { success: false, error: "Network error" };
+  }
+};
+
+export const fetchAccountProfile = async () => {
+  if (!API_URL)
+    return {
+      success: true,
+      profile: {
+        address: "123 Mock St",
+        phone_number: "555-0123",
+        mfa_enabled: false,
+      },
+    };
+  const token = getStoredToken();
+  if (!token) return { success: false, error: "Not authenticated" };
+
+  try {
+    const response = await fetch(`${API_URL}/auth/account`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+    if (response.ok) return { success: true, profile: data };
+    return { success: false, error: data.error || "Failed to fetch profile" };
+  } catch (err) {
+    console.error("Error fetching account profile:", err);
+    return { success: false, error: "Network error" };
+  }
+};
+
+export const updateAccountProfile = async (address, phoneNumber) => {
+  if (!API_URL) return { success: true, message: "Mock profile updated" };
+  const token = getStoredToken();
+  if (!token) return { success: false, error: "Not authenticated" };
+
+  try {
+    const response = await fetch(`${API_URL}/auth/account`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ address, phone_number: phoneNumber }),
+    });
+    const data = await response.json();
+    if (response.ok) return { success: true, ...data };
+    return { success: false, error: data.error || "Failed to update profile" };
+  } catch (err) {
+    console.error("Error updating account profile:", err);
+    return { success: false, error: "Network error" };
   }
 };

@@ -313,6 +313,66 @@ describe("apiClient", () => {
     const res = await apiClient.fetchMediumBlogs();
     expect(res).toEqual([]);
   });
+
+  it("setup2FA success", async () => {
+    apiClient.setSession("token", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ secret: "abc", qr_code: "qr" }),
+    });
+    const res = await apiClient.setup2FA();
+    expect(res.success).toBe(true);
+  });
+
+  it("verify2FA success", async () => {
+    apiClient.setSession("token", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ message: "verified" }),
+    });
+    const res = await apiClient.verify2FA("123456");
+    expect(res.success).toBe(true);
+  });
+
+  it("login2FA success", async () => {
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ token: "t", user: { username: "a" } }),
+    });
+    const res = await apiClient.login2FA("temp", "123");
+    expect(res.success).toBe(true);
+  });
+
+  it("fetchAccountProfile success", async () => {
+    apiClient.setSession("token", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ username: "test", address: "123" }),
+    });
+    const res = await apiClient.fetchAccountProfile();
+    expect(res.success).toBe(true);
+    expect(res.profile.address).toBe("123");
+  });
+
+  it("updateAccountProfile success", async () => {
+    apiClient.setSession("token", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ message: "updated" }),
+    });
+    const res = await apiClient.updateAccountProfile("123", "456");
+    expect(res.success).toBe(true);
+  });
+
+  it("deleteAccount success", async () => {
+    apiClient.setSession("token", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ message: "deleted" }),
+    });
+    const res = await apiClient.deleteAccount();
+    expect(res.success).toBe(true);
+  });
 });
 
 describe("apiClient API unreachable", () => {
@@ -548,5 +608,107 @@ describe("apiClient API unreachable", () => {
 
     expect(res.success).toBe(false);
     expect(res.error).toBe("Network error during S3 upload");
+  });
+
+  it("setup2FA catches error", async () => {
+    apiClient.setSession("token", { username: "test" });
+    const res = await apiClient.setup2FA();
+    expect(res.success).toBe(false);
+  });
+
+  it("verify2FA catches error", async () => {
+    apiClient.setSession("token", { username: "test" });
+    const res = await apiClient.verify2FA("123");
+    expect(res.success).toBe(false);
+  });
+
+  it("login2FA catches error", async () => {
+    const res = await apiClient.login2FA("t", "123");
+    expect(res.success).toBe(false);
+  });
+
+  it("fetchAccountProfile catches error", async () => {
+    apiClient.setSession("token", { username: "test" });
+    const res = await apiClient.fetchAccountProfile();
+    expect(res.success).toBe(false);
+  });
+
+  it("updateAccountProfile catches error", async () => {
+    apiClient.setSession("token", { username: "test" });
+    const res = await apiClient.updateAccountProfile("123", "123");
+    expect(res.success).toBe(false);
+  });
+
+  it("deleteAccount catches error", async () => {
+    apiClient.setSession("token", { username: "test" });
+    const res = await apiClient.deleteAccount();
+    expect(res.success).toBe(false);
+  });
+
+  it("setup2FA network error", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockRejectedValueOnce(new Error("Network"));
+    const res = await apiClient.setup2FA();
+    expect(res.success).toBe(false);
+    expect(res.error).toBe("Network error");
+  });
+
+  it("verify2FA network error", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockRejectedValueOnce(new Error("Network"));
+    const res = await apiClient.verify2FA("123456");
+    expect(res.success).toBe(false);
+    expect(res.error).toBe("Network error");
+  });
+
+  it("login2FA network error", async () => {
+    global.fetch.mockRejectedValueOnce(new Error("Network"));
+    const res = await apiClient.login2FA("token", "123456");
+    expect(res.success).toBe(false);
+    expect(res.error).toBe("Network error");
+  });
+
+  it("fetchAccountProfile network error", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockRejectedValueOnce(new Error("Network"));
+    const res = await apiClient.fetchAccountProfile();
+    expect(res.success).toBe(false);
+    expect(res.error).toBe("Network error");
+  });
+
+  it("updateAccountProfile network error", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockRejectedValueOnce(new Error("Network"));
+    const res = await apiClient.updateAccountProfile({});
+    expect(res.success).toBe(false);
+    expect(res.error).toBe("Network error");
+  });
+
+  it("deleteAccount network error", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockRejectedValueOnce(new Error("Network"));
+    const res = await apiClient.deleteAccount();
+    expect(res.success).toBe(false);
+    expect(res.error).toBe("Network error while deleting account");
+  });
+
+  it("fetchAccountProfile failure", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: "Failed to fetch profile" }),
+    });
+    const res = await apiClient.fetchAccountProfile();
+    expect(res.success).toBe(false);
+  });
+
+  it("updateAccountProfile failure", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: "Failed to update profile" }),
+    });
+    const res = await apiClient.updateAccountProfile({});
+    expect(res.success).toBe(false);
   });
 });

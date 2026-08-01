@@ -107,6 +107,42 @@ resource "aws_apigatewayv2_route" "post_media_upload_url" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
+resource "aws_apigatewayv2_route" "delete_auth_account" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "DELETE /auth/account"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "get_auth_account" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "GET /auth/account"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "put_auth_account" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "PUT /auth/account"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "post_auth_2fa_setup" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "POST /auth/2fa/setup"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "post_auth_2fa_verify" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "POST /auth/2fa/verify"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "post_auth_login_2fa" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "POST /auth/login/2fa"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
 resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.http_api.id
   name        = "$default"

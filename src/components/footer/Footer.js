@@ -8,10 +8,20 @@ export default function Footer(props) {
   return (
     <div className="footer-div">
       <Fade>
-        <p className="footer-text" style={{ color: props.theme.secondaryText }}>
-          Made with <span role="img">❤️</span> by {greeting.title}
-        </p>
-        {/* <ToggleSwitch theme={props.theme} onToggle={props.onToggle}/> */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <p
+            className="footer-text"
+            style={{ color: props.theme.secondaryText }}
+          >
+            Made with <span role="img">❤️</span> by {greeting.title}
+          </p>
+        </div>
       </Fade>
     </div>
   );

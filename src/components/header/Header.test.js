@@ -28,12 +28,16 @@ describe("Header Component", () => {
     expect(screen.queryByText("Logout")).not.toBeInTheDocument();
   });
 
-  it("renders Logout button when user is logged in", () => {
+  it("renders Logout button when user is logged in and dropdown opened", () => {
     jest
       .spyOn(apiClient, "getStoredUser")
       .mockReturnValue({ username: "test" });
     renderWithRouter(<Header theme={mockTheme} />);
-    expect(screen.getByText("Logout")).toBeInTheDocument();
+    expect(screen.getByText(/Account/i)).toBeInTheDocument();
+
+    // Open dropdown
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+    expect(screen.getByText(/Logout/i)).toBeInTheDocument();
     expect(screen.queryByText("Login")).not.toBeInTheDocument();
   });
 
@@ -48,12 +52,11 @@ describe("Header Component", () => {
     window.location = { href: "" };
 
     renderWithRouter(<Header theme={mockTheme} />);
-    const logoutBtn = screen.getByText("Logout");
 
-    // Test hover states
-    fireEvent.mouseEnter(logoutBtn);
-    fireEvent.mouseOut(logoutBtn);
-    fireEvent.blur(logoutBtn);
+    // Open dropdown
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+
+    const logoutBtn = screen.getByText(/Logout/i);
 
     // Test click
     fireEvent.click(logoutBtn);
@@ -73,12 +76,54 @@ describe("Header Component", () => {
     process.env.REACT_APP_COGNITO_CLIENT_ID = "mock-client-id";
 
     renderWithRouter(<Header theme={mockTheme} />);
-    const logoutBtn = screen.getByText("Logout");
+
+    // Open dropdown
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+
+    const logoutBtn = screen.getByText(/Logout/i);
 
     fireEvent.click(logoutBtn);
     expect(apiClient.clearSession).toHaveBeenCalled();
     expect(window.location.href).toContain("mock-client-id");
     expect(window.location.href).toContain("logout_uri=");
+  });
+
+  it("handles Manage Account click", () => {
+    jest
+      .spyOn(apiClient, "getStoredUser")
+      .mockReturnValue({ username: "test" });
+    renderWithRouter(<Header theme={mockTheme} />);
+
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+
+    const manageAccountBtn = screen.getByText(/Manage Account/i);
+    expect(manageAccountBtn.getAttribute("href")).toBe("/account");
+  });
+
+  it("handles Change Password click", async () => {
+    jest
+      .spyOn(apiClient, "getStoredUser")
+      .mockReturnValue({ username: "test" });
+
+    jest.spyOn(apiClient, "requestPasswordReset").mockResolvedValue({
+      success: true,
+    });
+
+    window.alert = jest.fn();
+
+    renderWithRouter(<Header theme={mockTheme} />);
+
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+
+    const changePasswordBtn = screen.getByText(/Change Password/i);
+    fireEvent.click(changePasswordBtn);
+
+    await screen.findByText(/Change Password/i); // wait for event tick
+
+    expect(apiClient.requestPasswordReset).toHaveBeenCalledWith("test");
+    expect(window.alert).toHaveBeenCalledWith(
+      "A password reset link has been sent to your email. Please check your inbox."
+    );
   });
 
   it("handles mouse hover and out on all nav links", () => {
@@ -103,5 +148,58 @@ describe("Header Component", () => {
       fireEvent.mouseOut(link);
       expect(link.style.backgroundColor).toBe("transparent");
     });
+  });
+
+  it("handles Change Password click failure", async () => {
+    jest
+      .spyOn(apiClient, "getStoredUser")
+      .mockReturnValue({ username: "test" });
+    jest
+      .spyOn(apiClient, "requestPasswordReset")
+      .mockResolvedValue({ success: false, error: "bad error" });
+    window.alert = jest.fn();
+
+    renderWithRouter(<Header theme={mockTheme} />);
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+
+    const changePasswordBtn = screen.getByText(/Change Password/i);
+    fireEvent.click(changePasswordBtn);
+    await screen.findByText(/Change Password/i); // wait for event tick
+
+    expect(window.alert).toHaveBeenCalledWith(
+      "Failed to send password reset link: bad error"
+    );
+  });
+
+  it("handles Change Password missing email/username", async () => {
+    jest.spyOn(apiClient, "getStoredUser").mockReturnValue({ role: "admin" });
+    window.alert = jest.fn();
+
+    renderWithRouter(<Header theme={mockTheme} />);
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+
+    const changePasswordBtn = screen.getByText(/Change Password/i);
+    fireEvent.click(changePasswordBtn);
+
+    expect(window.alert).toHaveBeenCalledWith(
+      "Unable to find your email address. Please log out and use the Forgot Password link."
+    );
+  });
+
+  it("closes dropdown on mouse leave", () => {
+    jest
+      .spyOn(apiClient, "getStoredUser")
+      .mockReturnValue({ username: "test" });
+    renderWithRouter(<Header theme={mockTheme} />);
+
+    const accountToggle = screen.getByText(/Account/i);
+    fireEvent.mouseEnter(accountToggle);
+    expect(screen.getByText(/Logout/i)).toBeInTheDocument();
+
+    // The container has the onMouseLeave
+    const container = accountToggle.closest(".account-dropdown-container");
+    fireEvent.mouseLeave(container);
+
+    expect(screen.queryByText(/Logout/i)).not.toBeInTheDocument();
   });
 });

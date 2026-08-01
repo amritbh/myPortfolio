@@ -313,4 +313,83 @@ describe("Login Component", () => {
     });
     window.location = originalLocation;
   });
+
+  it("handles 2FA required response from login", async () => {
+    jest.spyOn(apiClient, "loginAdmin").mockResolvedValueOnce({
+      success: true,
+      requires_2fa: true,
+      temp_token: "temp-token",
+    });
+
+    renderWithRouter(<Login theme={mockTheme} />);
+    fireEvent.click(screen.getByText(/Sign in with email/i));
+
+    fireEvent.change(screen.getByPlaceholderText(/Email address/i), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Password/i), {
+      target: { value: "amrit123" },
+    });
+    fireEvent.click(document.getElementById("login-submit-btn"));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: /2-Step Verification/i })
+      ).toBeInTheDocument();
+    });
+
+    jest.spyOn(apiClient, "login2FA").mockResolvedValueOnce({
+      success: true,
+      token: "valid-jwt",
+      user: { username: "admin", role: "admin" },
+    });
+
+    fireEvent.change(screen.getByPlaceholderText(/6-digit code/i), {
+      target: { value: "123456" },
+    });
+    fireEvent.click(screen.getByText(/Verify & Sign In/i));
+
+    await waitFor(() => {
+      expect(apiClient.login2FA).toHaveBeenCalledWith("temp-token", "123456");
+    });
+  });
+
+  it("handles invalid 2FA code during login", async () => {
+    jest.spyOn(apiClient, "loginAdmin").mockResolvedValueOnce({
+      success: true,
+      requires_2fa: true,
+      temp_token: "temp-token",
+    });
+
+    renderWithRouter(<Login theme={mockTheme} />);
+    fireEvent.click(screen.getByText(/Sign in with email/i));
+
+    fireEvent.change(screen.getByPlaceholderText(/Email address/i), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Password/i), {
+      target: { value: "amrit123" },
+    });
+    fireEvent.click(document.getElementById("login-submit-btn"));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: /2-Step Verification/i })
+      ).toBeInTheDocument();
+    });
+
+    jest.spyOn(apiClient, "login2FA").mockResolvedValueOnce({
+      success: false,
+      error: "Invalid 2FA code",
+    });
+
+    fireEvent.change(screen.getByPlaceholderText(/6-digit code/i), {
+      target: { value: "111111" },
+    });
+    fireEvent.click(screen.getByText(/Verify & Sign In/i));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Invalid 2FA code/i)).toBeInTheDocument();
+    });
+  });
 });
