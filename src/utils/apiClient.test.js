@@ -691,4 +691,24 @@ describe("apiClient API unreachable", () => {
     expect(res.success).toBe(false);
     expect(res.error).toBe("Network error while deleting account");
   });
+
+  it("fetchAccountProfile failure", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: "Failed to fetch profile" }),
+    });
+    const res = await apiClient.fetchAccountProfile();
+    expect(res.success).toBe(false);
+  });
+
+  it("updateAccountProfile failure", async () => {
+    apiClient.setSession("token123", { username: "test" });
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: "Failed to update profile" }),
+    });
+    const res = await apiClient.updateAccountProfile({});
+    expect(res.success).toBe(false);
+  });
 });

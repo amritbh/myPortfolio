@@ -123,13 +123,13 @@
 
 .message-success {
   background-color: rgba(46, 204, 113, 0.1);
-  color: #1d8348;
+  color: #0f5132;
   border: 1px solid #2ecc71;
 }
 
 .message-error {
   background-color: rgba(231, 76, 60, 0.1);
-  color: #c0392b;
+  color: #842029;
   border: 1px solid #e74c3c;
 }
 
