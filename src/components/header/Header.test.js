@@ -88,6 +88,44 @@ describe("Header Component", () => {
     expect(window.location.href).toContain("logout_uri=");
   });
 
+  it("handles Manage Account click", () => {
+    jest
+      .spyOn(apiClient, "getStoredUser")
+      .mockReturnValue({ username: "test" });
+    renderWithRouter(<Header theme={mockTheme} />);
+
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+
+    const manageAccountBtn = screen.getByText(/Manage Account/i);
+    expect(manageAccountBtn.getAttribute("href")).toBe("/account");
+  });
+
+  it("handles Change Password click", async () => {
+    jest
+      .spyOn(apiClient, "getStoredUser")
+      .mockReturnValue({ username: "test" });
+
+    jest.spyOn(apiClient, "requestPasswordReset").mockResolvedValue({
+      success: true,
+    });
+
+    window.alert = jest.fn();
+
+    renderWithRouter(<Header theme={mockTheme} />);
+
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+
+    const changePasswordBtn = screen.getByText(/Change Password/i);
+    fireEvent.click(changePasswordBtn);
+
+    await screen.findByText(/Change Password/i); // wait for event tick
+
+    expect(apiClient.requestPasswordReset).toHaveBeenCalledWith("test");
+    expect(window.alert).toHaveBeenCalledWith(
+      "A password reset link has been sent to your email. Please check your inbox."
+    );
+  });
+
   it("handles mouse hover and out on all nav links", () => {
     jest.spyOn(apiClient, "getStoredUser").mockReturnValue(null);
     renderWithRouter(<Header theme={mockTheme} />);

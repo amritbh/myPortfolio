@@ -1035,3 +1035,86 @@ def test_update_account_profile(setup_dynamodb):
     db_user = app.users_table.get_item(Key={'username': 'testuser'}).get('Item')
     assert db_user['address'] == 'New Address'
     assert db_user['phone_number'] == '555-1234'
+
+def test_get_account_profile_unauthorized(setup_dynamodb):
+    import app
+    event = {
+        'rawPath': '/auth/account',
+        'requestContext': {'http': {'method': 'GET'}},
+        'headers': {},
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 401
+    
+    event['headers']['authorization'] = 'Bearer invalid'
+    response2 = app.lambda_handler(event, None)
+    assert response2['statusCode'] == 401
+
+def test_get_account_profile_user_not_found(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'missinguser', 'role': 'user'})
+    event = {
+        'rawPath': '/auth/account',
+        'requestContext': {'http': {'method': 'GET'}},
+        'headers': {'authorization': f'Bearer {token}'},
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 404
+
+def test_update_account_profile_unauthorized(setup_dynamodb):
+    import app
+    event = {
+        'rawPath': '/auth/account',
+        'requestContext': {'http': {'method': 'PUT'}},
+        'headers': {},
+        'body': json.dumps({'address': 'a'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 401
+
+def test_get_account_profile_exception(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'testuser', 'role': 'user'})
+    event = {
+        'rawPath': '/auth/account',
+        'requestContext': {'http': {'method': 'GET'}},
+        'headers': {'authorization': f'Bearer {token}'}
+    }
+    with patch('app.users_table.get_item') as mock_get:
+        mock_get.side_effect = Exception("DB Error")
+        response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 500
+
+def test_update_account_profile_exception(setup_dynamodb):
+    import app
+    token = app.generate_jwt({'username': 'testuser', 'role': 'user'})
+    event = {
+        'rawPath': '/auth/account',
+        'requestContext': {'http': {'method': 'PUT'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'address': 'a'})
+    }
+    with patch('app.users_table.update_item') as mock_update:
+        mock_update.side_effect = Exception("DB Error")
+        response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 500
+
+def test_update_account_profile_missing_fields(setup_dynamodb):
+    import app
+    app.users_table.put_item(Item={'username': 'testuser', 'email': 'test@example.com'})
+    token = app.generate_jwt({'username': 'testuser', 'role': 'user'})
+    
+    # Missing address
+    event = {
+        'rawPath': '/auth/account',
+        'requestContext': {'http': {'method': 'PUT'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'phone_number': '555-1234'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200 # App handles it by using what is present or doesn't complain?
+    # Wait, in app.py:
+    # body = json.loads(event.get('body', '{}'))
+    # users_table.update_item(...)
+    # It doesn't error on missing fields, it updates them to whatever they are in the body.
+

@@ -75,4 +75,113 @@ describe("Account Component", () => {
       ).toBeInTheDocument();
     });
   });
+
+  it("handles API error on profile load", async () => {
+    jest.spyOn(apiClient, "fetchAccountProfile").mockResolvedValue({
+      success: false,
+      error: "Failed to load profile",
+    });
+
+    renderWithRouter(<Account theme={mockTheme} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Failed to load profile")).toBeInTheDocument();
+    });
+  });
+
+  it("handles API error on profile update", async () => {
+    jest.spyOn(apiClient, "fetchAccountProfile").mockResolvedValue({
+      success: true,
+      profile: {
+        address: "123 Main St",
+        phone_number: "555-1234",
+        mfa_enabled: false,
+      },
+    });
+
+    jest.spyOn(apiClient, "updateAccountProfile").mockResolvedValue({
+      success: false,
+      error: "Failed to update profile",
+    });
+
+    renderWithRouter(<Account theme={mockTheme} />);
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText("Save Changes"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Failed to update profile")).toBeInTheDocument();
+    });
+  });
+
+  it("handles 2FA setup flow", async () => {
+    jest.spyOn(apiClient, "fetchAccountProfile").mockResolvedValue({
+      success: true,
+      profile: { address: "", phone_number: "", mfa_enabled: false },
+    });
+
+    jest.spyOn(apiClient, "setup2FA").mockResolvedValue({
+      success: true,
+      uri: "otpauth://totp/...",
+    });
+
+    jest.spyOn(apiClient, "verify2FA").mockResolvedValue({
+      success: true,
+    });
+
+    renderWithRouter(<Account theme={mockTheme} />);
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText("Enable 2FA"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Setup 2FA")).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByPlaceholderText("000000"), {
+      target: { value: "123456" },
+    });
+    fireEvent.click(screen.getByText("Verify & Enable"));
+
+    await waitFor(() => {
+      expect(screen.getByText("2FA enabled successfully!")).toBeInTheDocument();
+      expect(screen.getByText("2FA Enabled")).toBeInTheDocument();
+    });
+  });
+
+  it("handles account deletion flow", async () => {
+    jest.spyOn(apiClient, "fetchAccountProfile").mockResolvedValue({
+      success: true,
+      profile: { address: "", phone_number: "", mfa_enabled: false },
+    });
+
+    jest.spyOn(apiClient, "deleteAccount").mockResolvedValue({
+      success: true,
+    });
+
+    window.confirm = jest.fn().mockImplementation(() => true);
+
+    const originalLocation = window.location;
+    delete window.location;
+    window.location = { href: "" };
+
+    renderWithRouter(<Account theme={mockTheme} />);
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText("Delete Account"));
+
+    await waitFor(() => {
+      expect(window.confirm).toHaveBeenCalled();
+      expect(apiClient.deleteAccount).toHaveBeenCalled();
+      expect(window.location.href).toBe("/");
+    });
+
+    window.location = originalLocation;
+  });
 });
