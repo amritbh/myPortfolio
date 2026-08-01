@@ -11,6 +11,7 @@ import {
   verify2FA,
   deleteAccount,
   clearSession,
+  getStoredUser,
 } from "../../utils/apiClient";
 import "./Account.css";
 
@@ -43,11 +44,13 @@ class Account extends Component {
   loadProfile = async () => {
     this.setState({ loading: true });
     const result = await fetchAccountProfile();
+    const storedUser = getStoredUser() || {};
     if (result.success && result.profile) {
       this.setState({
         username: result.profile.username || "",
-        email: result.profile.email || "",
-        name: result.profile.name || "",
+        email:
+          result.profile.email || storedUser.email || storedUser.username || "",
+        name: result.profile.name || storedUser.name || "",
         address: result.profile.address || "",
         phoneNumber: result.profile.phone_number || "",
         mfaEnabled: result.profile.mfa_enabled || false,
