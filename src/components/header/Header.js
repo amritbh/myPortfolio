@@ -241,6 +241,7 @@ class Header extends Component {
                             Manage Account
                           </Link>
                           <button
+                            type="button"
                             onClick={this.handleChangePassword}
                             className="account-dropdown-item"
                             style={{ color: theme.text }}
@@ -269,6 +270,7 @@ class Header extends Component {
                           </button>
                           <div className="account-dropdown-divider" />
                           <button
+                            type="button"
                             onClick={this.handleLogout}
                             className="account-dropdown-item"
                             style={{ color: "#d9534f" }}

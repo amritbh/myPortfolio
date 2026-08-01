@@ -40,6 +40,10 @@ CLOUDFRONT_MEDIA_URL = os.environ.get('CLOUDFRONT_MEDIA_URL', '')
 JWT_SECRET = os.environ.get('JWT_SECRET', os.environ.get('ADMIN_PASSWORD', 'amrit123'))
 TOKEN_EXPIRATION_SECONDS = 8 * 60 * 60 # 8 hours
 
+BEARER_PREFIX = BEARER_PREFIX
+AUTH_ACCOUNT_ROUTE = AUTH_ACCOUNT_ROUTE
+
+
 def send_email(to_email, subject, body):
     try:
         ses.send_email(
@@ -328,7 +332,7 @@ def verify_any_token(token: str):
 def delete_account_route(event):
     try:
         auth_header = event.get('headers', {}).get('authorization', '')
-        if not auth_header.startswith('Bearer '):
+        if not auth_header.startswith(BEARER_PREFIX):
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
             
         token = auth_header.split(' ')[1]
@@ -350,7 +354,7 @@ def delete_account_route(event):
 def setup_2fa_route(event):
     try:
         auth_header = event.get('headers', {}).get('authorization', '')
-        if not auth_header.startswith('Bearer '):
+        if not auth_header.startswith(BEARER_PREFIX):
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
             
         token = auth_header.split(' ')[1]
@@ -376,7 +380,7 @@ def setup_2fa_route(event):
 def verify_2fa_route(event):
     try:
         auth_header = event.get('headers', {}).get('authorization', '')
-        if not auth_header.startswith('Bearer '):
+        if not auth_header.startswith(BEARER_PREFIX):
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
             
         token = auth_header.split(' ')[1]
@@ -409,7 +413,7 @@ def verify_2fa_route(event):
 def get_account_route(event):
     try:
         auth_header = event.get('headers', {}).get('authorization', '')
-        if not auth_header.startswith('Bearer '):
+        if not auth_header.startswith(BEARER_PREFIX):
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
             
         token = auth_header.split(' ')[1]
@@ -437,7 +441,7 @@ def get_account_route(event):
 def update_account_route(event):
     try:
         auth_header = event.get('headers', {}).get('authorization', '')
-        if not auth_header.startswith('Bearer '):
+        if not auth_header.startswith(BEARER_PREFIX):
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
             
         token = auth_header.split(' ')[1]
@@ -678,7 +682,7 @@ def contact_portfolio(event):
 def authenticate(event):
     headers = event.get('headers', {})
     auth_header = headers.get('authorization', headers.get('Authorization', ''))
-    token = auth_header.replace('Bearer ', '').strip() if auth_header.startswith('Bearer ') else auth_header
+    token = auth_header.replace(BEARER_PREFIX, '').strip() if auth_header.startswith(BEARER_PREFIX) else auth_header
     if not token:
         return None
     payload = verify_jwt(token)
@@ -890,11 +894,11 @@ def lambda_handler(event, context):
         return forgot_password_route(event)
     if path in ['/auth/reset-password', '/reset-password'] and method == 'POST':
         return reset_password_route(event)
-    if path == '/auth/account' and method == 'DELETE':
+    if path == AUTH_ACCOUNT_ROUTE and method == 'DELETE':
         return delete_account_route(event)
-    if path == '/auth/account' and method == 'GET':
+    if path == AUTH_ACCOUNT_ROUTE and method == 'GET':
         return get_account_route(event)
-    if path == '/auth/account' and method == 'PUT':
+    if path == AUTH_ACCOUNT_ROUTE and method == 'PUT':
         return update_account_route(event)
     if path in ['/portfolio', '/api/portfolio'] and method == 'POST':
         return contact_portfolio(event)

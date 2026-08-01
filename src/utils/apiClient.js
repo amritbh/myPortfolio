@@ -528,6 +528,7 @@ export const uploadMediaToS3 = async (file, onProgress = null) => {
     if (onProgress) onProgress(100);
     return { success: true, url: urlResult.cloudfront_url };
   } catch (err) {
+    console.error("API Error:", err);
     return { success: false, error: err.message };
   }
 };
@@ -572,6 +573,7 @@ export const setup2FA = async () => {
     if (response.ok) return { success: true, ...data };
     return { success: false, error: data.error || "Failed to setup 2FA" };
   } catch (err) {
+    console.error("API Error:", err);
     return { success: false, error: "Network error" };
   }
 };
@@ -594,6 +596,7 @@ export const verify2FA = async (code) => {
     if (response.ok) return { success: true, ...data };
     return { success: false, error: data.error || "Failed to verify 2FA" };
   } catch (err) {
+    console.error("API Error:", err);
     return { success: false, error: "Network error" };
   }
 };
@@ -615,6 +618,7 @@ export const login2FA = async (tempToken, code) => {
     if (response.ok) return { success: true, ...data };
     return { success: false, error: data.error || "Invalid 2FA code" };
   } catch (err) {
+    console.error("API Error:", err);
     return { success: false, error: "Network error" };
   }
 };

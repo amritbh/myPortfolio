@@ -188,9 +188,12 @@ class Account extends Component {
                     <h2 style={{ color: theme.text }}>Profile Information</h2>
                     <form onSubmit={this.handleSaveProfile}>
                       <div className="account-form-group">
-                        <label style={{ color: theme.text }}>Address</label>
+                        <label htmlFor="address" style={{ color: theme.text }}>
+                          Address
+                        </label>
                         <input
                           type="text"
+                          id="address"
                           name="address"
                           value={address}
                           onChange={this.handleInputChange}
@@ -204,11 +207,15 @@ class Account extends Component {
                         />
                       </div>
                       <div className="account-form-group">
-                        <label style={{ color: theme.text }}>
+                        <label
+                          htmlFor="phoneNumber"
+                          style={{ color: theme.text }}
+                        >
                           Phone Number
                         </label>
                         <input
                           type="tel"
+                          id="phoneNumber"
                           name="phoneNumber"
                           value={phoneNumber}
                           onChange={this.handleInputChange}
@@ -254,6 +261,7 @@ class Account extends Component {
                         </p>
                       </div>
                       <button
+                        type="button"
                         className={`account-btn ${
                           mfaEnabled ? "btn-secondary" : "btn-primary"
                         }`}
@@ -288,6 +296,7 @@ class Account extends Component {
                       Please be certain.
                     </p>
                     <button
+                      type="button"
                       className="account-btn btn-danger"
                       onClick={this.handleDeleteAccount}
                       disabled={isDeleting}
@@ -342,6 +351,7 @@ class Account extends Component {
                   }}
                 >
                   <button
+                    type="button"
                     onClick={() => this.setState({ show2FAModal: false })}
                     className="account-btn btn-secondary"
                     style={{
@@ -353,6 +363,7 @@ class Account extends Component {
                     Cancel
                   </button>
                   <button
+                    type="button"
                     onClick={this.handleVerify2FA}
                     className="account-btn btn-primary"
                     disabled={

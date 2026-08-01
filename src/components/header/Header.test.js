@@ -149,4 +149,57 @@ describe("Header Component", () => {
       expect(link.style.backgroundColor).toBe("transparent");
     });
   });
+
+  it("handles Change Password click failure", async () => {
+    jest
+      .spyOn(apiClient, "getStoredUser")
+      .mockReturnValue({ username: "test" });
+    jest
+      .spyOn(apiClient, "requestPasswordReset")
+      .mockResolvedValue({ success: false, error: "bad error" });
+    window.alert = jest.fn();
+
+    renderWithRouter(<Header theme={mockTheme} />);
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+
+    const changePasswordBtn = screen.getByText(/Change Password/i);
+    fireEvent.click(changePasswordBtn);
+    await screen.findByText(/Change Password/i); // wait for event tick
+
+    expect(window.alert).toHaveBeenCalledWith(
+      "Failed to send password reset link: bad error"
+    );
+  });
+
+  it("handles Change Password missing email/username", async () => {
+    jest.spyOn(apiClient, "getStoredUser").mockReturnValue({ role: "admin" });
+    window.alert = jest.fn();
+
+    renderWithRouter(<Header theme={mockTheme} />);
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+
+    const changePasswordBtn = screen.getByText(/Change Password/i);
+    fireEvent.click(changePasswordBtn);
+
+    expect(window.alert).toHaveBeenCalledWith(
+      "Unable to find your email address. Please log out and use the Forgot Password link."
+    );
+  });
+
+  it("closes dropdown on mouse leave", () => {
+    jest
+      .spyOn(apiClient, "getStoredUser")
+      .mockReturnValue({ username: "test" });
+    renderWithRouter(<Header theme={mockTheme} />);
+
+    const accountToggle = screen.getByText(/Account/i);
+    fireEvent.mouseEnter(accountToggle);
+    expect(screen.getByText(/Logout/i)).toBeInTheDocument();
+
+    // The container has the onMouseLeave
+    const container = accountToggle.closest(".account-dropdown-container");
+    fireEvent.mouseLeave(container);
+
+    expect(screen.queryByText(/Logout/i)).not.toBeInTheDocument();
+  });
 });
