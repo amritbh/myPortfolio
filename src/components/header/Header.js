@@ -75,7 +75,7 @@ class Header extends Component {
     const theme = this.props.theme;
     const link = settings.isSplash ? "/splash" : "home";
     return (
-      <div style={{ position: "relative", zIndex: 100 }}>
+      <div style={{ position: "relative", zIndex: 999 }}>
         <Fade top duration={1000} distance="20px">
           <SeoHeader />
           <div>
