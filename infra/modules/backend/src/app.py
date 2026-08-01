@@ -40,8 +40,8 @@ CLOUDFRONT_MEDIA_URL = os.environ.get('CLOUDFRONT_MEDIA_URL', '')
 JWT_SECRET = os.environ.get('JWT_SECRET', os.environ.get('ADMIN_PASSWORD', 'amrit123'))
 TOKEN_EXPIRATION_SECONDS = 8 * 60 * 60 # 8 hours
 
-BEARER_PREFIX = BEARER_PREFIX
-AUTH_ACCOUNT_ROUTE = AUTH_ACCOUNT_ROUTE
+BEARER_PREFIX = 'Bearer '
+AUTH_ACCOUNT_ROUTE = '/auth/account'
 
 
 def send_email(to_email, subject, body):
