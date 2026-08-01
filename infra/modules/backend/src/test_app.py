@@ -82,7 +82,7 @@ def test_signup_admin_success(setup_dynamodb):
     assert 'Account created successfully' in body['message']
     assert body['user']['username'] == 'newuser'
 
-def test_signup_duplicate_username(setup_dynamodb):
+def test_signup_duplicate_username_verified(setup_dynamodb):
     import app
     app.users_table = boto3.resource('dynamodb', region_name='us-east-1').Table(os.environ['USERS_TABLE_NAME'])
 
@@ -97,10 +97,37 @@ def test_signup_duplicate_username(setup_dynamodb):
     }
     app.lambda_handler(event, None)
     
-    # Try creating same user again
+    # Manually verify the user in the mock DB
+    app.users_table.update_item(
+        Key={'username': 'dupuser'},
+        UpdateExpression="SET verified = :v",
+        ExpressionAttributeValues={':v': True}
+    )
+    
+    # Try creating same user again when already verified
     res2 = app.lambda_handler(event, None)
     assert res2['statusCode'] == 400
     assert 'already registered' in json.loads(res2['body'])['error']
+
+def test_signup_resend_verification_unverified(setup_dynamodb):
+    import app
+    app.users_table = boto3.resource('dynamodb', region_name='us-east-1').Table(os.environ['USERS_TABLE_NAME'])
+
+    event = {
+        'rawPath': '/auth/signup',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({
+            'username': 'unverifieduser',
+            'email': 'unverified@example.com',
+            'password': 'SecurePassword123!'
+        })
+    }
+    app.lambda_handler(event, None)
+    
+    # Try creating same user again while unverified
+    res2 = app.lambda_handler(event, None)
+    assert res2['statusCode'] == 201
+    assert 'unverified' in json.loads(res2['body'])['message']
 
 def test_login_with_registered_dynamodb_user(setup_dynamodb):
     import app
@@ -881,4 +908,130 @@ def test_get_blog_by_slug_route(setup_dynamodb):
         'headers': {}
     }
     response = app.lambda_handler(event, None)
+    response = app.lambda_handler(event, None)
     assert response['statusCode'] == 200
+
+def test_delete_account(setup_dynamodb):
+    import app
+    
+    # Sign up a user
+    app.lambda_handler({
+        'rawPath': '/auth/signup',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({'username': 'deleteme', 'email': 'delete@example.com', 'password': 'pass'})
+    }, None)
+    
+    # Log them in to get token
+    token = app.generate_jwt({'username': 'deleteme', 'role': 'user'})
+    
+    # Delete the account
+    event = {
+        'rawPath': '/auth/account',
+        'requestContext': {'http': {'method': 'DELETE'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': ''
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    
+    # Ensure they are deleted from DB
+    db_user = app.users_table.get_item(Key={'username': 'deleteme'}).get('Item')
+    assert db_user is None
+
+def test_2fa_setup_and_login(setup_dynamodb):
+    import app
+    import pyotp
+    
+    # 1. Sign up and Login to get token
+    app.lambda_handler({
+        'rawPath': '/auth/signup',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({'username': 'user2fa', 'email': '2fa@example.com', 'password': 'SecurePass1!'})
+    }, None)
+    
+    # Manually verify the user in the mock DB
+    app.users_table.update_item(
+        Key={'username': 'user2fa'},
+        UpdateExpression="SET verified = :v",
+        ExpressionAttributeValues={':v': True}
+    )
+    
+    token = app.generate_jwt({'username': 'user2fa', 'role': 'user'})
+    
+    # 2. Setup 2FA
+    res_setup = app.lambda_handler({
+        'rawPath': '/auth/2fa/setup',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': ''
+    }, None)
+    assert res_setup['statusCode'] == 200
+    setup_data = json.loads(res_setup['body'])
+    secret = setup_data['secret']
+    
+    # 3. Verify 2FA
+    totp = pyotp.TOTP(secret)
+    code = totp.now()
+    res_verify = app.lambda_handler({
+        'rawPath': '/auth/2fa/verify',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'code': code})
+    }, None)
+    assert res_verify['statusCode'] == 200
+    
+    # 4. Login now requires 2FA
+    res_login_1 = app.lambda_handler({
+        'rawPath': '/auth/login',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({'username': 'user2fa', 'password': 'SecurePass1!'})
+    }, None)
+    assert res_login_1['statusCode'] == 200
+    login_1_data = json.loads(res_login_1['body'])
+    assert login_1_data['requires_2fa'] == True
+    temp_token = login_1_data['temp_token']
+    
+    # 5. Login with 2FA code
+    code2 = totp.now()
+    res_login_2 = app.lambda_handler({
+        'rawPath': '/auth/login/2fa',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({'temp_token': temp_token, 'code': code2})
+    }, None)
+    assert res_login_2['statusCode'] == 200
+    assert 'token' in json.loads(res_login_2['body'])
+
+def test_get_account_profile(setup_dynamodb):
+    import app
+    
+    app.users_table.put_item(Item={'username': 'testuser', 'email': 'test@example.com', 'address': '123 Test St', 'phone_number': '555-5555'})
+    token = app.generate_jwt({'username': 'testuser', 'role': 'user'})
+    
+    event = {
+        'rawPath': '/auth/account',
+        'requestContext': {'http': {'method': 'GET'}},
+        'headers': {'authorization': f'Bearer {token}'},
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    body = json.loads(response['body'])
+    assert body['address'] == '123 Test St'
+
+def test_update_account_profile(setup_dynamodb):
+    import app
+    
+    app.users_table.put_item(Item={'username': 'testuser', 'email': 'test@example.com'})
+    token = app.generate_jwt({'username': 'testuser', 'role': 'user'})
+    
+    event = {
+        'rawPath': '/auth/account',
+        'requestContext': {'http': {'method': 'PUT'}},
+        'headers': {'authorization': f'Bearer {token}'},
+        'body': json.dumps({'address': 'New Address', 'phone_number': '555-1234'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    
+    db_user = app.users_table.get_item(Key={'username': 'testuser'}).get('Item')
+    assert db_user['address'] == 'New Address'
+    assert db_user['phone_number'] == '555-1234'

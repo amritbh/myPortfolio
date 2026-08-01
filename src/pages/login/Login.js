@@ -8,6 +8,7 @@ import {
   requestPasswordReset,
   resetPassword,
   setSession,
+  login2FA,
 } from "../../utils/apiClient";
 import "./Login.css";
 
@@ -19,6 +20,8 @@ class Login extends Component {
     email: "",
     password: "",
     confirmPassword: "",
+    totpCode: "",
+    tempToken: "",
     isSubmitting: false,
     authError: "",
     verificationMessage: "",
@@ -188,6 +191,30 @@ class Login extends Component {
       }
     }
 
+    if (authMode === "login2FA") {
+      if (!this.state.totpCode || this.state.totpCode.length < 6) {
+        this.setState({ authError: "Code must be 6 digits." });
+        return;
+      }
+      this.setState({ isSubmitting: true, authError: "", statusMessage: "" });
+      const response = await login2FA(
+        this.state.tempToken,
+        this.state.totpCode
+      );
+      if (response.success) {
+        setSession(response.token, response.user);
+        this.props.history.push(
+          response.user.role === "admin" ? "/admin" : "/home"
+        );
+      } else {
+        this.setState({
+          authError: response.error || "Invalid 2FA code",
+          isSubmitting: false,
+        });
+      }
+      return;
+    }
+
     this.setState({ isSubmitting: true, authError: "", statusMessage: "" });
 
     let response;
@@ -208,6 +235,15 @@ class Login extends Component {
           confirmPassword: "",
         });
       } else {
+        if (response.requires_2fa) {
+          this.setState({
+            authMode: "login2FA",
+            tempToken: response.temp_token,
+            isSubmitting: false,
+            statusMessage: "2-Step Verification required",
+          });
+          return;
+        }
         this.props.history.push(
           response.user.role === "admin" ? "/admin" : "/home"
         );
@@ -420,6 +456,53 @@ class Login extends Component {
                   className="medium-auth-link"
                 >
                   Forgot your password?
+                </button>
+              </div>
+            )}
+
+            {/* ── Login 2FA ── */}
+            {authMode === "login2FA" && (
+              <div className="medium-auth-panel">
+                <h2 className="medium-auth-title">2-Step Verification</h2>
+                <p className="medium-auth-subtitle">
+                  Enter the 6-digit code from your authenticator app.
+                </p>
+                <form
+                  onSubmit={this.handleAuthSubmit}
+                  className="medium-auth-form"
+                >
+                  <input
+                    type="text"
+                    value={this.state.totpCode}
+                    onChange={(e) =>
+                      this.setState({ totpCode: e.target.value })
+                    }
+                    placeholder="6-digit code"
+                    className="medium-auth-input"
+                    maxLength={6}
+                    required
+                    style={{
+                      textAlign: "center",
+                      letterSpacing: "2px",
+                      fontSize: "1.2rem",
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    className="medium-auth-btn-primary"
+                    disabled={this.state.isSubmitting}
+                  >
+                    {this.state.isSubmitting
+                      ? "Verifying..."
+                      : "Verify & Sign In"}
+                  </button>
+                </form>
+                <button
+                  type="button"
+                  onClick={() => this.switchAuthMode("signin")}
+                  className="medium-auth-link medium-auth-back-link"
+                >
+                  &lt; Back to sign in
                 </button>
               </div>
             )}

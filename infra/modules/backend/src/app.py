@@ -6,6 +6,7 @@ import base64
 import hashlib
 import hmac
 import urllib.request
+import pyotp
 from botocore.config import Config
 
 JOSE_IMPORT_ERROR = None
@@ -279,7 +280,7 @@ def forgot_password_route(event):
             user = items[0]
             token = generate_jwt({'username': user['username'], 'type': 'reset'}, expires_in=900)
             origin = event.get('headers', {}).get('origin', 'https://amrit.cloud')
-            reset_link = f"{origin}/admin?resetToken={token}"
+            reset_link = f"{origin}/login?resetToken={token}"
             send_email(email, "Password Reset Request", f"Click here to reset your password: {reset_link}")
             
         return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'If an account with that email exists, a password reset link has been sent.'})}
@@ -309,6 +310,194 @@ def reset_password_route(event):
         return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Password reset successfully!'})}
     except Exception as e:
         print(e)
+        return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
+
+def verify_any_token(token: str):
+    # Try custom JWT first
+    payload = verify_jwt(token)
+    if payload:
+        return payload
+        
+    # Try Cognito token
+    cognito_payload = verify_cognito_jwt(token)
+    if cognito_payload and not cognito_payload.get('error'):
+        return cognito_payload
+        
+    return None
+
+def delete_account_route(event):
+    try:
+        auth_header = event.get('headers', {}).get('authorization', '')
+        if not auth_header.startswith('Bearer '):
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+            
+        token = auth_header.split(' ')[1]
+        payload = verify_any_token(token)
+        if not payload:
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+            
+        username = payload.get('username')
+        if not username:
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Invalid token'})}
+            
+        users_table.delete_item(Key={'username': username})
+        
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Account deleted successfully.'})}
+    except Exception as e:
+        print(f"Error deleting account: {e}")
+        return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
+
+def setup_2fa_route(event):
+    try:
+        auth_header = event.get('headers', {}).get('authorization', '')
+        if not auth_header.startswith('Bearer '):
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+            
+        token = auth_header.split(' ')[1]
+        payload = verify_any_token(token)
+        if not payload:
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+            
+        username = payload.get('username')
+        secret = pyotp.random_base32()
+        uri = pyotp.totp.TOTP(secret).provisioning_uri(name=username, issuer_name="Amrit Portfolio")
+        
+        users_table.update_item(
+            Key={'username': username},
+            UpdateExpression="SET totp_secret = :s",
+            ExpressionAttributeValues={':s': secret}
+        )
+        
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'uri': uri, 'secret': secret})}
+    except Exception as e:
+        print(f"Error setting up 2FA: {e}")
+        return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
+
+def verify_2fa_route(event):
+    try:
+        auth_header = event.get('headers', {}).get('authorization', '')
+        if not auth_header.startswith('Bearer '):
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+            
+        token = auth_header.split(' ')[1]
+        payload = verify_any_token(token)
+        if not payload:
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+            
+        username = payload.get('username')
+        body = json.loads(event.get('body', '{}'))
+        code = body.get('code', '').strip()
+        
+        db_user = users_table.get_item(Key={'username': username}).get('Item')
+        if not db_user or not db_user.get('totp_secret'):
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': '2FA setup not initiated'})}
+            
+        totp = pyotp.TOTP(db_user['totp_secret'])
+        if totp.verify(code):
+            users_table.update_item(
+                Key={'username': username},
+                UpdateExpression="SET mfa_enabled = :e",
+                ExpressionAttributeValues={':e': True}
+            )
+            return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': '2FA enabled successfully'})}
+        else:
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Invalid 2FA code'})}
+    except Exception as e:
+        print(f"Error verifying 2FA: {e}")
+        return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
+
+def get_account_route(event):
+    try:
+        auth_header = event.get('headers', {}).get('authorization', '')
+        if not auth_header.startswith('Bearer '):
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+            
+        token = auth_header.split(' ')[1]
+        payload = verify_any_token(token)
+        if not payload:
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+            
+        username = payload.get('username')
+        db_user = users_table.get_item(Key={'username': username}).get('Item')
+        if not db_user:
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'User not found'})}
+            
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({
+            'username': db_user.get('username'),
+            'email': db_user.get('email'),
+            'role': db_user.get('role'),
+            'address': db_user.get('address', ''),
+            'phone_number': db_user.get('phone_number', ''),
+            'mfa_enabled': db_user.get('mfa_enabled', False)
+        })}
+    except Exception as e:
+        print(f"Error getting account: {e}")
+        return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
+
+def update_account_route(event):
+    try:
+        auth_header = event.get('headers', {}).get('authorization', '')
+        if not auth_header.startswith('Bearer '):
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+            
+        token = auth_header.split(' ')[1]
+        payload = verify_any_token(token)
+        if not payload:
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
+            
+        username = payload.get('username')
+        body = json.loads(event.get('body', '{}'))
+        address = body.get('address', '').strip()
+        phone_number = body.get('phone_number', '').strip()
+        
+        users_table.update_item(
+            Key={'username': username},
+            UpdateExpression="SET address = :a, phone_number = :p",
+            ExpressionAttributeValues={':a': address, ':p': phone_number}
+        )
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Account updated successfully'})}
+    except Exception as e:
+        print(f"Error updating account: {e}")
+        return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
+
+def login_2fa_route(event):
+    try:
+        body = json.loads(event.get('body', '{}'))
+        temp_token = body.get('temp_token', '')
+        code = body.get('code', '').strip()
+        
+        payload = verify_jwt(temp_token)
+        if not payload or payload.get('type') != '2fa_temp':
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Invalid or expired temporary token'})}
+            
+        username = payload.get('username')
+        db_user = users_table.get_item(Key={'username': username}).get('Item')
+        
+        if not db_user or not db_user.get('mfa_enabled'):
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': '2FA is not enabled for this user'})}
+            
+        totp = pyotp.TOTP(db_user['totp_secret'])
+        if totp.verify(code):
+            email = db_user.get('email', '')
+            admin_email = os.environ.get('ADMIN_EMAIL', '')
+            db_role = db_user.get('role', 'user')
+            role = 'admin' if (email and admin_email and email == admin_email) else db_role
+            
+            token = generate_jwt({'username': username, 'role': role})
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({
+                    'message': 'Login successful',
+                    'token': token,
+                    'expiresIn': TOKEN_EXPIRATION_SECONDS,
+                    'user': {'username': username, 'email': email, 'role': role}
+                })
+            }
+        else:
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Invalid 2FA code'})}
+    except Exception as e:
+        print(f"Error in 2FA login: {e}")
         return {'statusCode': 500, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Internal server error'})}
 
 def login_admin(event):
@@ -343,6 +532,18 @@ def login_admin(event):
                     # Use role from database, but fallback to admin if email matches ADMIN_EMAIL
                     db_role = db_user.get('role', 'user')
                     role = 'admin' if (email and admin_email and email == admin_email) else db_role
+                    
+                    if db_user.get('mfa_enabled'):
+                        temp_token = generate_jwt({'username': username, 'type': '2fa_temp'}, expires_in=300)
+                        return {
+                            'statusCode': 200,
+                            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                            'body': json.dumps({
+                                'requires_2fa': True,
+                                'temp_token': temp_token,
+                                'message': '2FA required'
+                            })
+                        }
                     
                     token = generate_jwt({'username': username, 'role': role})
                     return {
@@ -677,12 +878,24 @@ def lambda_handler(event, context):
         return signup_admin(event)
     if path in ['/auth/login', '/login'] and method == 'POST':
         return login_admin(event)
+    if path == '/auth/login/2fa' and method == 'POST':
+        return login_2fa_route(event)
+    if path == '/auth/2fa/setup' and method == 'POST':
+        return setup_2fa_route(event)
+    if path == '/auth/2fa/verify' and method == 'POST':
+        return verify_2fa_route(event)
     if path in ['/auth/verify-email', '/verify-email'] and method == 'POST':
         return verify_email_route(event)
     if path in ['/auth/forgot-password', '/forgot-password'] and method == 'POST':
         return forgot_password_route(event)
     if path in ['/auth/reset-password', '/reset-password'] and method == 'POST':
         return reset_password_route(event)
+    if path == '/auth/account' and method == 'DELETE':
+        return delete_account_route(event)
+    if path == '/auth/account' and method == 'GET':
+        return get_account_route(event)
+    if path == '/auth/account' and method == 'PUT':
+        return update_account_route(event)
     if path in ['/portfolio', '/api/portfolio'] and method == 'POST':
         return contact_portfolio(event)
 

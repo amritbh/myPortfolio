@@ -28,12 +28,16 @@ describe("Header Component", () => {
     expect(screen.queryByText("Logout")).not.toBeInTheDocument();
   });
 
-  it("renders Logout button when user is logged in", () => {
+  it("renders Logout button when user is logged in and dropdown opened", () => {
     jest
       .spyOn(apiClient, "getStoredUser")
       .mockReturnValue({ username: "test" });
     renderWithRouter(<Header theme={mockTheme} />);
-    expect(screen.getByText("Logout")).toBeInTheDocument();
+    expect(screen.getByText(/Account/i)).toBeInTheDocument();
+
+    // Open dropdown
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+    expect(screen.getByText(/Logout/i)).toBeInTheDocument();
     expect(screen.queryByText("Login")).not.toBeInTheDocument();
   });
 
@@ -48,12 +52,11 @@ describe("Header Component", () => {
     window.location = { href: "" };
 
     renderWithRouter(<Header theme={mockTheme} />);
-    const logoutBtn = screen.getByText("Logout");
 
-    // Test hover states
-    fireEvent.mouseEnter(logoutBtn);
-    fireEvent.mouseOut(logoutBtn);
-    fireEvent.blur(logoutBtn);
+    // Open dropdown
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+
+    const logoutBtn = screen.getByText(/Logout/i);
 
     // Test click
     fireEvent.click(logoutBtn);
@@ -73,7 +76,11 @@ describe("Header Component", () => {
     process.env.REACT_APP_COGNITO_CLIENT_ID = "mock-client-id";
 
     renderWithRouter(<Header theme={mockTheme} />);
-    const logoutBtn = screen.getByText("Logout");
+
+    // Open dropdown
+    fireEvent.mouseEnter(screen.getByText(/Account/i));
+
+    const logoutBtn = screen.getByText(/Logout/i);
 
     fireEvent.click(logoutBtn);
     expect(apiClient.clearSession).toHaveBeenCalled();
