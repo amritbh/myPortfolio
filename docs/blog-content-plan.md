@@ -42,7 +42,7 @@ A detailed plan for writing technical blog posts on your portfolio at [amrit.clo
 - **Read Time**: ~8 min
 - **Topics**: SES domain verification, Lambda email handler, contact form integration
 
-### Blog 5: "The Hidden Trap of Email Deliverability: Custom Sign-Ups, Amazon SES, and DMARC"
+### Blog 5: "The Hidden Trap of Email Deliverability: Custom Signups, Amazon SES, and DMARC" (Drafted)
 
 - **Tags**: `AWS`, `SES`, `Auth`, `DynamoDB`, `Security`
 - **Read Time**: ~15 min
