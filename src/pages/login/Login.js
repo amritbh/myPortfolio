@@ -118,7 +118,6 @@ class Login extends Component {
     e.preventDefault();
     const {
       authMode,
-      username,
       email,
       password,
       confirmPassword,
@@ -335,7 +334,6 @@ class Login extends Component {
     const {
       authMode,
       showEmailForm,
-      username,
       email,
       password,
       confirmPassword,
