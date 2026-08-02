@@ -846,10 +846,86 @@ const experience = {
 
 // Projects Page
 const projectsHeader = {
-  title: "Projects",
+  title: "Projects & AI Trends",
   description:
-    "My projects makes use of vast variety of latest technology tools. My best experience is to create Data Science projects and deploy them to web applications using cloud infrastructure.",
-  avatar_image_path: "projects_image.svg",
+    "Welcome to my project space! Here you'll find a mix of my past GitHub work, a sneak peek into what I'm building next, and a curated list of the open-source AI and Agentic LLM tools that I'm currently obsessed with.",
+  avatar_image_path: "projects_header.png",
+};
+
+const aiOpenSourceData = {
+  title: "AI & Agentic AI Ecosystem",
+  data: [
+    {
+      id: "llama3",
+      name: "Meta Llama 3",
+      description:
+        "State-of-the-art open large language model by Meta, enabling developers to build sophisticated AI applications.",
+      releaseDate: "April 2024",
+      url: "https://llama.meta.com/",
+    },
+    {
+      id: "mistral",
+      name: "Mistral Large & Mixtral",
+      description:
+        "Highly efficient models with sparse mixture-of-experts (SMoE) architecture, rivaling proprietary models.",
+      releaseDate: "Early 2024",
+      url: "https://mistral.ai/",
+    },
+    {
+      id: "autogpt",
+      name: "AutoGPT & Agentic AI",
+      description:
+        "Experimental open-source attempts to make GPT-4 fully autonomous, chaining LLM thoughts for complex tasks.",
+      releaseDate: "Trending 2023-2024",
+      url: "https://github.com/Significant-Gravitas/AutoGPT",
+    },
+    {
+      id: "langchain",
+      name: "LangChain",
+      description:
+        "Framework for developing applications powered by language models, heavily used in agentic architectures.",
+      releaseDate: "Ongoing Updates",
+      url: "https://www.langchain.com/",
+    },
+    {
+      id: "huggingface",
+      name: "Hugging Face Transformers",
+      description:
+        "The leading open-source library for machine learning, providing thousands of pre-trained models for NLP, vision, and audio.",
+      releaseDate: "Core Ecosystem",
+      url: "https://huggingface.co/",
+    },
+    {
+      id: "ollama",
+      name: "Ollama",
+      description:
+        "A tool to get up and running with large language models locally, bringing open-source AI to personal machines seamlessly.",
+      releaseDate: "Trending 2024",
+      url: "https://ollama.com/",
+    },
+  ],
+};
+
+const upcomingProjectsData = {
+  title: "Upcoming & Relevant Projects",
+  data: [
+    {
+      id: "agentic-cli",
+      name: "Agentic Developer CLI",
+      description:
+        "A command-line interface tool powered by local LLMs to assist developers in scaffolding and debugging code automatically.",
+      status: "In Progress",
+      url: "#",
+    },
+    {
+      id: "ai-portfolio-builder",
+      name: "AI Portfolio Generator",
+      description:
+        "A web application that takes a user's resume and dynamically generates a personalized, heavily animated React portfolio.",
+      status: "Planning",
+      url: "#",
+    },
+  ],
 };
 
 const publicationsHeader = {
@@ -945,5 +1021,7 @@ export {
   projectsHeader,
   publicationsHeader,
   publications,
+  aiOpenSourceData,
+  upcomingProjectsData,
   contactPageData,
 };

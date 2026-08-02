@@ -12,8 +12,12 @@
 }
 
 .pull-request-body-div {
-  text-align: center;
-  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  padding: 0 5%;
+  max-width: 1200px;
+  margin: 40px auto 0 auto;
 }
 
 @media (max-width: 1380px) {

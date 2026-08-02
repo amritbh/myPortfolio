@@ -5,7 +5,7 @@
       "name": "My Portfolio",
       "createdAt": "2024-05-23T04:18:19Z",
       "url": "https://github.com/amritbh/myPortfolio",
-      "description": "My Portfolio",
+      "description": "Personal portfolio website built with React.",
       "isFork": false,
       "languages": [
         {
@@ -19,7 +19,7 @@
       "name": "Microservices Python App",
       "createdAt": "2023-03-13T20:41:33Z",
       "url": "https://github.com/amritbh/microservices-python-app",
-      "description": "Microservices Python App",
+      "description": "Scalable microservices architecture implemented in Python.",
       "isFork": false,
       "languages": [
         {
@@ -33,12 +33,40 @@
       "name": "Docker Spring Boot",
       "createdAt": "2023-03-06T16:26:54Z",
       "url": "https://github.com/amritbh/docker-spring-boot",
-      "description": "🔥 Docker Spring Boot",
+      "description": "🔥 Docker Spring Boot containerization showcase.",
       "isFork": false,
       "languages": [
         {
           "name": "Dockerfile",
           "iconifyClass": "simple-icons:docker"
+        }
+      ]
+    },
+    {
+      "id": "R_kgDOG_vYHC",
+      "name": "AI Agent Framework",
+      "createdAt": "2024-01-10T12:00:00Z",
+      "url": "https://github.com/amritbh/ai-agent-framework",
+      "description": "A robust framework for building autonomous AI agents with tool-use capabilities.",
+      "isFork": false,
+      "languages": [
+        {
+          "name": "TypeScript",
+          "iconifyClass": "logos:typescript-icon"
+        }
+      ]
+    },
+    {
+      "id": "R_kgDOG_vYHE",
+      "name": "LLM Orchestrator",
+      "createdAt": "2023-11-20T09:30:00Z",
+      "url": "https://github.com/amritbh/llm-orchestrator",
+      "description": "Distributed orchestrator for managing high-throughput LLM inferences.",
+      "isFork": false,
+      "languages": [
+        {
+          "name": "Go",
+          "iconifyClass": "logos:go"
         }
       ]
     }

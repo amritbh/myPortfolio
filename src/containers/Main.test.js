@@ -34,9 +34,6 @@ jest.mock("../pages/education/EducationComponent", () => () => (
 jest.mock("../pages/experience/Experience", () => () => (
   <div data-testid="experience-page">Experience</div>
 ));
-jest.mock("../pages/opensource/Opensource", () => () => (
-  <div data-testid="opensource-page">Opensource</div>
-));
 jest.mock("../pages/contact/ContactComponent", () => () => (
   <div data-testid="contact-page">Contact</div>
 ));
@@ -73,7 +70,6 @@ describe("Main Component Routing", () => {
     { path: "/home", id: "home-page" },
     { path: "/experience", id: "experience-page" },
     { path: "/education", id: "education-page" },
-    { path: "/opensource", id: "opensource-page" },
     { path: "/login", id: "login-page" },
     { path: "/account", id: "account-page" },
     { path: "/admin", id: "admin-page" },

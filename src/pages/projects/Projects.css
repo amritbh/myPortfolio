@@ -66,13 +66,12 @@
   font-weight: 600;
 }
 .repo-cards-div-main {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1rem 1rem;
-  margin-left: 40px;
-  margin-right: 40px;
-  margin-top: 60px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  padding: 0 5%;
+  max-width: 1200px;
+  margin: 60px auto 0 auto;
 }
 
 @media (max-width: 1380px) {
@@ -109,7 +108,6 @@
   }
 
   .repo-cards-div-main {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     margin-left: 10px;
     margin-right: 10px;
     margin-top: 30px;

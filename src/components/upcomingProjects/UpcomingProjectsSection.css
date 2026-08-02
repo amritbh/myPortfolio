@@ -1,0 +1,83 @@
+.upcoming-main {
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.upcoming-header-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.upcoming-header {
+  font-size: 40px;
+  line-height: 1.2;
+  font-family: "Google Sans Regular";
+}
+
+.upcoming-body-div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 0 20px;
+  margin-top: 20px;
+}
+
+.upcoming-card {
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 10px 30px -5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.upcoming-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 15px 40px -5px rgba(0, 0, 0, 0.3);
+}
+
+.upcoming-name-div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.upcoming-name {
+  font-size: 20px;
+  font-family: "Google Sans Regular";
+  font-weight: bold;
+  margin: 0;
+}
+
+.upcoming-status {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-family: "Google Sans Regular";
+  font-weight: bold;
+}
+
+.upcoming-description {
+  font-size: 16px;
+  line-height: 1.5;
+  font-family: "Google Sans Regular";
+  margin: 0;
+}
+
+/* Media Queries */
+@media (max-width: 1380px) {
+  .upcoming-header {
+    font-size: 35px;
+  }
+}
+
+@media (max-width: 768px) {
+  .upcoming-header {
+    font-size: 30px;
+    text-align: center;
+  }
+}
