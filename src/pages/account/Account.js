@@ -139,7 +139,6 @@ class Account extends Component {
   render() {
     const { theme } = this.props;
     const {
-      username,
       email,
       name,
       address,
