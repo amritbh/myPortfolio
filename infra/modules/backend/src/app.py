@@ -331,7 +331,8 @@ def verify_any_token(token: str):
 
 def delete_account_route(event):
     try:
-        auth_header = event.get('headers', {}).get('authorization', '')
+        headers = {k.lower(): v for k, v in event.get('headers', {}).items()}
+        auth_header = headers.get('authorization', '')
         if not auth_header.startswith(BEARER_PREFIX):
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
             
@@ -353,7 +354,8 @@ def delete_account_route(event):
 
 def setup_2fa_route(event):
     try:
-        auth_header = event.get('headers', {}).get('authorization', '')
+        headers = {k.lower(): v for k, v in event.get('headers', {}).items()}
+        auth_header = headers.get('authorization', '')
         if not auth_header.startswith(BEARER_PREFIX):
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
             
@@ -379,7 +381,8 @@ def setup_2fa_route(event):
 
 def verify_2fa_route(event):
     try:
-        auth_header = event.get('headers', {}).get('authorization', '')
+        headers = {k.lower(): v for k, v in event.get('headers', {}).items()}
+        auth_header = headers.get('authorization', '')
         if not auth_header.startswith(BEARER_PREFIX):
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
             
@@ -412,7 +415,8 @@ def verify_2fa_route(event):
 
 def get_account_route(event):
     try:
-        auth_header = event.get('headers', {}).get('authorization', '')
+        headers = {k.lower(): v for k, v in event.get('headers', {}).items()}
+        auth_header = headers.get('authorization', '')
         if not auth_header.startswith(BEARER_PREFIX):
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
             
@@ -441,7 +445,8 @@ def get_account_route(event):
 
 def update_account_route(event):
     try:
-        auth_header = event.get('headers', {}).get('authorization', '')
+        headers = {k.lower(): v for k, v in event.get('headers', {}).items()}
+        auth_header = headers.get('authorization', '')
         if not auth_header.startswith(BEARER_PREFIX):
             return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'})}
             
