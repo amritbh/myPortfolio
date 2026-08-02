@@ -67,7 +67,7 @@ describe("Account Component", () => {
     const saveButton = screen.getByText("Save Changes");
     fireEvent.click(saveButton);
 
-    expect(updateSpy).toHaveBeenCalledWith("New Address", "");
+    expect(updateSpy).toHaveBeenCalledWith("", "New Address", "");
 
     await waitFor(() => {
       expect(

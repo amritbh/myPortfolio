@@ -47,13 +47,11 @@ describe("Login Component", () => {
     // Expand the email form
     fireEvent.click(screen.getByText(/Sign up with email/i));
 
-    const usernameInput = screen.getByPlaceholderText(/Username/i);
     const emailInput = screen.getByPlaceholderText(/Email address/i);
     const passInput = screen.getByPlaceholderText(/Password \(min 6 chars\)/i);
     const confirmInput = screen.getByPlaceholderText(/Confirm password/i);
     const submitBtn = document.getElementById("login-submit-btn");
 
-    fireEvent.change(usernameInput, { target: { value: "newuser" } });
     fireEvent.change(emailInput, { target: { value: "user@example.com" } });
     fireEvent.change(passInput, { target: { value: "Password123!" } });
     fireEvent.change(confirmInput, { target: { value: "Password123!" } });
@@ -230,25 +228,7 @@ describe("Login Component", () => {
 
     const submitBtn = document.getElementById("login-submit-btn");
 
-    // Short username
-    fireEvent.change(screen.getByPlaceholderText(/Username/i), {
-      target: { value: "ab" },
-    });
-    fireEvent.change(screen.getByPlaceholderText(/Email address/i), {
-      target: { value: "test@example.com" },
-    });
-    fireEvent.change(screen.getByPlaceholderText(/Password \(min 6 chars\)/i), {
-      target: { value: "validpassword" },
-    });
-    fireEvent.click(submitBtn);
-    expect(
-      screen.getByText(/Username must be at least 3 characters/i)
-    ).toBeInTheDocument();
-
     // Short password
-    fireEvent.change(screen.getByPlaceholderText(/Username/i), {
-      target: { value: "validUser" },
-    });
     fireEvent.change(screen.getByPlaceholderText(/Email address/i), {
       target: { value: "test@example.com" },
     });

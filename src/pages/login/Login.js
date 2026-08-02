@@ -181,10 +181,6 @@ class Login extends Component {
     }
 
     if (authMode === "signup") {
-      if (!username || username.trim().length < 3) {
-        this.setState({ authError: "Username must be at least 3 characters." });
-        return;
-      }
       if (password !== confirmPassword) {
         this.setState({ authError: "Passwords do not match." });
         return;
@@ -219,7 +215,8 @@ class Login extends Component {
 
     let response;
     if (authMode === "signup") {
-      response = await signupAdmin(username.trim(), email.trim(), password);
+      // Use email as the username
+      response = await signupAdmin(email.trim(), email.trim(), password);
     } else {
       response = await loginAdmin(email.trim(), password);
     }
@@ -555,16 +552,6 @@ class Login extends Component {
                   onSubmit={this.handleAuthSubmit}
                   className="medium-auth-form"
                 >
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) =>
-                      this.setState({ username: e.target.value })
-                    }
-                    placeholder="Username"
-                    className="medium-auth-input"
-                    required
-                  />
                   <input
                     type="email"
                     value={email}

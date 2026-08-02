@@ -649,7 +649,7 @@ export const fetchAccountProfile = async () => {
   }
 };
 
-export const updateAccountProfile = async (address, phoneNumber) => {
+export const updateAccountProfile = async (name, address, phoneNumber) => {
   if (!API_URL) return { success: true, message: "Mock profile updated" };
   const token = getStoredToken();
   if (!token) return { success: false, error: "Not authenticated" };
@@ -661,7 +661,7 @@ export const updateAccountProfile = async (address, phoneNumber) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ address, phone_number: phoneNumber }),
+      body: JSON.stringify({ name, address, phone_number: phoneNumber }),
     });
     const data = await response.json();
     if (response.ok) return { success: true, ...data };

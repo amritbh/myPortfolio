@@ -208,7 +208,7 @@ def signup_admin(event):
                         'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                         'body': json.dumps({
                             'message': 'Account exists but is unverified. A new verification email has been sent.',
-                            'user': {'username': username, 'email': email, 'role': 'user'}
+                            'user': {'username': username, 'email': email, 'role': 'user', 'name': existing_user.get('name', '')}
                         })
                     }
                 return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Username is already registered'})}
@@ -241,7 +241,7 @@ def signup_admin(event):
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Account created successfully. Please check your email to verify.',
-                'user': {'username': username, 'email': email, 'role': 'user'}
+                'user': {'username': username, 'email': email, 'role': 'user', 'name': ''}
             })
         }
     except Exception as e:
@@ -430,6 +430,7 @@ def get_account_route(event):
             'username': db_user.get('username'),
             'email': db_user.get('email'),
             'role': db_user.get('role'),
+            'name': db_user.get('name', ''),
             'address': db_user.get('address', ''),
             'phone_number': db_user.get('phone_number', ''),
             'mfa_enabled': db_user.get('mfa_enabled', False)
@@ -453,11 +454,13 @@ def update_account_route(event):
         body = json.loads(event.get('body', '{}'))
         address = body.get('address', '').strip()
         phone_number = body.get('phone_number', '').strip()
+        name = body.get('name', '').strip()
         
         users_table.update_item(
             Key={'username': username},
-            UpdateExpression="SET address = :a, phone_number = :p",
-            ExpressionAttributeValues={':a': address, ':p': phone_number}
+            UpdateExpression="SET address = :a, phone_number = :p, #n = :name",
+            ExpressionAttributeNames={'#n': 'name'},
+            ExpressionAttributeValues={':a': address, ':p': phone_number, ':name': name}
         )
         return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Account updated successfully'})}
     except Exception as e:
@@ -495,7 +498,7 @@ def login_2fa_route(event):
                     'message': 'Login successful',
                     'token': token,
                     'expiresIn': TOKEN_EXPIRATION_SECONDS,
-                    'user': {'username': username, 'email': email, 'role': role}
+                    'user': {'username': username, 'email': email, 'role': role, 'name': db_user.get('name', '')}
                 })
             }
         else:
@@ -557,7 +560,7 @@ def login_admin(event):
                             'message': 'Login successful',
                             'token': token,
                             'expiresIn': TOKEN_EXPIRATION_SECONDS,
-                            'user': {'username': username, 'email': email, 'role': role}
+                            'user': {'username': username, 'email': email, 'role': role, 'name': db_user.get('name', '')}
                         })
                     }
                 else:

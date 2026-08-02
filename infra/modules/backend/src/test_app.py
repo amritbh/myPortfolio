@@ -1027,12 +1027,13 @@ def test_update_account_profile(setup_dynamodb):
         'rawPath': '/auth/account',
         'requestContext': {'http': {'method': 'PUT'}},
         'headers': {'authorization': f'Bearer {token}'},
-        'body': json.dumps({'address': 'New Address', 'phone_number': '555-1234'})
+        'body': json.dumps({'name': 'John Doe', 'address': 'New Address', 'phone_number': '555-1234'})
     }
     response = app.lambda_handler(event, None)
     assert response['statusCode'] == 200
     
     db_user = app.users_table.get_item(Key={'username': 'testuser'}).get('Item')
+    assert db_user['name'] == 'John Doe'
     assert db_user['address'] == 'New Address'
     assert db_user['phone_number'] == '555-1234'
 
