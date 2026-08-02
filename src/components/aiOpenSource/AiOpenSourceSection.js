@@ -19,6 +19,13 @@ export default function AiOpenSourceSection({ theme }) {
             <div
               className="ai-trend-card"
               onClick={() => window.open(item.url, "_blank")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  window.open(item.url, "_blank");
+                }
+              }}
+              role="button"
+              tabIndex={0}
               style={{ backgroundColor: theme.highlight }}
             >
               <div className="ai-trend-name-div">
