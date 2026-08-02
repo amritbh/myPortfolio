@@ -11,3 +11,9 @@
   - For frontend (React): Use `npm test -- --coverage` to verify the coverage of the modified components and hooks.
   - For backend (Python/Lambda): Use `pytest --cov=.` to verify the coverage of the modified logic.
 - **Failures blocking Push**: Do not attempt to push changes if tests are failing or if coverage for the modified logic is insufficient. Iterate on adding test cases first.
+
+# Git & GitHub Workflow Rules
+
+- **Branch Management**: Before starting any new task, always check if the current remote branch has already been merged (e.g., using `gh pr status` or `git log`). If the remote branch is merged, you must create a new branch for the new work instead of continuing on the merged branch.
+- **Draft PRs**: Whenever you are asked to create a Pull Request (PR), ALWAYS create a **Draft PR** (e.g., using `gh pr create --draft`).
+- **Protect Main Branch**: NEVER push changes directly to the `main` branch. All work must be pushed to feature branches and merged via Pull Requests.

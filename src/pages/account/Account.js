@@ -11,6 +11,7 @@ import {
   verify2FA,
   deleteAccount,
   clearSession,
+  getStoredUser,
 } from "../../utils/apiClient";
 import "./Account.css";
 
@@ -18,6 +19,9 @@ class Account extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      username: "",
+      email: "",
+      name: "",
       address: "",
       phoneNumber: "",
       mfaEnabled: false,
@@ -40,8 +44,13 @@ class Account extends Component {
   loadProfile = async () => {
     this.setState({ loading: true });
     const result = await fetchAccountProfile();
+    const storedUser = getStoredUser() || {};
     if (result.success && result.profile) {
       this.setState({
+        username: result.profile.username || "",
+        email:
+          result.profile.email || storedUser.email || storedUser.username || "",
+        name: result.profile.name || storedUser.name || "",
         address: result.profile.address || "",
         phoneNumber: result.profile.phone_number || "",
         mfaEnabled: result.profile.mfa_enabled || false,
@@ -65,8 +74,8 @@ class Account extends Component {
   handleSaveProfile = async (e) => {
     e.preventDefault();
     this.setState({ saving: true });
-    const { address, phoneNumber } = this.state;
-    const result = await updateAccountProfile(address, phoneNumber);
+    const { name, address, phoneNumber } = this.state;
+    const result = await updateAccountProfile(name, address, phoneNumber);
 
     if (result.success) {
       this.showMessage("Profile updated successfully!");
@@ -130,6 +139,9 @@ class Account extends Component {
   render() {
     const { theme } = this.props;
     const {
+      username,
+      email,
+      name,
       address,
       phoneNumber,
       mfaEnabled,
@@ -187,6 +199,43 @@ class Account extends Component {
                   >
                     <h2 style={{ color: theme.text }}>Profile Information</h2>
                     <form onSubmit={this.handleSaveProfile}>
+                      <div className="account-form-group">
+                        <label style={{ color: theme.text }}>
+                          Email Address
+                        </label>
+                        <div
+                          style={{
+                            color: theme.secondaryText,
+                            padding: "12px 15px",
+                            backgroundColor: `${theme.text}05`,
+                            borderRadius: "5px",
+                            marginBottom: "15px",
+                            fontSize: "1rem",
+                          }}
+                        >
+                          {email}
+                        </div>
+                      </div>
+                      <div className="account-form-group">
+                        <label htmlFor="name" style={{ color: theme.text }}>
+                          Full Name
+                        </label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          value={name}
+                          onChange={this.handleInputChange}
+                          className="account-input"
+                          style={{
+                            color: theme.text,
+                            borderColor: `${theme.text}33`,
+                            backgroundColor: theme.body,
+                          }}
+                          placeholder="Enter your full name"
+                        />
+                      </div>
+
                       <div className="account-form-group">
                         <label htmlFor="address" style={{ color: theme.text }}>
                           Address

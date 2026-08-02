@@ -75,7 +75,7 @@ class Header extends Component {
     const theme = this.props.theme;
     const link = settings.isSplash ? "/splash" : "home";
     return (
-      <div style={{ position: "relative", zIndex: 100 }}>
+      <div style={{ position: "relative", zIndex: 999 }}>
         <Fade top duration={1000} distance="20px">
           <SeoHeader />
           <div>
@@ -214,6 +214,31 @@ class Header extends Component {
                       </span>
                       {this.state.showDropdown && (
                         <div className="account-dropdown-menu">
+                          <div
+                            style={{
+                              padding: "10px 20px",
+                              borderBottom: `1px solid ${theme.text}33`,
+                              marginBottom: "10px",
+                            }}
+                          >
+                            <div
+                              style={{ fontWeight: "bold", color: theme.text }}
+                            >
+                              {user.name && user.name.trim()
+                                ? user.name
+                                : user.username || user.email || "User"}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "0.85em",
+                                color: theme.secondaryText,
+                              }}
+                            >
+                              {user.email && user.email.trim()
+                                ? user.email
+                                : user.username || "Unknown Email"}
+                            </div>
+                          </div>
                           <Link
                             to="/account"
                             className="account-dropdown-item"
