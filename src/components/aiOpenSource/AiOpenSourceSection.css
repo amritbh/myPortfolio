@@ -4,7 +4,7 @@
 .ai-trends-header {
   font-size: 40px;
   line-height: 1.1;
-  font-family: "Google Sans Regular";
+  font-family: "Google Sans Regular", sans-serif;
   text-align: center;
   margin-left: 10px;
   margin-right: 10px;
@@ -39,21 +39,21 @@
 }
 .ai-trend-name {
   text-align: left;
-  font-family: "Google Sans Regular";
-  margin-bottom: 0.75rem;
+  font-family: "Google Sans Regular", sans-serif;
+  margin: 0 0 0.75rem 0;
   font-size: 25px;
   font-weight: 700;
   letter-spacing: -0.5px;
   overflow: hidden;
   line-height: 1.2;
-  margin: 0px;
 }
 .ai-trend-description {
   overflow: hidden;
   text-align: left;
   display: -webkit-box;
-  font-family: "Google Sans Regular";
+  font-family: "Google Sans Regular", sans-serif;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   margin-top: 0.8rem;
 }
@@ -65,6 +65,6 @@
 }
 .ai-trend-date {
   margin: 0;
-  font-family: "Google Sans Regular";
+  font-family: "Google Sans Regular", sans-serif;
   font-weight: 400;
 }

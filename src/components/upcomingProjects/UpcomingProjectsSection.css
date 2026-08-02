@@ -13,7 +13,7 @@
 .upcoming-header {
   font-size: 40px;
   line-height: 1.2;
-  font-family: "Google Sans Regular";
+  font-family: "Google Sans Regular", sans-serif;
 }
 
 .upcoming-body-div {
@@ -48,7 +48,7 @@
 
 .upcoming-name {
   font-size: 20px;
-  font-family: "Google Sans Regular";
+  font-family: "Google Sans Regular", sans-serif;
   font-weight: bold;
   margin: 0;
 }
@@ -57,14 +57,14 @@
   font-size: 12px;
   padding: 4px 10px;
   border-radius: 20px;
-  font-family: "Google Sans Regular";
+  font-family: "Google Sans Regular", sans-serif;
   font-weight: bold;
 }
 
 .upcoming-description {
   font-size: 16px;
   line-height: 1.5;
-  font-family: "Google Sans Regular";
+  font-family: "Google Sans Regular", sans-serif;
   margin: 0;
 }
 
