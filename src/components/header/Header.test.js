@@ -135,7 +135,6 @@ describe("Header Component", () => {
       "Education",
       "Experience",
       "Projects",
-      "Open Source",
       "Blog",
       "Contact Me",
       "Login",

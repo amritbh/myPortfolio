@@ -1,11 +1,17 @@
 .repo-card-div {
   color: rgb(88, 96, 105);
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 30px -15px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 30px -15px;
   padding: 2rem;
   cursor: pointer;
-  flex: 1 1 25%;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  height: 100%;
+  box-sizing: border-box;
 }
 .repo-card-div:hover {
+  transform: translateY(-5px);
   box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px -10px;
 }
 
@@ -78,6 +84,8 @@
 .repo-details {
   display: flex;
   flex-direction: row;
+  margin-top: auto;
+  padding-top: 20px;
 }
 
 .repo-creation-date {

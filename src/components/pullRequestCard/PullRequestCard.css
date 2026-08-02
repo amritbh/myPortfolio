@@ -1,11 +1,19 @@
 .pull-request-card {
-  width: 75%;
-  display: inline-block;
-  /* margin-left: 12.5%;
-    margin-right: 12.5%; */
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   margin-bottom: 10px;
-  border-radius: 5px;
-  padding: 10px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 30px -15px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.pull-request-card:hover {
+  transform: translateY(-5px);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px -10px;
 }
 
 .pr-top {

@@ -1,0 +1,70 @@
+.ai-trends-header-div {
+  margin-top: 60px;
+}
+.ai-trends-header {
+  font-size: 40px;
+  line-height: 1.1;
+  font-family: "Google Sans Regular", sans-serif;
+  text-align: center;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.ai-trends-body-div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  padding: 0 5%;
+  max-width: 1200px;
+  margin: 40px auto 0 auto;
+}
+.ai-trend-card {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 30px -15px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.ai-trend-card:hover {
+  transform: translateY(-5px);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px -10px;
+}
+.ai-trend-name-div {
+  display: flex;
+  align-items: center;
+}
+.ai-trend-name {
+  text-align: left;
+  font-family: "Google Sans Regular", sans-serif;
+  margin: 0 0 0.75rem 0;
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  overflow: hidden;
+  line-height: 1.2;
+}
+.ai-trend-description {
+  overflow: hidden;
+  text-align: left;
+  display: -webkit-box;
+  font-family: "Google Sans Regular", sans-serif;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  margin-top: 0.8rem;
+}
+.ai-trend-details {
+  display: flex;
+  flex-direction: row;
+  margin-top: auto;
+  padding-top: 15px;
+}
+.ai-trend-date {
+  margin: 0;
+  font-family: "Google Sans Regular", sans-serif;
+  font-weight: 400;
+}
