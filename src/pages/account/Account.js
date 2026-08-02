@@ -58,7 +58,11 @@ class Account extends Component {
       });
     } else {
       this.showMessage(result.error || "Failed to load profile", "error");
-      this.setState({ loading: false });
+      this.setState({
+        email: storedUser.email || storedUser.username || "",
+        name: storedUser.name || "",
+        loading: false,
+      });
     }
   };
 
