@@ -8,12 +8,15 @@ export default function BlogCard({ blog, theme }) {
     summary,
     publishDate,
     slug,
-    coverImage: imageUrl,
+    coverImage,
     tags,
     readTime,
     likes,
     comments,
   } = blog;
+
+  const imageUrl =
+    coverImage || "https://amrit.cloud/media/blog_default_cover.png";
 
   const displayAuthor = {
     name: "Amrit Bhattarai",
@@ -62,13 +65,14 @@ export default function BlogCard({ blog, theme }) {
           >
             {formattedDate}{" "}
             {blog.updatedAt &&
-              `(Last updated: ${new Date(
-                blog.updatedAt
-              ).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })})`}
+              `(Last updated: ${new Date(blog.updatedAt).toLocaleDateString(
+                "en-US",
+                {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                }
+              )})`}
           </span>
         </div>
 

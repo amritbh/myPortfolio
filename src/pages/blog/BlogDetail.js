@@ -201,6 +201,9 @@ class BlogDetail extends Component {
       readTime,
       summary,
     } = blog;
+
+    const displayCoverImage =
+      coverImage || "https://amrit.cloud/media/blog_default_cover.png";
     const displayAuthor = {
       name: "Amrit Bhattarai",
       avatar: require("../../assests/images/amrit-pp.jpg"),
@@ -426,10 +429,10 @@ class BlogDetail extends Component {
             />
 
             {/* Cover Image */}
-            {coverImage && (
+            {displayCoverImage && (
               <figure className="medium-article-cover">
                 <img
-                  src={coverImage}
+                  src={displayCoverImage}
                   alt={title}
                   className="medium-article-cover-img"
                 />
@@ -696,13 +699,19 @@ class BlogDetail extends Component {
                         borderColor: theme.imageDark,
                       }}
                     >
-                      {rb.coverImage && (
-                        <img
-                          src={rb.coverImage}
-                          alt={rb.title}
-                          className="medium-related-thumb"
-                        />
-                      )}
+                      <div className="medium-related-image">
+                        {(rb.coverImage ||
+                          "https://amrit.cloud/media/blog_default_cover.png") && (
+                          <img
+                            src={
+                              rb.coverImage ||
+                              "https://amrit.cloud/media/blog_default_cover.png"
+                            }
+                            alt={rb.title}
+                            className="medium-related-thumb"
+                          />
+                        )}
+                      </div>
                       <div className="medium-related-meta">
                         <span
                           className="medium-related-tag"
