@@ -630,11 +630,28 @@
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .medium-engagement-bar {
-    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    padding: 12px 0;
+    margin: 0;
+    flex-direction: row;
+    justify-content: center;
+    gap: 40px;
+    z-index: 1000;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .medium-engagement-item {
+    flex-direction: row;
+    gap: 8px;
   }
 
   .medium-article-layout {
-    padding: 32px 16px 60px;
+    padding: 32px 16px 90px;
   }
 
   .medium-article-title {

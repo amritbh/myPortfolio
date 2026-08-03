@@ -227,8 +227,11 @@ class BlogDetail extends Component {
         <Header theme={theme} />
 
         <div className="medium-article-layout">
-          {/* Floating Left Engagement Bar */}
-          <div className="medium-engagement-bar">
+          {/* Floating Engagement Bar (or bottom bar on mobile) */}
+          <div
+            className="medium-engagement-bar"
+            style={{ backgroundColor: theme.body }}
+          >
             {/* Like */}
             <div className="medium-engagement-item">
               <button
