@@ -120,7 +120,7 @@ function TagInput({ tags, onChange }) {
 }
 
 // ── Cover Media Uploader ───────────────────────────────────────────────────────
-function CoverMediaUploader({ value, onChange }) {
+function CoverMediaUploader({ value, onChange, blogSlug }) {
   const [dragging, setDragging] = React.useState(false);
   const [uploading, setUploading] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
@@ -137,7 +137,7 @@ function CoverMediaUploader({ value, onChange }) {
     setUploading(true);
     setProgress(0);
     // NOSONAR - uploadMediaToS3 is an async function
-    const result = await uploadMediaToS3(file, (p) => setProgress(p));
+    const result = await uploadMediaToS3(file, (p) => setProgress(p), blogSlug);
     setUploading(false);
     if (result.success) {
       onChange(result.url);
@@ -513,8 +513,10 @@ class AdminDashboard extends Component {
       insertMediaError: "",
     });
     // NOSONAR - uploadMediaToS3 is an async function
-    const result = await uploadMediaToS3(file, (p) =>
-      this.setState({ insertMediaProgress: p })
+    const result = await uploadMediaToS3(
+      file,
+      (p) => this.setState({ insertMediaProgress: p }),
+      this.state.editBlog ? this.state.editBlog.slug : "drafts"
     );
     this.setState({ insertMediaUploading: false });
     if (!result.success) {
@@ -860,14 +862,17 @@ class AdminDashboard extends Component {
                         Cover Media
                       </span>
                     </div>
-                    <CoverMediaUploader
-                      value={formData.coverImage}
-                      onChange={(url) =>
-                        this.setState((prev) => ({
-                          formData: { ...prev.formData, coverImage: url },
-                        }))
-                      }
-                    />
+                    <div className="ag-cover-uploader-wrapper">
+                      <CoverMediaUploader
+                        value={formData.coverImage}
+                        onChange={(url) =>
+                          this.setState((prev) => ({
+                            formData: { ...prev.formData, coverImage: url },
+                          }))
+                        }
+                        blogSlug={formData.slug || "drafts"}
+                      />
+                    </div>
                   </section>
 
                   {/* URL Slug */}

@@ -453,7 +453,11 @@ export const fetchMediumBlogs = async () => {
  * Get a presigned S3 PUT URL for direct browser upload of media files.
  * Admin-only. Returns { presigned_url, cloudfront_url, key } on success.
  */
-export const getMediaUploadUrl = async (filename, contentType) => {
+export const getMediaUploadUrl = async (
+  filename,
+  contentType,
+  blogSlug = null
+) => {
   if (!API_URL) {
     // Mock: return a fake URL in local dev
     console.warn("API URL not configured, using mock media upload URL.");
@@ -473,7 +477,7 @@ export const getMediaUploadUrl = async (filename, contentType) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ filename, content_type: contentType }),
+      body: JSON.stringify({ filename, content_type: contentType, blogSlug }),
     });
     const data = await response.json();
     if (!response.ok) {
@@ -495,10 +499,15 @@ export const getMediaUploadUrl = async (filename, contentType) => {
  *
  * @param {File} file - The browser File object
  * @param {function} onProgress - Optional callback (0 to 100)
+ * @param {string} blogSlug - Optional blog slug for S3 path partitioning
  * @returns {{ success: boolean, url?: string, error?: string }}
  */
-export const uploadMediaToS3 = async (file, onProgress = null) => {
-  const urlResult = await getMediaUploadUrl(file.name, file.type);
+export const uploadMediaToS3 = async (
+  file,
+  onProgress = null,
+  blogSlug = null
+) => {
+  const urlResult = await getMediaUploadUrl(file.name, file.type, blogSlug);
   if (!urlResult.success) return urlResult;
 
   // Mock mode: no actual upload needed
