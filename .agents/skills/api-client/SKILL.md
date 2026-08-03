@@ -210,6 +210,13 @@ export const clearSession = () => {
 
 - `getStoredToken()`, `getStoredUser()`, `setSession()`, `clearSession()`
 
+### Media Uploads (Admin)
+
+- `getMediaUploadUrl(filename, contentType, blogSlug)` → `POST /media/upload-url` (requests presigned S3 url, requires token)
+- `uploadMediaToS3(file, onProgress, blogSlug)` → Orchestrates getting presigned URL and uploading file to S3 via PUT
+
+**Note:** `blogSlug` is passed to partition images into entity-based folders in S3 (`media/blogs/{blogSlug}/`).
+
 ## External API: Medium Blogs
 
 ```js

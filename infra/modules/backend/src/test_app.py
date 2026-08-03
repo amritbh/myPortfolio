@@ -848,7 +848,27 @@ def test_get_media_upload_url_admin_success(mock_presign, setup_dynamodb):
     assert body['presigned_url'] == 'https://presigned.url'
     assert body['cloudfront_url'].startswith('https://amrit.cloud/media/')
     assert 'test_image.png' in body['key']
+    assert body['key'].startswith('media/drafts/')
 
+@patch('app.s3_client.generate_presigned_url')
+def test_get_media_upload_url_with_blog_slug(mock_presign, setup_dynamodb):
+    import app
+    app.MEDIA_BUCKET_NAME = 'test-media-bucket'
+    app.CLOUDFRONT_MEDIA_URL = 'https://amrit.cloud/media'
+    
+    token = app.generate_jwt({'username': 'amrit', 'role': 'admin'})
+    mock_presign.return_value = 'https://presigned.url'
+
+    event = {
+        'rawPath': '/media/upload-url',
+        'requestContext': {'http': {'method': 'POST'}},
+        'headers': {'Authorization': f'Bearer {token}'},
+        'body': json.dumps({'filename': 'test image.png', 'content_type': 'image/png', 'blogSlug': 'test-blog-slug'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    body = json.loads(response['body'])
+    assert body['key'].startswith('media/blogs/test-blog-slug/')
 def test_get_media_upload_url_unauthorized(setup_dynamodb):
     import app
     event = {
