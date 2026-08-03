@@ -246,9 +246,43 @@ describe("BlogDetail Component", () => {
 
     const shareBtn = screen.getByTitle("Copy link");
     fireEvent.click(shareBtn);
-    expect(navigator.clipboard.writeText).toHaveBeenCalled();
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      "https://amrit.cloud/blogs/test-blog"
+    );
 
     // Trigger scroll
     fireEvent.scroll(window, { target: { scrollY: 100 } });
+  });
+
+  it("handles sharing the blog post via navigator.share if supported", async () => {
+    const originalShare = global.navigator.share;
+    global.navigator.share = jest.fn().mockResolvedValue(true);
+
+    const testBlog = {
+      slug: "test-blog-2",
+      title: "Test Blog 2",
+      summary: "Test summary",
+      content: "Content",
+    };
+
+    jest.spyOn(apiClient, "fetchBlogBySlug").mockResolvedValueOnce(testBlog);
+    jest.spyOn(apiClient, "fetchBlogs").mockResolvedValueOnce([testBlog]);
+
+    renderWithRouter(<BlogDetail theme={mockTheme} />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Test Blog 2")[0]).toBeInTheDocument();
+    });
+
+    const shareBtn = screen.getByTitle("Copy link");
+    fireEvent.click(shareBtn);
+
+    expect(global.navigator.share).toHaveBeenCalledWith({
+      title: "Test Blog 2",
+      text: "Test summary",
+      url: "https://amrit.cloud/blogs/test-blog-2",
+    });
+
+    global.navigator.share = originalShare;
   });
 });
