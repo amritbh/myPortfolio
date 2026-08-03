@@ -122,10 +122,28 @@ class BlogDetail extends Component {
     }
   };
 
-  handleShareLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    this.setState({ linkCopied: true });
-    setTimeout(() => this.setState({ linkCopied: false }), 2000);
+  handleShareLink = async () => {
+    const { blog } = this.state;
+    if (!blog) return;
+
+    const shareUrl = `https://amrit.cloud/blogs/${blog.slug}`;
+    const shareData = {
+      title: blog.title,
+      text: blog.summary,
+      url: shareUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      navigator.clipboard.writeText(shareUrl);
+      this.setState({ linkCopied: true });
+      setTimeout(() => this.setState({ linkCopied: false }), 2000);
+    }
   };
 
   scrollToComments = () => {
