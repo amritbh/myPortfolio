@@ -234,6 +234,7 @@
 
 .markdown-body p {
   margin-bottom: 1.8em;
+  text-align: justify;
 }
 
 .markdown-body a {
