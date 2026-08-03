@@ -234,6 +234,7 @@
 
 .markdown-body p {
   margin-bottom: 1.8em;
+  text-align: justify;
 }
 
 .markdown-body a {
@@ -244,6 +245,7 @@
 
 .markdown-body img {
   max-width: 100%;
+  height: auto;
   border-radius: 4px;
   margin: 2em 0;
 }
