@@ -542,8 +542,17 @@ class AdminDashboard extends Component {
 
   handlePublish = async (e) => {
     e.preventDefault();
-    this.setState({ isPublishing: true, statusMessage: "Publishing…" });
     const { formData, editingSlug } = this.state;
+
+    if (!formData.coverImage) {
+      this.setState({
+        statusMessage: "A cover image is required before publishing.",
+        statusType: "error",
+      });
+      return;
+    }
+
+    this.setState({ isPublishing: true, statusMessage: "Publishing…" });
     const token = getStoredToken();
     const payload = {
       slug: formData.slug,

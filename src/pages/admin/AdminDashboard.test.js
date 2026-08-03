@@ -24,6 +24,7 @@ const mockBlogs = [
     title: "Test Blog 1",
     summary: "Summary 1",
     publishDate: "2026-01-01",
+    coverImage: "https://example.com/cover1.png",
     likes: ["user1", "user2"],
     comments: [{ id: 1, text: "nice" }],
   },
@@ -96,6 +97,12 @@ describe("AdminDashboard Component", () => {
     const contentArea = screen.getByPlaceholderText(/Write your story/i);
     fireEvent.change(contentArea, {
       target: { name: "content", value: "This is my story." },
+    });
+
+    // Cover image URL
+    const coverUrlInput = screen.getByPlaceholderText("https://...");
+    fireEvent.change(coverUrlInput, {
+      target: { value: "https://example.com/cover.png" },
     });
 
     // Click publish now (it starts disabled, so we have to ensure it's enabled by having all required fields, which we do)
