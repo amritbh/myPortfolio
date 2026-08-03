@@ -60,7 +60,15 @@ export default function BlogCard({ blog, theme }) {
             className="medium-story-date"
             style={{ color: theme.secondaryText }}
           >
-            {formattedDate}
+            {formattedDate}{" "}
+            {blog.updatedAt &&
+              `(Last updated: ${new Date(
+                blog.updatedAt
+              ).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })})`}
           </span>
         </div>
 

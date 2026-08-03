@@ -468,9 +468,23 @@ describe("apiClient API unreachable", () => {
         key: "media/image.png",
       }),
     });
-    const res = await apiClient.getMediaUploadUrl("test.png", "image/png");
+    const res = await apiClient.getMediaUploadUrl(
+      "test.png",
+      "image/png",
+      "test-slug"
+    );
     expect(res.success).toBe(true);
     expect(res.presigned_url).toBe("https://presigned.url");
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        body: JSON.stringify({
+          filename: "test.png",
+          content_type: "image/png",
+          blogSlug: "test-slug",
+        }),
+      })
+    );
   });
 
   it("getMediaUploadUrl unauthenticated", async () => {

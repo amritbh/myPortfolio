@@ -835,6 +835,7 @@ def get_media_upload_url(event):
         body = json.loads(event.get('body', '{}'))
         filename = body.get('filename', 'upload').strip()
         content_type = body.get('content_type', 'application/octet-stream').strip()
+        blog_slug = body.get('blogSlug', '').strip()
 
         # Validate content type — only allow images and videos
         allowed_types = (
@@ -848,7 +849,13 @@ def get_media_upload_url(event):
         import uuid
         import re
         safe_name = re.sub(r'[^a-zA-Z0-9._-]', '_', filename)[:80]
-        unique_key = f"media/{uuid.uuid4().hex}-{safe_name}"
+        
+        # Determine prefix based on blogSlug
+        if blog_slug:
+            safe_slug = re.sub(r'[^a-zA-Z0-9._-]', '', blog_slug)[:100]
+            unique_key = f"media/blogs/{safe_slug}/{uuid.uuid4().hex}-{safe_name}"
+        else:
+            unique_key = f"media/drafts/{uuid.uuid4().hex}-{safe_name}"
 
         # Generate 5-minute presigned PUT URL
         presigned_url = s3_client.generate_presigned_url(

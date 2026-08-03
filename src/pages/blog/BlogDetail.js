@@ -402,6 +402,14 @@ class BlogDetail extends Component {
                       month: "long",
                       day: "numeric",
                     })}
+                    {blog.updatedAt &&
+                      ` (Last updated: ${new Date(
+                        blog.updatedAt
+                      ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })})`}
                   </span>
                   <span className="medium-dot">·</span>
                   <span>{displayReadTime}</span>

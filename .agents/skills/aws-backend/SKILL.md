@@ -60,6 +60,16 @@ slug = parts[2]  # e.g., /blogs/my-post → "my-post"
 
 Legacy path aliases are supported (e.g., `/signup` → `/auth/signup`).
 
+## S3 Media Partitioning
+
+Media uploads via the `/media/upload-url` endpoint are partitioned using **Entity-Based Partitioning**.
+When requesting a presigned URL, the frontend can pass a `blogSlug` in the JSON payload:
+
+- If `blogSlug` is provided: Images are stored under `media/blogs/{blogSlug}/`
+- If no slug is provided: Images fall back to `media/drafts/`
+
+This ensures easy cleanup and clear organization as content scales.
+
 ## DynamoDB Schema
 
 ### Blogs Table (`${project_name}-${env}-blogs`)

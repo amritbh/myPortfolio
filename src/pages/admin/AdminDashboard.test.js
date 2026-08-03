@@ -281,7 +281,11 @@ describe("AdminDashboard Component", () => {
 
     await fireEvent.change(input, { target: { files: [file] } });
 
-    expect(uploadSpy).toHaveBeenCalledWith(file, expect.any(Function));
+    expect(uploadSpy).toHaveBeenCalledWith(
+      file,
+      expect.any(Function),
+      "drafts"
+    );
   });
 
   it("handles drag and drop media upload", async () => {
@@ -309,7 +313,11 @@ describe("AdminDashboard Component", () => {
       },
     });
 
-    expect(uploadSpy).toHaveBeenCalledWith(file, expect.any(Function));
+    expect(uploadSpy).toHaveBeenCalledWith(
+      file,
+      expect.any(Function),
+      "drafts"
+    );
   });
 
   it("handles media upload failure", async () => {

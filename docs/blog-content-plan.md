@@ -12,11 +12,11 @@ A detailed plan for writing technical blog posts on your portfolio at [amrit.clo
 | **Format**                  | Markdown (rendered by `BlogDetail.js` using `marked`)         |
 | **Supported features**      | Headings, code blocks, images, blockquotes, inline formatting |
 | **Publishing workflow**     | Admin Dashboard → Create/Edit → Publish                       |
-| **Estimated series length** | 14 blogs across 3 phases                                      |
+| **Estimated series length** | 15 blogs across 3 phases                                      |
 
 ---
 
-## Phase 1 — Foundational AWS & Serverless (Blogs 1–6)
+## Phase 1 — Foundational AWS & Serverless (Blogs 1–7)
 
 ### Blog 1: "How I Built a Serverless Portfolio on AWS — From Zero to Production"
 
@@ -54,50 +54,56 @@ A detailed plan for writing technical blog posts on your portfolio at [amrit.clo
 - **Read Time**: ~14 min
 - **Topics**: Generating presigned URLs in Lambda, direct-to-S3 drag-and-drop media uploads, CloudFront caching, React Markdown editor UI
 
+### Blog 7: "Scaling S3 Media Organization — Entity-Based Partitioning for Serverless Apps"
+
+- **Tags**: `AWS`, `S3`, `Architecture`, `Serverless`, `Data Management`
+- **Read Time**: ~10 min
+- **Topics**: Why flat S3 buckets fail at scale, migrating to entity-based partitioning (e.g. by blog slug), parsing backend JSON for dynamic routing, maintaining a clean architecture as your application grows.
+
 ---
 
-## Phase 2 — Infrastructure as Code (Blogs 7–10)
+## Phase 2 — Infrastructure as Code (Blogs 8–11)
 
-### Blog 7: "Terraform for Beginners — Infrastructure as Code That Actually Makes Sense"
+### Blog 8: "Terraform for Beginners — Infrastructure as Code That Actually Makes Sense"
 
 - **Tags**: `Terraform`, `IaC`, `DevOps`, `AWS`
 - **Read Time**: ~14 min
 
-### Blog 8: "Terragrunt — DRY Terraform at Scale"
+### Blog 9: "Terragrunt — DRY Terraform at Scale"
 
 - **Tags**: `Terragrunt`, `Terraform`, `IaC`, `DevOps`
 - **Read Time**: ~12 min
 
-### Blog 9: "Terraform Testing — How to Validate Your Infrastructure Before It Breaks Production"
+### Blog 10: "Terraform Testing — How to Validate Your Infrastructure Before It Breaks Production"
 
 - **Tags**: `Terraform`, `Testing`, `DevOps`, `CI/CD`
 - **Read Time**: ~10 min
 
-### Blog 10: "Managing Terraform State Like a Pro"
+### Blog 11: "Managing Terraform State Like a Pro"
 
 - **Tags**: `Terraform`, `State Management`, `AWS`, `DevOps`
 - **Read Time**: ~10 min
 
 ---
 
-## Phase 3 — Architecture & Design Patterns (Blogs 11–14)
+## Phase 3 — Architecture & Design Patterns (Blogs 12–15)
 
-### Blog 11: "Designing a Scalable Serverless Architecture on AWS"
+### Blog 12: "Designing a Scalable Serverless Architecture on AWS"
 
 - **Tags**: `Architecture`, `AWS`, `Serverless`, `Design Patterns`
 - **Read Time**: ~15 min
 
-### Blog 12: "CI/CD Pipeline Design for Modern Web Applications"
+### Blog 13: "CI/CD Pipeline Design for Modern Web Applications"
 
 - **Tags**: `CI/CD`, `GitHub Actions`, `DevOps`, `SonarCloud`
 - **Read Time**: ~12 min
 
-### Blog 13: "Microservices vs Monolith — Making the Right Architecture Decision"
+### Blog 14: "Microservices vs Monolith — Making the Right Architecture Decision"
 
 - **Tags**: `Architecture`, `Microservices`, `Design Patterns`
 - **Read Time**: ~10 min
 
-### Blog 14: "The Well-Architected Framework — Building on AWS the Right Way"
+### Blog 15: "The Well-Architected Framework — Building on AWS the Right Way"
 
 - **Tags**: `AWS`, `Architecture`, `Well-Architected`, `Best Practices`
 - **Read Time**: ~14 min
@@ -113,11 +119,12 @@ A detailed plan for writing technical blog posts on your portfolio at [amrit.clo
 | Week 5–6   | Blog 3: AWS Cognito Authentication        | Phase 1 |
 | Week 7–8   | Blog 4: Transactional Emails with SES     | Phase 1 |
 | Week 9–10  | Blog 6: Custom Markdown CMS & S3 Media    | Phase 1 |
-| Week 11–12 | Blog 7: Terraform for Beginners           | Phase 2 |
-| Week 13–14 | Blog 8: Terragrunt at Scale               | Phase 2 |
-| Week 15–16 | Blog 9: Terraform Testing                 | Phase 2 |
-| Week 17–18 | Blog 10: Managing Terraform State         | Phase 2 |
-| Week 19–20 | Blog 11: Scalable Serverless Architecture | Phase 3 |
-| Week 21–22 | Blog 12: CI/CD Pipeline Design            | Phase 3 |
-| Week 23–24 | Blog 13: Microservices vs Monolith        | Phase 3 |
-| Week 25–26 | Blog 14: Well-Architected Framework       | Phase 3 |
+| Week 11-12 | Blog 7: Scaling S3 Media Organization     | Phase 1 |
+| Week 13-14 | Blog 8: Terraform for Beginners           | Phase 2 |
+| Week 15-16 | Blog 9: Terragrunt at Scale               | Phase 2 |
+| Week 17-18 | Blog 10: Terraform Testing                | Phase 2 |
+| Week 19-20 | Blog 11: Managing Terraform State         | Phase 2 |
+| Week 21-22 | Blog 12: Scalable Serverless Architecture | Phase 3 |
+| Week 23-24 | Blog 13: CI/CD Pipeline Design            | Phase 3 |
+| Week 25-26 | Blog 14: Microservices vs Monolith        | Phase 3 |
+| Week 27-28 | Blog 15: Well-Architected Framework       | Phase 3 |
