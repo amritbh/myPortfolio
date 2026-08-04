@@ -40,9 +40,29 @@ resource "aws_ses_email_identity" "forward_email" {
 # -------------------------------------------------------------------------
 # S3 Bucket for Inbound Emails
 # -------------------------------------------------------------------------
+#tfsec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket" "inbound_mail" {
   bucket        = "inbound-mail-${replace(var.domain_name, ".", "-")}-${random_id.bucket_suffix.hex}"
   force_destroy = true
+}
+
+resource "aws_s3_bucket_public_access_block" "inbound_mail_pab" {
+  bucket                  = aws_s3_bucket.inbound_mail.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+#tfsec:ignore:aws-s3-encryption-customer-key
+resource "aws_s3_bucket_server_side_encryption_configuration" "inbound_mail_sse" {
+  bucket = aws_s3_bucket.inbound_mail.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
 }
 
 resource "random_id" "bucket_suffix" {
@@ -72,6 +92,7 @@ resource "aws_s3_bucket_policy" "ses_put_policy" {
 }
 
 data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
 
 # -------------------------------------------------------------------------
 # Lambda Function to Forward Email
@@ -97,6 +118,7 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+#tfsec:ignore:aws-iam-no-policy-wildcards
 resource "aws_iam_role_policy" "lambda_forwarder_policy" {
   name = "lambda-ses-forwarder-policy"
   role = aws_iam_role.lambda_forwarder_role.id
@@ -111,7 +133,7 @@ resource "aws_iam_role_policy" "lambda_forwarder_policy" {
       {
         Effect   = "Allow"
         Action   = ["ses:SendRawEmail"]
-        Resource = "*"
+        Resource = "arn:aws:ses:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:identity/${var.domain_name}"
       }
     ]
   })
@@ -147,6 +169,7 @@ resource "aws_lambda_permission" "allow_ses" {
   function_name  = aws_lambda_function.forwarder.function_name
   principal      = "ses.amazonaws.com"
   source_account = data.aws_caller_identity.current.account_id
+  source_arn     = "arn:aws:ses:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:receipt-rule-set/${aws_ses_receipt_rule_set.main.rule_set_name}:receipt-rule/*"
 }
 
 # -------------------------------------------------------------------------
@@ -204,7 +227,7 @@ resource "aws_iam_user_policy" "smtp_user_policy" {
       {
         Effect   = "Allow"
         Action   = "ses:SendRawEmail"
-        Resource = "*"
+        Resource = "arn:aws:ses:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:identity/${var.domain_name}"
       }
     ]
   })

@@ -1,8 +1,20 @@
 data "aws_caller_identity" "current" {}
 
 # S3 Bucket for Blog Media (images, videos)
+#tfsec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket" "media_bucket" {
   bucket = "${var.project_name}-${var.environment}-media"
+}
+
+#tfsec:ignore:aws-s3-encryption-customer-key
+resource "aws_s3_bucket_server_side_encryption_configuration" "media_bucket_sse" {
+  bucket = aws_s3_bucket.media_bucket.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
 }
 
 # Block all public access — CloudFront OAC handles reads, presigned URLs handle writes

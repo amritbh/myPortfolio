@@ -8,6 +8,12 @@ resource "aws_dynamodb_table" "blogs_table" {
 
   deletion_protection_enabled = true
 
+  #tfsec:ignore:aws-dynamodb-table-customer-key
+  #tfsec:ignore:aws-dynamodb-enable-recovery
+  server_side_encryption {
+    enabled = true
+  }
+
   attribute {
     name = "slug"
     type = "S"
@@ -36,6 +42,12 @@ resource "aws_dynamodb_table" "users_table" {
   hash_key     = "username"
 
   deletion_protection_enabled = true
+
+  #tfsec:ignore:aws-dynamodb-table-customer-key
+  #tfsec:ignore:aws-dynamodb-enable-recovery
+  server_side_encryption {
+    enabled = true
+  }
 
   attribute {
     name = "username"
