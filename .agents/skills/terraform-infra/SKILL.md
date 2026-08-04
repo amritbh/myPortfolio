@@ -11,7 +11,7 @@ This project uses **Terraform** for AWS resource management and **Terragrunt** f
 
 | Tool         | Version                           |
 | ------------ | --------------------------------- |
-| Terraform    | `1.8.0`                           |
+| Terraform    | `1.14.8` (was 1.8.0)              |
 | Terragrunt   | `0.53.8`                          |
 | AWS Provider | Defined in module `main.tf` files |
 
@@ -114,18 +114,18 @@ These are enforced in CI/CD:
 # Terraform formatting (recursive across all .tf files)
 terraform fmt -check -recursive
 
-# Terragrunt HCL formatting
+# Terragrunt HCL formatting (CI uses v0.53.8)
 terragrunt hclfmt --terragrunt-check
 
 # Validation
 terragrunt run-all validate --terragrunt-non-interactive
 ```
 
-Always run these locally before pushing:
+**CRITICAL RULE:** You MUST always run these formatting commands locally using a `run_command` BEFORE you `git commit` any changes to `.tf` or `.hcl` files, or else the CI pipeline will fail:
 
 ```bash
 cd infra && terraform fmt -recursive
-cd infra && terragrunt hclfmt
+cd infra && terragrunt hcl fmt   # Use `hcl fmt` for local Terragrunt 1.x, or `hclfmt` for 0.x
 ```
 
 ## Security Scanning
