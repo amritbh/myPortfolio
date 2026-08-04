@@ -129,7 +129,7 @@ resource "aws_lambda_function" "forwarder" {
   role             = aws_iam_role.lambda_forwarder_role.arn
   handler          = "forwarder.lambda_handler"
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  runtime          = "python3.9"
+  runtime          = "python3.11"
   timeout          = 30
 
   environment {

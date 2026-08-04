@@ -20,8 +20,12 @@ resource "aws_dynamodb_table" "blogs_table" {
 
   global_secondary_index {
     name            = "PublishDateIndex"
-    hash_key        = "publishDate"
     projection_type = "ALL"
+    
+    key_schema {
+      attribute_name = "publishDate"
+      key_type       = "HASH"
+    }
   }
 }
 
@@ -66,7 +70,7 @@ resource "aws_lambda_function" "api_lambda" {
   role             = aws_iam_role.lambda_exec_role.arn
   handler          = "app.lambda_handler"
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  runtime          = "python3.9"
+  runtime          = "python3.11"
 
   environment {
     variables = {
@@ -75,7 +79,7 @@ resource "aws_lambda_function" "api_lambda" {
       ADMIN_EMAIL          = var.admin_email
       SENDER_EMAIL         = var.system_email
       COGNITO_USER_POOL_ID = aws_cognito_user_pool.pool.id
-      COGNITO_REGION       = data.aws_region.current.name
+      COGNITO_REGION       = data.aws_region.current.region
       COGNITO_CLIENT_ID    = aws_cognito_user_pool_client.client.id
       MEDIA_BUCKET_NAME    = aws_s3_bucket.media_bucket.id
       CLOUDFRONT_MEDIA_URL = "https://amrit.cloud"
