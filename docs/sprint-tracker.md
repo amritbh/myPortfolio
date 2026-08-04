@@ -8,13 +8,13 @@
 
 ## Sprint Status Overview
 
-| Sprint | Name                                | Status         | Branch                | PR  |
-| ------ | ----------------------------------- | -------------- | --------------------- | --- |
-| 1      | Theme Switcher System               | 🔄 In Progress | `feat/theme-switcher` | —   |
-| 2      | Hero Section Redesign               | ⬜ Not Started | —                     | —   |
-| 3      | Blog Preview + Travel Teaser        | ⬜ Not Started | —                     | —   |
-| 4      | Travel Page + Footer                | ⬜ Not Started | —                     | —   |
-| 5      | Stack Modernization (post-redesign) | ⬜ Not Started | —                     | —   |
+| Sprint | Name                                | Status            | Branch                | PR                                                    |
+| ------ | ----------------------------------- | ----------------- | --------------------- | ----------------------------------------------------- |
+| 1      | Theme Switcher System               | ✅ Done (PR open) | `feat/theme-switcher` | [#86](https://github.com/amritbh/myPortfolio/pull/86) |
+| 2      | Hero Section Redesign               | ⬜ Not Started    | —                     | —                                                     |
+| 3      | Blog Preview + Travel Teaser        | ⬜ Not Started    | —                     | —                                                     |
+| 4      | Travel Page + Footer                | ⬜ Not Started    | —                     | —                                                     |
+| 5      | Stack Modernization (post-redesign) | ⬜ Not Started    | —                     | —                                                     |
 
 ---
 
@@ -25,14 +25,14 @@
 
 ### Tasks
 
-- [/] **1.1** Add `darkTheme` and `lightTheme` alias to `src/theme.js`
-- [ ] **1.2** Convert `src/App.js` to state-driven theming with localStorage
-- [ ] **1.3** Create `ThemeSwitcher` component (`ThemeSwitcher.js` + `ThemeSwitcher.css`)
-- [ ] **1.4** Wire `ThemeSwitcher` into `Header.js` + update `Main.js` prop flow
-- [ ] **1.5** Remove dead `ToggleSwitch` reference from `Footer.js`
-- [ ] **1.6** Write `ThemeSwitcher.test.js` + update `Header.test.js`
-- [ ] **1.7** Run `npm test -- --coverage` and verify >80% coverage
-- [ ] **1.8** Create draft PR
+- [x] **1.1** Add `darkTheme` and `lightTheme` alias to `src/theme.js`
+- [x] **1.2** Convert `src/App.js` to state-driven theming with localStorage
+- [x] **1.3** Create `ThemeSwitcher` component (`ThemeSwitcher.js` + `ThemeSwitcher.css`)
+- [x] **1.4** Wire `ThemeSwitcher` into `Header.js` + update `Main.js` prop flow
+- [x] **1.5** Remove dead `ToggleSwitch` reference from `Footer.js`
+- [x] **1.6** Write `ThemeSwitcher.test.js` (11 tests) + update `Header.test.js` (+2 tests)
+- [x] **1.7** Run `npm test -- --coverage` — 23/23 tests passing
+- [x] **1.8** Created draft PR [#86](https://github.com/amritbh/myPortfolio/pull/86)
 
 ### Acceptance Criteria
 
