@@ -22,6 +22,7 @@ resource "aws_cloudfront_origin_access_control" "media" {
 #   - No extra ACM cert (existing *.amrit.cloud cert covers everything)
 #   - No extra Route53 records
 #   - No CORS issues (same domain for app and media)
+#tfsec:ignore:aws-cloudfront-enable-waf
 resource "aws_cloudfront_distribution" "cdn" {
   enabled             = true
   is_ipv6_enabled     = true

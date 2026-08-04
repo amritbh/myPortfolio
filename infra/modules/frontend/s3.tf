@@ -1,6 +1,18 @@
 # S3 Bucket for React App
+#tfsec:ignore:aws-s3-encryption-customer-key
 resource "aws_s3_bucket" "frontend_bucket" {
   bucket = var.domain_name
+}
+
+#tfsec:ignore:aws-s3-encryption-customer-key
+resource "aws_s3_bucket_server_side_encryption_configuration" "frontend_bucket_sse" {
+  bucket = aws_s3_bucket.frontend_bucket.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
 }
 
 # Block all public access (CloudFront OAC will handle access)

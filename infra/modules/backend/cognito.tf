@@ -15,7 +15,7 @@ resource "aws_cognito_user_pool" "pool" {
   email_configuration {
     email_sending_account = "DEVELOPER"
     from_email_address    = "Admin <${var.system_email}>"
-    source_arn            = "arn:aws:ses:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:identity/amrit.cloud"
+    source_arn            = "arn:aws:ses:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:identity/amrit.cloud"
   }
 }
 

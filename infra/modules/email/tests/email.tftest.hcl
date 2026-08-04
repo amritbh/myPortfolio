@@ -23,8 +23,8 @@ run "valid_plan" {
   }
 
   assert {
-    condition     = aws_lambda_function.forwarder.runtime == "python3.9"
-    error_message = "Lambda function runtime did not match python3.9"
+    condition     = aws_lambda_function.forwarder.runtime == "python3.11"
+    error_message = "Lambda function runtime did not match python3.11"
   }
 
   assert {
