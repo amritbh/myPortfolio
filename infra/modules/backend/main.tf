@@ -21,7 +21,7 @@ resource "aws_dynamodb_table" "blogs_table" {
   global_secondary_index {
     name            = "PublishDateIndex"
     projection_type = "ALL"
-    
+
     key_schema {
       attribute_name = "publishDate"
       key_type       = "HASH"
