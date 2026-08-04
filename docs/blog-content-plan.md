@@ -84,26 +84,31 @@ A detailed plan for writing technical blog posts on your portfolio at [amrit.clo
 - **Tags**: `Terraform`, `State Management`, `AWS`, `DevOps`
 - **Read Time**: ~10 min
 
+### Blog 12: "Securing Infrastructure as Code with tfsec"
+
+- **Tags**: `Security`, `Terraform`, `AWS`, `DevOps`, `tfsec`
+- **Read Time**: ~12 min
+
 ---
 
-## Phase 3 — Architecture & Design Patterns (Blogs 12–15)
+## Phase 3 — Architecture & Design Patterns (Blogs 13–16)
 
-### Blog 12: "Designing a Scalable Serverless Architecture on AWS"
+### Blog 13: "Designing a Scalable Serverless Architecture on AWS"
 
 - **Tags**: `Architecture`, `AWS`, `Serverless`, `Design Patterns`
 - **Read Time**: ~15 min
 
-### Blog 13: "CI/CD Pipeline Design for Modern Web Applications"
+### Blog 14: "CI/CD Pipeline Design for Modern Web Applications"
 
 - **Tags**: `CI/CD`, `GitHub Actions`, `DevOps`, `SonarCloud`
 - **Read Time**: ~12 min
 
-### Blog 14: "Microservices vs Monolith — Making the Right Architecture Decision"
+### Blog 15: "Microservices vs Monolith — Making the Right Architecture Decision"
 
 - **Tags**: `Architecture`, `Microservices`, `Design Patterns`
 - **Read Time**: ~10 min
 
-### Blog 15: "The Well-Architected Framework — Building on AWS the Right Way"
+### Blog 16: "The Well-Architected Framework — Building on AWS the Right Way"
 
 - **Tags**: `AWS`, `Architecture`, `Well-Architected`, `Best Practices`
 - **Read Time**: ~14 min
@@ -124,7 +129,8 @@ A detailed plan for writing technical blog posts on your portfolio at [amrit.clo
 | Week 15-16 | Blog 9: Terragrunt at Scale               | Phase 2 |
 | Week 17-18 | Blog 10: Terraform Testing                | Phase 2 |
 | Week 19-20 | Blog 11: Managing Terraform State         | Phase 2 |
-| Week 21-22 | Blog 12: Scalable Serverless Architecture | Phase 3 |
-| Week 23-24 | Blog 13: CI/CD Pipeline Design            | Phase 3 |
-| Week 25-26 | Blog 14: Microservices vs Monolith        | Phase 3 |
-| Week 27-28 | Blog 15: Well-Architected Framework       | Phase 3 |
+| Week 21-22 | Blog 12: Securing IaC with tfsec          | Phase 2 |
+| Week 23-24 | Blog 13: Scalable Serverless Architecture | Phase 3 |
+| Week 25-26 | Blog 14: CI/CD Pipeline Design            | Phase 3 |
+| Week 27-28 | Blog 15: Microservices vs Monolith        | Phase 3 |
+| Week 29-30 | Blog 16: Well-Architected Framework       | Phase 3 |
