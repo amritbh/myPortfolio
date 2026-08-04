@@ -12,7 +12,7 @@ A detailed plan for writing technical blog posts on your portfolio at [amrit.clo
 | **Format**                  | Markdown (rendered by `BlogDetail.js` using `marked`)         |
 | **Supported features**      | Headings, code blocks, images, blockquotes, inline formatting |
 | **Publishing workflow**     | Admin Dashboard → Create/Edit → Publish                       |
-| **Estimated series length** | 15 blogs across 3 phases                                      |
+| **Estimated series length** | 20 blogs across 4 phases                                      |
 
 ---
 
@@ -128,3 +128,93 @@ A detailed plan for writing technical blog posts on your portfolio at [amrit.clo
 | Week 23-24 | Blog 13: CI/CD Pipeline Design            | Phase 3 |
 | Week 25-26 | Blog 14: Microservices vs Monolith        | Phase 3 |
 | Week 27-28 | Blog 15: Well-Architected Framework       | Phase 3 |
+| Week 29-30 | Blog 16: Redesign Series Part 1           | Phase 4 |
+| Week 31-32 | Blog 17: Redesign Series Part 2           | Phase 4 |
+| Week 33-34 | Blog 18: Redesign Series Part 3           | Phase 4 |
+| Week 35-36 | Blog 19: Redesign Series Part 4           | Phase 4 |
+| Week 37-38 | Blog 20: Redesign Series Part 5           | Phase 4 |
+
+---
+
+## Phase 4 — Landing Page Redesign Series (Blogs 16–20)
+
+This phase documents the full redesign of amrit.cloud as a live engineering case study.
+Each blog maps to one sprint and is written after the sprint's PR is merged.
+The series doubles as a showcase of frontend engineering, UX decision-making, and React patterns.
+
+### Blog 16: "How I Redesigned My Portfolio Landing Page (Sprint 1: Dark Mode Done Right)"
+
+- **Slug**: `redesign-s1-dark-mode-theme-switcher`
+- **Tags**: `React`, `Frontend`, `UX`, `Dark Mode`, `JavaScript`
+- **Read Time**: ~10 min
+- **Publish after**: Sprint 1 PR merged
+- **Topics**:
+  - Why the hardcoded `chosenTheme` pattern breaks and how to fix it with state-driven theming
+  - Building a 3-mode pill switcher (Light, System, Dark) from scratch in React 16 class components
+  - Reading `prefers-color-scheme` with `window.matchMedia` and listening for live OS changes
+  - Persisting theme preference in `localStorage` without any external state library
+  - Designing the dark theme palette: why GitHub-dark (`#0D1117`) beats flat black
+  - Testing theme switching with Jest and `@testing-library/react`
+  - Code walkthrough of `App.js`, `ThemeSwitcher.js`, and the prop-flow through `Main.js`
+
+### Blog 17: "Redesigning the Hero Section (Sprint 2: First Impressions Matter)"
+
+- **Slug**: `redesign-s2-hero-section`
+- **Tags**: `React`, `CSS`, `UX`, `Frontend`, `Design`
+- **Read Time**: ~12 min
+- **Publish after**: Sprint 2 PR merged
+- **Topics**:
+  - Why a flat name and subtitle is not enough: what makes a hero section convert
+  - Designing a split-screen hero: layout decisions, visual hierarchy, whitespace
+  - Gradient text in CSS: `background-clip: text` and `-webkit-text-fill-color: transparent`
+  - Animating identity chips sequentially with CSS `nth-child` animation delays
+  - Profile photo with an animated Nepal-flag-inspired gradient ring using `conic-gradient`
+  - Animated count-up stats bar on scroll intersection
+  - Writing a compelling personal intro (Nepal born, Oregon based, cloud architect)
+  - Making it fully responsive without a CSS framework
+
+### Blog 18: "Adding a Blog Preview and Travel Teaser to the Home Page (Sprint 3)"
+
+- **Slug**: `redesign-s3-blog-preview-travel-teaser`
+- **Tags**: `React`, `Frontend`, `API`, `UX`, `Travel`
+- **Read Time**: ~10 min
+- **Publish after**: Sprint 3 PR merged
+- **Topics**:
+  - Why surfacing content on the landing page reduces friction and increases engagement
+  - Building a `FeaturedBlogs` component: skeleton loading states, 3-column CSS grid, graceful error handling
+  - Reusing the existing `fetchBlogs()` API client in a new context
+  - Creating the `TravelTeaser` section: introducing a travel identity to a tech portfolio
+  - Design choices: destination chips, Nepal vs USA split cards, motorcycling strip
+  - Mountain silhouette SVG background: inline SVG with theme-aware opacity
+  - Data-driven design: adding `travelData` to `portfolio.js` and consuming it in components
+
+### Blog 19: "Building the Travel Page and Redesigning the Footer (Sprint 4)"
+
+- **Slug**: `redesign-s4-travel-page-footer`
+- **Tags**: `React`, `Frontend`, `Travel`, `Nepal`, `UX`
+- **Read Time**: ~11 min
+- **Publish after**: Sprint 4 PR merged
+- **Topics**:
+  - Creating a new React route `/travel` from scratch: from `Main.js` to page component
+  - Structuring the travel page: Nepal treks, motorcycling, USA travel, and a Nepal tourism support message
+  - The 7 Himalayan trek destinations and why I want to document them (ABC, Tilicho, Gosaikunda, Mustang, Pokhara, Badimalika, Aama Yangri)
+  - Why I chose `/travel` over `travel.amrit.cloud` (SEO, infra cost, audience size reasoning)
+  - Building a newsletter signup UI in the footer without any backend (yet)
+  - Enhanced footer: quick links, social icons, and copyright in a clean 3-row layout
+  - Wiring up the "Coming Soon" subscriber experience
+
+### Blog 20: "Migrating from CRA to Vite and JavaScript to TypeScript (Sprint 5)"
+
+- **Slug**: `redesign-s5-vite-typescript-migration`
+- **Tags**: `TypeScript`, `Vite`, `React 18`, `Frontend`, `Migration`
+- **Read Time**: ~15 min
+- **Publish after**: Sprint 5 PR merged
+- **Topics**:
+  - Why CRA is deprecated and why Vite is the right replacement in 2026
+  - The case for TypeScript: what silent bugs it would have caught in this portfolio
+  - Step-by-step migration: `vite.config.ts`, `tsconfig.json`, renaming files, typing props
+  - Converting class components to functional components with hooks: a practical guide
+  - Shared type interfaces: `Theme`, `Blog`, `GreetingData`, `TravelData` in `src/types/index.ts`
+  - Migrating from Jest to Vitest: near-identical API, zero config
+  - Removing the `--openssl-legacy-provider` workaround for good
+  - CI/CD pipeline changes and final production build verification
