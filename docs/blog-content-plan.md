@@ -64,7 +64,7 @@ A detailed plan for writing technical blog posts on your portfolio at [amrit.clo
 
 ## Phase 2 — Infrastructure as Code (Blogs 8–11)
 
-### Blog 8: "Terraform for Beginners — Infrastructure as Code That Actually Makes Sense"
+### Blog 8: "Terraform for Beginners (Infrastructure as Code That Actually Makes Sense)" (Drafted)
 
 - **Tags**: `Terraform`, `IaC`, `DevOps`, `AWS`
 - **Read Time**: ~14 min

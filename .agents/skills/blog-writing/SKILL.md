@@ -34,10 +34,10 @@ This project maintains a series of technical blog posts describing its own archi
 ## 4. Content Guidelines
 
 - **Writing Tone:** The writing style should be natural and humanized, sounding like a real engineer sharing their experiences, not like a stiff corporate manual or an AI assistant.
-- **Keywords:** Always weave the terms "serverless portfolio", "technical blogging", and "dynamic blogging" into the narrative of the blog content to reinforce the overarching theme of this series.
+- **Keywords:** Always weave the terms "serverless portfolio", "technical blog", and "travel blog" into the narrative of the blog content to reinforce the overarching theme of this series.
 - **Title Numbering:** When publishing or registering a new blog post in DynamoDB, ensure the title is prepended with its sequential number (e.g., "6. Title Goes Here").
 
 ## 5. Typography Rules (From AGENTS.md)
 
-- Avoid using hyphens (`-`), double underscores (`__`), or em dashes (`—`) in sentences as punctuation AND completely avoid them in blog headings. These can cause rendering conflicts with the custom UI parser.
+- **NEVER** use em dashes (`—`), hyphens (`-`), or double underscores (`__`) in the **title** or anywhere in the **content/body** of the blog post as punctuation. These characters cause severe rendering conflicts with the custom UI parser.
 - Standard markdown lists using hyphens are completely fine. Use commas, parentheses, or rephrase sentences to avoid inline punctuation issues.
