@@ -39,5 +39,5 @@ This project maintains a series of technical blog posts describing its own archi
 
 ## 5. Typography Rules (From AGENTS.md)
 
-- Avoid using hyphens (`-`), double underscores (`__`), or em dashes (`—`) in sentences as punctuation AND completely avoid them in blog headings. These can cause rendering conflicts with the custom UI parser.
+- **NEVER** use em dashes (`—`), hyphens (`-`), or double underscores (`__`) in the **title** or anywhere in the **content/body** of the blog post as punctuation. These characters cause severe rendering conflicts with the custom UI parser.
 - Standard markdown lists using hyphens are completely fine. Use commas, parentheses, or rephrase sentences to avoid inline punctuation issues.
