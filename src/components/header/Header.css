@@ -238,3 +238,16 @@
     font-size: 12px;
   }
 }
+
+/* Theme switcher nav item — vertically centers the pill in the nav */
+.theme-switcher-nav-item {
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+}
+
+@media (max-width: 47.99em) {
+  .theme-switcher-nav-item {
+    padding: 12px 10px;
+  }
+}

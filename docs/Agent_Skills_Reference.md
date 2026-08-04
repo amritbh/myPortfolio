@@ -6,15 +6,17 @@ This document provides a quick reference for the AI agent skill files located in
 
 ## Skills Overview
 
-| #   | Skill                                                   | Directory                                  | Trigger                                               |
-| --- | ------------------------------------------------------- | ------------------------------------------ | ----------------------------------------------------- |
-| 1   | [Cognito Authentication](#1-cognito-authentication)     | `.agents/skills/cognito-auth/`             | Login, signup, auth routes, JWT, Cognito infra        |
-| 2   | [AWS Backend](#2-aws-backend)                           | `.agents/skills/aws-backend/`              | app.py, API routes, DynamoDB, Lambda                  |
-| 3   | [Terraform Infrastructure](#3-terraform-infrastructure) | `.agents/skills/terraform-infra/`          | Terraform modules, Terragrunt, state, infra workflows |
-| 4   | [CI/CD Pipeline](#4-cicd-pipeline)                      | `.agents/skills/cicd-pipeline/`            | GitHub Actions, pipeline failures, deployment         |
-| 5   | [React Component Patterns](#5-react-component-patterns) | `.agents/skills/react-component-patterns/` | New pages, components, frontend UI                    |
-| 6   | [API Client Patterns](#6-api-client-patterns)           | `.agents/skills/api-client/`               | API calls, auth flows, data layer                     |
-| 7   | [Portfolio Data Schema](#7-portfolio-data-schema)       | `.agents/skills/portfolio-data/`           | Portfolio content, sections, personal info            |
+| #   | Skill                                                   | Directory                                  | Trigger                                                                           |
+| --- | ------------------------------------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------- |
+| 1   | [Cognito Authentication](#1-cognito-authentication)     | `.agents/skills/cognito-auth/`             | Login, signup, auth routes, JWT, Cognito infra                                    |
+| 2   | [AWS Backend](#2-aws-backend)                           | `.agents/skills/aws-backend/`              | app.py, API routes, DynamoDB, Lambda                                              |
+| 3   | [Terraform Infrastructure](#3-terraform-infrastructure) | `.agents/skills/terraform-infra/`          | Terraform modules, Terragrunt, state, infra workflows                             |
+| 4   | [CI/CD Pipeline](#4-cicd-pipeline)                      | `.agents/skills/cicd-pipeline/`            | GitHub Actions, pipeline failures, deployment                                     |
+| 5   | [React Component Patterns](#5-react-component-patterns) | `.agents/skills/react-component-patterns/` | New pages, components, frontend UI                                                |
+| 6   | [API Client Patterns](#6-api-client-patterns)           | `.agents/skills/api-client/`               | API calls, auth flows, data layer                                                 |
+| 7   | [Portfolio Data Schema](#7-portfolio-data-schema)       | `.agents/skills/portfolio-data/`           | Portfolio content, sections, personal info                                        |
+| 8   | [Theme Switcher System](#8-theme-switcher-system)       | `.agents/skills/theme-switcher/`           | Theme modes, dark/light/system, ThemeSwitcher component, localStorage persistence |
+| 9   | [Stack Modernization](#9-stack-modernization)           | `.agents/skills/stack-modernization/`      | Vite migration, React 18 upgrade, class to hooks, TypeScript adoption (Sprint 5)  |
 
 ---
 
@@ -119,6 +121,37 @@ Schema reference for `src/portfolio.js` (950 lines, 12 named exports):
 
 ---
 
+## 8. Theme Switcher System
+
+**File:** `.agents/skills/theme-switcher/SKILL.md`
+
+Documents the 3-mode theme system (Light / System / Dark) that replaced the old hardcoded `chosenTheme`:
+
+- **State management** — `App.js` holds `themeMode` + `activeTheme` state, persists to `localStorage`
+- **System mode** — uses `window.matchMedia("(prefers-color-scheme: dark)")` with a live change listener
+- **ThemeSwitcher component** — 3-segment pill UI in the Header; icon-only toggle on mobile
+- **Dark theme palette** — GitHub-dark inspired (`#0D1117` body, `#58A6FF` accent)
+
+**Key topics:** Theme resolution logic, prop flow (App → Main → Header → ThemeSwitcher), `localStorage` key, `darkTheme` token values, common debugging steps, test requirements.
+
+---
+
+## 9. Stack Modernization
+
+**File:** `.agents/skills/stack-modernization/SKILL.md`
+
+Migration guide for upgrading the full stack after the 4 redesign sprints are complete:
+
+- **CRA → Vite** — `vite.config.ts` setup, `package.json` script updates, remove `--openssl-legacy-provider`
+- **React 16 → 18** — concurrent mode, functional components, hooks
+- **Class → Functional** — conversion pattern with TypeScript types, ordered component list
+- **JavaScript → TypeScript** — shared `src/types/index.ts` interfaces (Theme, Blog, HeroChip, TravelData, etc.)
+- **Jest → Vitest** — near-identical API, `vi.fn()` replaces `jest.fn()`
+
+**Key topics:** 10-step migration order, full file rename map, TypeScript gotchas specific to this codebase (`require()` images, `react-reveal` types, `react-router-dom v5` typing), CI/CD pipeline changes, acceptance criteria.
+
+---
+
 ## How Skills Work
 
 Skills are automatically discovered from `.agents/skills/` directories. Each directory must contain a `SKILL.md` file with YAML frontmatter (`name` and `description` fields). When a user request matches a skill's name or description, the agent reads the full SKILL.md for context before proceeding.
@@ -127,6 +160,7 @@ Skills are automatically discovered from `.agents/skills/` directories. Each dir
 
 1. Create a directory: `.agents/skills/<skill-name>/`
 2. Create `SKILL.md` with frontmatter:
+
    ```yaml
    ---
    name: Skill Name
@@ -134,5 +168,6 @@ Skills are automatically discovered from `.agents/skills/` directories. Each dir
    ---
 
    ```
+
 3. Add detailed instructions in the markdown body
 4. Optionally add `scripts/`, `examples/`, `resources/`, `references/` subdirectories

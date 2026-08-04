@@ -26,13 +26,25 @@ export default class Main extends Component {
               settings.isSplash ? (
                 <Splash {...props} theme={this.props.theme} />
               ) : (
-                <Home {...props} theme={this.props.theme} />
+                <Home
+                  {...props}
+                  theme={this.props.theme}
+                  themeMode={this.props.themeMode}
+                  onThemeChange={this.props.onThemeChange}
+                />
               )
             }
           />
           <Route
             path="/home"
-            render={(props) => <Home {...props} theme={this.props.theme} />}
+            render={(props) => (
+              <Home
+                {...props}
+                theme={this.props.theme}
+                themeMode={this.props.themeMode}
+                onThemeChange={this.props.onThemeChange}
+              />
+            )}
           />
           <Route
             path="/experience"

@@ -20,3 +20,12 @@
   3. Create a brand new branch for the new work.
 - **Draft PRs**: Whenever you are asked to create a Pull Request (PR), ALWAYS create a **Draft PR** (e.g., using `gh pr create --draft`).
 - **Protect Main Branch**: NEVER push changes directly to the `main` branch. All work must be pushed to feature branches and merged via Pull Requests.
+
+# Sprint Tracker Rules
+
+- **Sprint Tracker:** The file `docs/sprint-tracker.md` is the single source of truth for implementation progress on the landing page redesign (Sprints 1–5).
+- **Update on every task completion:** When you finish any individual task (e.g., 1.1, 2.3), immediately update the tracker: change `[ ]` to `[x]` for that task.
+- **Update sprint status:** When all tasks in a sprint are complete and the draft PR is created, update the sprint's status in the overview table from `🔄 In Progress` to `✅ Done (PR open)`.
+- **Update on merge:** When a sprint PR is merged to `main`, update the status to `✅ Merged` and move it to the "Completed Sprints" section of the tracker.
+- **In-progress marker:** Use `[/]` to mark a task that has been started but not yet finished.
+- **Never skip this step:** Updating the tracker is as important as writing the code. Do not end your turn after completing a task without updating `docs/sprint-tracker.md`.
