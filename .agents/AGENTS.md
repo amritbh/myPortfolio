@@ -14,6 +14,9 @@
 
 # Git & GitHub Workflow Rules
 
-- **Branch Management**: Before starting any new task, always check if the current remote branch has already been merged (e.g., using `gh pr status` or `git log`). If the remote branch is merged, you must create a new branch for the new work instead of continuing on the merged branch.
+- **Branch Management**: Before making ANY new commit or starting ANY new task, ALWAYS check if the current branch's PR has already been merged (using `gh pr status` or `gh pr view`). If the remote branch is merged:
+  1. DO NOT make any further commits to the current branch.
+  2. You MUST run `git checkout main` and `git pull` to get the latest merged changes.
+  3. Create a brand new branch for the new work.
 - **Draft PRs**: Whenever you are asked to create a Pull Request (PR), ALWAYS create a **Draft PR** (e.g., using `gh pr create --draft`).
 - **Protect Main Branch**: NEVER push changes directly to the `main` branch. All work must be pushed to feature branches and merged via Pull Requests.
