@@ -34,7 +34,7 @@ This project maintains a series of technical blog posts describing its own archi
 ## 4. Content Guidelines
 
 - **Writing Tone:** The writing style should be natural and humanized, sounding like a real engineer sharing their experiences, not like a stiff corporate manual or an AI assistant.
-- **Keywords:** Always weave the terms "serverless portfolio", "technical blogging", and "dynamic blogging" into the narrative of the blog content to reinforce the overarching theme of this series.
+- **Keywords:** Always weave the terms "serverless portfolio", "technical blog", and "travel blog" into the narrative of the blog content to reinforce the overarching theme of this series.
 - **Title Numbering:** When publishing or registering a new blog post in DynamoDB, ensure the title is prepended with its sequential number (e.g., "6. Title Goes Here").
 
 ## 5. Typography Rules (From AGENTS.md)
