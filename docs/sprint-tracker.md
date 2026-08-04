@@ -1,8 +1,8 @@
 # Landing Page Redesign — Sprint Tracker
 
 **Project:** amrit.cloud landing page redesign  
-**Plan reference:** [Landing_Page_Redesign_Plan.md](./Landing_Page_Redesign_Plan.md)  
-**Blog series:** [blog-content-plan.md](./blog-content-plan.md) (Phase 4, Blogs 16–20)  
+**Plan reference:** [Landing_Page_Redesign_Plan.local.md](./Landing_Page_Redesign_Plan.local.md)  
+**Blog series:** [blog-content-plan.local.md](./blog-content-plan.local.md) (Phase 4, Blogs 16–20)  
 **Last updated:** 2026-08-04
 
 ---
