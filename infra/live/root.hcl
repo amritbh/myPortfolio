@@ -12,6 +12,6 @@ remote_state {
     key            = "${path_relative_to_include()}/terraform.tfstate"
     region         = "us-east-1"
     encrypt        = true
-    dynamodb_table = "amrit-portfolio-terraform-locks-amrit990"
+    use_lockfile   = true
   }
 }

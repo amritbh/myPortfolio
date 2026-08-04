@@ -74,14 +74,14 @@ remote_state {
     key            = "${path_relative_to_include()}/terraform.tfstate"
     region         = "us-east-1"
     encrypt        = true
-    dynamodb_table = "amrit-portfolio-terraform-locks-amrit990"
+    use_lockfile   = true
   }
 }
 ```
 
 - All child `terragrunt.hcl` files inherit via `find_in_parent_folders("root.hcl")`
 - State is stored per-module: each module gets its own state file key
-- DynamoDB table provides state locking to prevent concurrent modifications
+- Native S3 state locking is enabled (`use_lockfile = true`), eliminating the need for a separate DynamoDB table.
 
 ### Environment Config (`infra/live/prod/terragrunt.hcl`)
 
