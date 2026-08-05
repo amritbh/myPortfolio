@@ -110,7 +110,7 @@ class FeaturedBlogs extends Component {
                   className="blog-tag"
                   style={{
                     backgroundColor: `${tagColor(tag)}22`,
-                    color: tagColor(tag),
+                    color: theme ? theme.text : undefined,
                   }}
                 >
                   {tag}
@@ -125,21 +125,21 @@ class FeaturedBlogs extends Component {
             </h3>
             <p
               className="blog-card-excerpt"
-              style={{ color: theme ? theme.secondaryText : undefined }}
+              style={{ color: theme ? theme.text : undefined }}
             >
               {blog.summary || blog.excerpt || ""}
             </p>
             <div className="blog-card-meta">
               <span
                 className="blog-meta-date"
-                style={{ color: theme ? theme.secondaryText : undefined }}
+                style={{ color: theme ? theme.text : undefined }}
               >
                 {formatDate(blog.publishDate)}
               </span>
               {blog.readTime && (
                 <span
                   className="blog-meta-read"
-                  style={{ color: theme ? theme.secondaryText : undefined }}
+                  style={{ color: theme ? theme.text : undefined }}
                 >
                   {blog.readTime}
                 </span>
