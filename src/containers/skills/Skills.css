@@ -83,3 +83,16 @@
     margin-top: 0px;
   }
 }
+
+.skill-img-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.skill-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+}

@@ -85,7 +85,7 @@ const skills = {
   data: [
     {
       title: "Agentic AI and LLMs",
-      fileName: "DataScienceImg",
+      fileName: "skill_agentic_ai.png",
       skills: [
         "⚡ Experience with Agentic AI, Large Language Models (LLMs) and RAG",
         "⚡ Developing multi-agent AI architectures and applications",
@@ -152,7 +152,7 @@ const skills = {
     },
     {
       title: "Full Stack Software Engineer",
-      fileName: "SoftwareImg",
+      fileName: "skill_fullstack.png",
       skills: [
         "⚡ Strong experience building backend applications using Java, Python and Spring Boot",
         "⚡ Experience developing RESTful APIs and microservices",
@@ -256,7 +256,7 @@ const skills = {
     },
     {
       title: "DevOps and Cloud",
-      fileName: "DataScienceImg",
+      fileName: "skill_devops.png",
       skills: [
         "⚡ Experience in building CI/CD pipelines for code deployment",
         "⚡ Working with various cloud platforms such as AWS, Azure, Google Cloud",
@@ -373,7 +373,7 @@ const skills = {
     },
     {
       title: "Site Reliability Engineering",
-      fileName: "FullStackImg",
+      fileName: "skill_sre.png",
       skills: [
         "⚡ Experience in setting up and maintaining monitoring systems",
         "⚡ Working with various logging and monitoring tools",
@@ -448,7 +448,7 @@ const skills = {
     },
     {
       title: "Cloud Infra-Architecture",
-      fileName: "CloudInfraImg",
+      fileName: "skill_cloud_infra.png",
       skills: [
         "⚡ Experience working on multiple cloud platforms",
         "⚡ Hosting and maintaining websites on virtual machine instances along with integration of databases",
@@ -536,7 +536,7 @@ const skills = {
     },
     {
       title: "Network and System Administration",
-      fileName: "DesignImg",
+      fileName: "skill_networking.png",
       skills: [
         "⚡ Experience in setting up and maintaining network infrastructure",
         //settig up virtual network in aws and azure
