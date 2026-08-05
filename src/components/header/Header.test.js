@@ -4,6 +4,23 @@ import Header from "./Header";
 import { BrowserRouter } from "react-router-dom";
 import * as apiClient from "../../utils/apiClient";
 
+// matchMedia mock required by ThemeSwitcher
+beforeAll(() => {
+  Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    value: jest.fn().mockImplementation((query) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
+});
+
 const mockTheme = {
   body: "#ffffff",
   text: "#000000",
@@ -12,6 +29,8 @@ const mockTheme = {
   highlight: "#a066fb",
 };
 
+const mockOnThemeChange = jest.fn();
+
 const renderWithRouter = (ui) => {
   return render(<BrowserRouter>{ui}</BrowserRouter>);
 };
@@ -19,6 +38,34 @@ const renderWithRouter = (ui) => {
 describe("Header Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  it("renders the ThemeSwitcher with all 3 mode buttons", () => {
+    jest.spyOn(apiClient, "getStoredUser").mockReturnValue(null);
+    renderWithRouter(
+      <Header
+        theme={mockTheme}
+        themeMode="system"
+        onThemeChange={mockOnThemeChange}
+      />
+    );
+    expect(screen.getByRole("radiogroup")).toBeInTheDocument();
+    expect(screen.getByLabelText("Light theme")).toBeInTheDocument();
+    expect(screen.getByLabelText("System theme")).toBeInTheDocument();
+    expect(screen.getByLabelText("Dark theme")).toBeInTheDocument();
+  });
+
+  it("calls onThemeChange when a theme mode is selected via ThemeSwitcher", () => {
+    jest.spyOn(apiClient, "getStoredUser").mockReturnValue(null);
+    renderWithRouter(
+      <Header
+        theme={mockTheme}
+        themeMode="system"
+        onThemeChange={mockOnThemeChange}
+      />
+    );
+    fireEvent.click(screen.getByLabelText("Dark theme"));
+    expect(mockOnThemeChange).toHaveBeenCalledWith("dark");
   });
 
   it("renders Login link when no user is logged in", () => {

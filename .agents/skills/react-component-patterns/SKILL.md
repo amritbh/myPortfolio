@@ -7,24 +7,30 @@ description: Conventions for creating and modifying React components in this por
 
 This is a **React 16** portfolio app using class components, `styled-components` theming, `react-router-dom` v5, and vanilla CSS.
 
+> **Future:** Sprint 5 will migrate this to Vite + React 18 + functional components + TypeScript. See the **Stack Modernization** skill before doing any work related to that migration.
+
 ## Technology Stack
 
-| Technology                  | Version                     | Purpose               |
-| --------------------------- | --------------------------- | --------------------- |
-| React                       | `^16.10.2`                  | UI library            |
-| react-router-dom            | `^5.1.2`                    | Client-side routing   |
-| styled-components           | `^5.1.1`                    | Global theme provider |
-| react-scripts               | `3.2.0`                     | Build tooling (CRA)   |
-| react-helmet                | `^6.1.0`                    | SEO meta tags         |
-| react-reveal                | `^1.2.2`                    | Scroll animations     |
-| bootstrap / react-bootstrap | `^5.0.2` / `^1.0.0-beta.16` | Layout utilities      |
-| baseui                      | `^9.65.3`                   | Some UI components    |
-| chart.js / react-chartjs-2  | `^2.9.3` / `^2.9.0`         | Charts                |
-| marked                      | `^4.3.0`                    | Markdown rendering    |
+| Technology                  | Version                     | Purpose                          |
+| --------------------------- | --------------------------- | -------------------------------- |
+| React                       | `^16.10.2`                  | UI library                       |
+| react-router-dom            | `^5.1.2`                    | Client-side routing              |
+| styled-components           | `^5.1.1`                    | Global theme provider            |
+| react-scripts               | `3.2.0`                     | Build tooling (CRA — deprecated) |
+| react-helmet                | `^6.1.0`                    | SEO meta tags                    |
+| react-reveal                | `^1.2.2`                    | Scroll animations                |
+| bootstrap / react-bootstrap | `^5.0.2` / `^1.0.0-beta.16` | Layout utilities                 |
+| baseui                      | `^9.65.3`                   | Some UI components               |
+| chart.js / react-chartjs-2  | `^2.9.3` / `^2.9.0`         | Charts                           |
+| marked                      | `^4.3.0`                    | Markdown rendering               |
 
 ### Build Requirement
 
 Node 18 with `--openssl-legacy-provider` flag (already configured in `package.json` scripts).
+
+### Theme System
+
+The theme is **state-driven** via `App.js` (not a hardcoded `chosenTheme` export). Three modes are supported: `light`, `dark`, and `system`. See the **Theme Switcher System** skill for full details on the theme architecture, prop flow, and `ThemeSwitcher` component.
 
 ## File Structure Conventions
 

@@ -4,6 +4,7 @@ import { Fade } from "react-reveal";
 import { NavLink, Link } from "react-router-dom";
 import { greeting, settings } from "../../portfolio.js";
 import SeoHeader from "../seoHeader/SeoHeader";
+import ThemeSwitcher from "../themeSwitcher/ThemeSwitcher";
 import {
   getStoredUser,
   clearSession,
@@ -320,6 +321,13 @@ class Header extends Component {
                       Login
                     </NavLink>
                   )}
+                </li>
+                <li className="theme-switcher-nav-item">
+                  <ThemeSwitcher
+                    themeMode={this.props.themeMode || "system"}
+                    onThemeChange={this.props.onThemeChange || (() => {})}
+                    theme={theme}
+                  />
                 </li>
               </ul>
             </header>

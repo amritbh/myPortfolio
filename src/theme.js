@@ -195,4 +195,26 @@ export const materialTealTheme = {
   splashBg: "#05505E",
 };
 
+// Dark theme — rich GitHub-dark inspired palette (not flat black)
+export const darkTheme = {
+  body: "#0D1117",
+  text: "#E6EDF3",
+  expTxtColor: "#C9D1D9",
+  highlight: "#1F3A5F",
+  dark: "#010409",
+  secondaryText: "#8B949E",
+  imageHighlight: "#58A6FF",
+  compImgHighlight: "#21262D",
+  jacketColor: "#388BFD",
+  headerColor: "#161B2277",
+  splashBg: "#010409",
+};
+
+// Light theme — alias for blueTheme (used by theme switcher)
+export const lightTheme = blueTheme;
+
+// DEPRECATED: chosenTheme is no longer the active mechanism.
+// Theme is now state-driven via App.js. This export is kept only
+// for any legacy code that may still reference it and will be
+// removed during the Sprint 5 stack modernization.
 export const chosenTheme = blueTheme;
