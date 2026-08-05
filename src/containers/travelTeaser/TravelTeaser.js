@@ -29,11 +29,7 @@ class TravelTeaser extends Component {
     const svgOpacity = theme && theme.body === "#0D1117" ? 0.04 : 0.035;
 
     return (
-      <section
-        className="travel-teaser-section"
-        id="travel-teaser"
-        style={{ backgroundColor: theme ? theme.compImgHighlight : undefined }}
-      >
+      <section className="travel-teaser-section" id="travel-teaser">
         <MountainSvg opacity={svgOpacity} />
 
         <div className="travel-teaser-inner">
