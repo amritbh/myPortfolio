@@ -50,15 +50,7 @@ class Greeting extends Component {
               >
                 Read My Blog
               </Link>
-              <a
-                href={greeting.resumeLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-outlined"
-                style={{ borderColor: theme.jacketColor, color: theme.text }}
-              >
-                View Resume
-              </a>
+
               <a
                 href={greeting.portfolio_repository}
                 target="_blank"
