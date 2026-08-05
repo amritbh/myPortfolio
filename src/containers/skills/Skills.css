@@ -1,6 +1,8 @@
 .skills-main-div {
   display: flex;
   overflow: hidden;
+  padding: 0 5%;
+  align-items: center;
 }
 
 .skills-header {
