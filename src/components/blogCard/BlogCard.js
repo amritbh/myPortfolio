@@ -36,7 +36,7 @@ export default function BlogCard({ blog, theme }) {
   const innerContent = (
     <article
       className="medium-story-card"
-      style={{ borderBottomColor: theme.imageDark }}
+      style={{ borderBottomColor: theme.compImgHighlight }}
     >
       {/* Left Content */}
       <div className="medium-story-body">
@@ -97,7 +97,7 @@ export default function BlogCard({ blog, theme }) {
                 key={i}
                 className="medium-story-tag"
                 style={{
-                  backgroundColor: theme.imageDark,
+                  backgroundColor: theme.compImgHighlight,
                   color: theme.secondaryText,
                 }}
               >

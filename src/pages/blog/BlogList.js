@@ -66,13 +66,17 @@ class BlogList extends Component {
 
     return (
       <div className="medium-feed-root" style={{ backgroundColor: theme.body }}>
-        <Header theme={theme} />
+        <Header
+          theme={theme}
+          themeMode={this.props.themeMode}
+          onThemeChange={this.props.onThemeChange}
+        />
 
         {/* Topic Filter Bar */}
         <div
           className="medium-topic-bar"
           style={{
-            borderBottomColor: theme.imageDark,
+            borderBottomColor: theme.compImgHighlight,
             backgroundColor: theme.body,
           }}
         >
@@ -106,7 +110,7 @@ class BlogList extends Component {
                 <div
                   className="medium-spinner"
                   style={{
-                    borderColor: theme.imageDark,
+                    borderColor: theme.compImgHighlight,
                     borderTopColor: theme.text,
                   }}
                 />
@@ -151,7 +155,7 @@ class BlogList extends Component {
             {/* About */}
             <div
               className="medium-sidebar-section"
-              style={{ borderBottomColor: theme.imageDark }}
+              style={{ borderBottomColor: theme.compImgHighlight }}
             >
               <div className="medium-sidebar-author">
                 <img
@@ -179,7 +183,7 @@ class BlogList extends Component {
             {/* Recommended Topics */}
             <div
               className="medium-sidebar-section"
-              style={{ borderBottomColor: theme.imageDark }}
+              style={{ borderBottomColor: theme.compImgHighlight }}
             >
               <h3
                 className="medium-sidebar-heading"
@@ -193,7 +197,7 @@ class BlogList extends Component {
                     key={topic}
                     className="medium-sidebar-topic-pill"
                     style={{
-                      backgroundColor: theme.imageDark,
+                      backgroundColor: theme.compImgHighlight,
                       color: theme.text,
                     }}
                     onClick={() => this.setState({ activeTopic: topic })}
@@ -223,7 +227,7 @@ class BlogList extends Component {
                     >
                       <span
                         className="medium-trending-num"
-                        style={{ color: theme.imageDark }}
+                        style={{ color: theme.compImgHighlight }}
                       >
                         0{i + 1}
                       </span>

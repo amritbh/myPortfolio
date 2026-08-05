@@ -21,7 +21,7 @@ export default function UpcomingProjectsSection(props) {
               <div
                 className="upcoming-card"
                 style={{
-                  backgroundColor: theme.imageDark,
+                  backgroundColor: theme.compImgHighlight,
                   border: `1px solid ${theme.imageHighlight}`,
                 }}
               >

@@ -17,7 +17,11 @@ class Projects extends Component {
     const theme = this.props.theme;
     return (
       <div className="projects-main">
-        <Header theme={theme} />
+        <Header
+          theme={theme}
+          themeMode={this.props.themeMode}
+          onThemeChange={this.props.onThemeChange}
+        />
         <div className="basic-projects">
           <Fade bottom duration={2000} distance="40px">
             <div className="projects-heading-div">

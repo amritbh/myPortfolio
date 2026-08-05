@@ -161,7 +161,11 @@ class Account extends Component {
 
     return (
       <div style={{ backgroundColor: theme.body }}>
-        <Header theme={theme} />
+        <Header
+          theme={theme}
+          themeMode={this.props.themeMode}
+          onThemeChange={this.props.onThemeChange}
+        />
         <div className="account-page">
           <Fade bottom duration={1000} distance="40px">
             <div

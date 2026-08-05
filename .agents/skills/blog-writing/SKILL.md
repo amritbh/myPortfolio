@@ -18,6 +18,7 @@ This project maintains a series of technical blog posts describing its own archi
 - **No Markdown Titles:** Do not include a top-level heading (e.g., `# Blog Title`) at the very beginning of the file. The file should start directly with the introductory paragraph, as titles are managed separately in the Admin UI/Database.
 - **Images & Architecture Diagrams:**
   - The correct S3 media URL format is `https://amrit.cloud/media/blogs/<blog-slug>/{filename.png}`. Do not store images in the root `/media/` folder.
+  - **IMPORTANT**: Never include the cover image markdown (e.g. `![Cover](...)`) at the top of the blog content body. The frontend CMS automatically renders the `coverImage` attribute from DynamoDB at the top of the page. Including it in the markdown will cause the image to display twice.
   - When drafting a new blog, proactively generate high-quality AI images for the **Blog Cover** and any **Architecture Diagrams** using the image generation tool. **CRITICAL**: For BOTH cover images and architecture diagrams, ALWAYS instruct the image generator to create a "minimalist, flat, and professional draw.io / Excalidraw-style diagram using standard AWS icons. Avoid all complex 3D rendering and glowing neon effects so it looks exactly like a natural, hand-crafted system design chart drawn up by an engineer." Additionally, instruct the generator to embed the diagram's title EXACTLY ONCE at the top center of the image.
   - Upload these generated images directly to the entity-based directory in the S3 bucket (`s3://amrit-portfolio-prod-media/media/blogs/<blog-slug>/`) using `aws s3 cp`.
   - **Important**: For architecture diagrams, always **retain the original ASCII text diagram** directly below the image tag in the markdown file. This ensures the raw technical flow is preserved alongside the visual diagram.
@@ -41,3 +42,38 @@ This project maintains a series of technical blog posts describing its own archi
 
 - **NEVER** use em dashes (`—`), hyphens (`-`), or double underscores (`__`) in the **title** or anywhere in the **content/body** of the blog post as punctuation. These characters cause severe rendering conflicts with the custom UI parser.
 - Standard markdown lists using hyphens are completely fine. Use commas, parentheses, or rephrase sentences to avoid inline punctuation issues.
+
+## 6. Publishing the Blog
+
+- When explicitly asked to publish a blog, you can bypass the Admin UI by writing a Python script to directly insert the blog JSON into the DynamoDB `amrit-portfolio-prod-blogs` table in `us-east-1` using `boto3`.
+- The item schema must exactly match the required DynamoDB structure: `slug`, `title` (prepended with sequential number), `summary`, `publishDate` (UTC ISO format ending in Z), `coverImage`, `readTime`, `tags` (list), `author` (dict with name and avatar), and `content` (raw markdown from the draft file).
+- Example script structure:
+
+  ```python
+  import boto3
+  import datetime
+
+  dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+  table = dynamodb.Table('amrit-portfolio-prod-blogs')
+
+  with open('docs/blogX_content.local.md', 'r') as f:
+      content = f.read()
+
+  item = {
+      'slug': 'your-slug-here',
+      'title': 'X. Your Title Here',
+      'summary': 'Your summary here',
+      'publishDate': datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
+      'coverImage': 'https://amrit.cloud/media/blogs/your-slug-here/cover.png',
+      'readTime': 'X min read',
+      'tags': ['Tag1', 'Tag2'],
+      'author': {
+          'name': 'Amrit',
+          'avatar': 'https://avatars.githubusercontent.com/u/79965355?v=4'
+      },
+      'content': content
+  }
+  table.put_item(Item=item)
+  ```
+
+- Run the script using the `run_command` tool to publish, then clean up and delete the temporary script. Finally, mark the blog as `(Published)` in the `docs/blog-content-plan.local.md` file.

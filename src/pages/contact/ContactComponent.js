@@ -119,7 +119,11 @@ function Contact(props) {
 
   return (
     <div className="contact-main">
-      <Header theme={theme} />
+      <Header
+        theme={theme}
+        themeMode={props.themeMode}
+        onThemeChange={props.onThemeChange}
+      />
 
       {/* Hero */}
       <Fade bottom duration={800} distance="20px">
