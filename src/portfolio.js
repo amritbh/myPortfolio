@@ -281,9 +281,9 @@ const skills = {
 
         {
           skillName: "Terraform",
-          fontAwesomeClassname: "logos-terraform",
+          fontAwesomeClassname: "simple-icons:terraform",
           style: {
-            backgroundColor: "transparent",
+            color: "#000000",
           },
         },
         {
@@ -522,9 +522,9 @@ const skills = {
         //terraform
         {
           skillName: "Terraform",
-          fontAwesomeClassname: "logos-terraform",
+          fontAwesomeClassname: "simple-icons:terraform",
           style: {
-            backgroundColor: "transparent",
+            color: "#000000",
           },
         },
         //ansible
