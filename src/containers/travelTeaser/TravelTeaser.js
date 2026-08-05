@@ -84,9 +84,7 @@ class TravelTeaser extends Component {
                 <strong style={{ color: theme ? theme.text : undefined }}>
                   {travelData.nepalCard.title}
                 </strong>
-                <span
-                  style={{ color: theme ? theme.secondaryText : undefined }}
-                >
+                <span style={{ color: theme ? theme.text : undefined }}>
                   {travelData.nepalCard.subtitle}
                 </span>
               </div>
@@ -110,9 +108,7 @@ class TravelTeaser extends Component {
                 <strong style={{ color: theme ? theme.text : undefined }}>
                   {travelData.usaCard.title}
                 </strong>
-                <span
-                  style={{ color: theme ? theme.secondaryText : undefined }}
-                >
+                <span style={{ color: theme ? theme.text : undefined }}>
                   {travelData.usaCard.subtitle}
                 </span>
               </div>
@@ -132,7 +128,7 @@ class TravelTeaser extends Component {
             <span className="moto-icon">🏍️</span>
             <span
               className="moto-label"
-              style={{ color: theme ? theme.secondaryText : undefined }}
+              style={{ color: theme ? theme.text : undefined }}
             >
               {travelData.motoStrip.label}
             </span>
