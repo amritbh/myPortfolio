@@ -39,18 +39,22 @@ class App extends Component {
   componentDidMount() {
     // Attach system preference listener when in "system" mode
     this.mediaQuery = window.matchMedia?.("(prefers-color-scheme: dark)");
-    this.mediaQuery?.addEventListener(
-      "change",
-      this.handleSystemPreferenceChange
-    );
+    if (this.mediaQuery && this.mediaQuery.addEventListener) {
+      this.mediaQuery.addEventListener(
+        "change",
+        this.handleSystemPreferenceChange
+      );
+    }
   }
 
   componentWillUnmount() {
     // Clean up listener to prevent memory leaks
-    this.mediaQuery?.removeEventListener(
-      "change",
-      this.handleSystemPreferenceChange
-    );
+    if (this.mediaQuery && this.mediaQuery.removeEventListener) {
+      this.mediaQuery.removeEventListener(
+        "change",
+        this.handleSystemPreferenceChange
+      );
+    }
   }
 
   handleSystemPreferenceChange() {
