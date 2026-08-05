@@ -64,4 +64,10 @@ describe("TravelTeaser Component", () => {
       screen.getByText(/Himalayas to the roads of Oregon/i)
     ).toBeInTheDocument();
   });
+
+  it("renders correctly when theme is not provided (default fallback)", () => {
+    // This covers all the `theme ? ... : undefined` branch conditions
+    renderWithRouter(<TravelTeaser />);
+    expect(screen.getByText("Beyond the Code")).toBeInTheDocument();
+  });
 });

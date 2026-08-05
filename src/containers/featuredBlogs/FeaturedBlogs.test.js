@@ -105,4 +105,13 @@ describe("FeaturedBlogs Component", () => {
       expect(screen.getByText("Could not load posts.")).toBeInTheDocument();
     });
   });
+
+  it("renders correctly when theme is not provided (default fallback)", async () => {
+    // This covers all the `theme ? ... : undefined` branch conditions
+    jest.spyOn(apiClient, "fetchBlogs").mockResolvedValue(mockBlogData);
+    renderWithRouter(<FeaturedBlogs />);
+    await waitFor(() => {
+      expect(screen.getByText("Blog Post One")).toBeInTheDocument();
+    });
+  });
 });
