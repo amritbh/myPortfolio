@@ -125,7 +125,9 @@ class TravelTeaser extends Component {
               borderColor: theme ? theme.highlight : undefined,
             }}
           >
-            <span className="moto-icon">🏍️</span>
+            <span className="moto-icon" role="img" aria-label="motorcycle">
+              🏍️
+            </span>
             <span
               className="moto-label"
               style={{ color: theme ? theme.text : undefined }}

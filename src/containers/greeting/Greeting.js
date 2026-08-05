@@ -58,7 +58,10 @@ class Greeting extends Component {
                 className="btn-ghost"
                 style={{ color: theme.secondaryText }}
               >
-                ⭐ Star on GitHub
+                <span role="img" aria-label="star">
+                  ⭐
+                </span>{" "}
+                Star on GitHub
               </a>
             </div>
 
