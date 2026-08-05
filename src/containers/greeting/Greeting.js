@@ -24,7 +24,7 @@ class Greeting extends Component {
             <div className="hero-chips">
               {greeting.heroChips.map((chip, index) => (
                 <span
-                  key={index}
+                  key={chip.label}
                   className="chip"
                   style={{
                     borderColor: theme.secondaryText,
@@ -86,7 +86,7 @@ class Greeting extends Component {
               style={{ backgroundColor: theme.headerColor }}
             >
               {greeting.heroStats.map((stat, index) => (
-                <div key={index} className="stat">
+                <div key={stat.label} className="stat">
                   <span className="stat-val" style={{ color: theme.text }}>
                     {stat.value}
                   </span>

@@ -15,14 +15,14 @@
 
 .hero-greeting-label {
   font-size: 1.5rem;
-  font-family: "Google Sans Medium";
+  font-family: "Google Sans Medium", sans-serif;
   margin-bottom: -0.5rem;
 }
 
 .hero-name.gradient-text {
   font-size: 5rem;
   line-height: 1.1;
-  font-family: "Google Sans Bold";
+  font-family: "Google Sans Bold", sans-serif;
   margin-bottom: 1.5rem;
   background: linear-gradient(135deg, #388bfd, #c9d1d9);
   -webkit-background-clip: text;
@@ -45,7 +45,7 @@
   border: 1px solid;
   border-radius: 50px;
   font-size: 0.9rem;
-  font-family: "Google Sans Medium";
+  font-family: "Google Sans Medium", sans-serif;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   animation: slideInUp 0.5s ease-out backwards;
 }
@@ -68,7 +68,7 @@
 .hero-subtitle {
   font-size: 1.25rem;
   line-height: 1.6;
-  font-family: "Google Sans Regular";
+  font-family: "Google Sans Regular", sans-serif;
   margin-bottom: 2rem;
 }
 
@@ -85,7 +85,7 @@
 .btn-ghost {
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
-  font-family: "Google Sans Medium";
+  font-family: "Google Sans Medium", sans-serif;
   text-decoration: none;
   font-size: 1rem;
   transition: all 0.2s ease;
@@ -164,12 +164,12 @@
 
 .stat-val {
   font-size: 1.5rem;
-  font-family: "Google Sans Bold";
+  font-family: "Google Sans Bold", sans-serif;
 }
 
 .stat-label {
   font-size: 0.85rem;
-  font-family: "Google Sans Regular";
+  font-family: "Google Sans Regular", sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
