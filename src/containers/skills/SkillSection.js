@@ -34,7 +34,7 @@ class SkillSection extends Component {
                   </h1>
                 </Fade>
                 <Fade right duration={1500}>
-                  <SoftwareSkill logos={skill.softwareSkills} />
+                  <SoftwareSkill logos={skill.softwareSkills} theme={theme} />
                 </Fade>
                 <Fade right duration={2000}>
                   <div>
