@@ -174,12 +174,16 @@ class BlogDetail extends Component {
           className="medium-article-root"
           style={{ backgroundColor: theme.body }}
         >
-          <Header theme={theme} />
+          <Header
+            theme={theme}
+            themeMode={this.props.themeMode}
+            onThemeChange={this.props.onThemeChange}
+          />
           <div className="medium-article-loading">
             <div
               className="medium-article-spinner"
               style={{
-                borderColor: theme.imageDark,
+                borderColor: theme.compImgHighlight,
                 borderTopColor: theme.text,
               }}
             />
@@ -195,7 +199,11 @@ class BlogDetail extends Component {
           className="medium-article-root"
           style={{ backgroundColor: theme.body }}
         >
-          <Header theme={theme} />
+          <Header
+            theme={theme}
+            themeMode={this.props.themeMode}
+            onThemeChange={this.props.onThemeChange}
+          />
           <div className="medium-article-error">
             <h2 style={{ color: theme.text }}>Post not found</h2>
             <p style={{ color: theme.secondaryText }}>
@@ -242,7 +250,11 @@ class BlogDetail extends Component {
           style={{ width: `${readingProgress}%` }}
         />
 
-        <Header theme={theme} />
+        <Header
+          theme={theme}
+          themeMode={this.props.themeMode}
+          onThemeChange={this.props.onThemeChange}
+        />
 
         <div className="medium-article-layout">
           {/* Floating Engagement Bar (or bottom bar on mobile) */}
@@ -258,7 +270,7 @@ class BlogDetail extends Component {
                 disabled={isLiking}
                 title={user ? "Like this story" : "Log in to like"}
                 style={{
-                  borderColor: isLiked ? "#e74c3c" : theme.imageDark,
+                  borderColor: isLiked ? "#e74c3c" : theme.compImgHighlight,
                   color: isLiked ? "#e74c3c" : theme.secondaryText,
                 }}
               >
@@ -299,7 +311,7 @@ class BlogDetail extends Component {
                 onClick={this.scrollToComments}
                 title="Jump to responses"
                 style={{
-                  borderColor: theme.imageDark,
+                  borderColor: theme.compImgHighlight,
                   color: theme.secondaryText,
                 }}
               >
@@ -329,7 +341,7 @@ class BlogDetail extends Component {
                 onClick={this.handleShareLink}
                 title="Copy link"
                 style={{
-                  borderColor: theme.imageDark,
+                  borderColor: theme.compImgHighlight,
                   color: linkCopied ? "#1a8917" : theme.secondaryText,
                 }}
               >
@@ -446,7 +458,7 @@ class BlogDetail extends Component {
             {/* Divider */}
             <hr
               className="medium-article-divider"
-              style={{ borderColor: theme.imageDark }}
+              style={{ borderColor: theme.compImgHighlight }}
             />
 
             {/* Cover Image */}
@@ -471,8 +483,8 @@ class BlogDetail extends Component {
             <div
               className="medium-author-card"
               style={{
-                borderTopColor: theme.imageDark,
-                borderBottomColor: theme.imageDark,
+                borderTopColor: theme.compImgHighlight,
+                borderBottomColor: theme.compImgHighlight,
               }}
             >
               <img
@@ -506,7 +518,7 @@ class BlogDetail extends Component {
             <div
               id="blog-responses"
               className="medium-responses"
-              style={{ borderTopColor: theme.imageDark }}
+              style={{ borderTopColor: theme.compImgHighlight }}
             >
               <h2
                 className="medium-responses-heading"
@@ -584,8 +596,8 @@ class BlogDetail extends Component {
                 <div
                   className="medium-response-login-box"
                   style={{
-                    backgroundColor: theme.imageDark,
-                    border: `1px solid ${theme.imageDark}`,
+                    backgroundColor: theme.compImgHighlight,
+                    border: `1px solid ${theme.compImgHighlight}`,
                   }}
                 >
                   <div className="login-box-text">
@@ -606,7 +618,7 @@ class BlogDetail extends Component {
                 {comments.length === 0 ? (
                   <div
                     className="medium-no-responses-empty"
-                    style={{ backgroundColor: theme.imageDark }}
+                    style={{ backgroundColor: theme.compImgHighlight }}
                   >
                     <div className="empty-bubble">
                       <span role="img" aria-label="comment">
@@ -622,7 +634,7 @@ class BlogDetail extends Component {
                     <div
                       key={c.id}
                       className="medium-response-item"
-                      style={{ borderBottomColor: theme.imageDark }}
+                      style={{ borderBottomColor: theme.compImgHighlight }}
                     >
                       <div className="medium-response-item-header">
                         <div className="medium-response-item-author">
@@ -701,7 +713,7 @@ class BlogDetail extends Component {
             {relatedBlogs.length > 0 && (
               <div
                 className="medium-related"
-                style={{ borderTopColor: theme.imageDark }}
+                style={{ borderTopColor: theme.compImgHighlight }}
               >
                 <h2
                   className="medium-related-heading"
@@ -717,7 +729,7 @@ class BlogDetail extends Component {
                       className="medium-related-item"
                       style={{
                         textDecoration: "none",
-                        borderColor: theme.imageDark,
+                        borderColor: theme.compImgHighlight,
                       }}
                     >
                       <div className="medium-related-image">

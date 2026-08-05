@@ -50,65 +50,134 @@ export default class Main extends Component {
             path="/experience"
             exact
             render={(props) => (
-              <Experience {...props} theme={this.props.theme} />
+              <Experience
+                {...props}
+                theme={this.props.theme}
+                themeMode={this.props.themeMode}
+                onThemeChange={this.props.onThemeChange}
+              />
             )}
           />
           <Route
             path="/education"
             render={(props) => (
-              <Education {...props} theme={this.props.theme} />
+              <Education
+                {...props}
+                theme={this.props.theme}
+                themeMode={this.props.themeMode}
+                onThemeChange={this.props.onThemeChange}
+              />
             )}
           />
 
           <Route
             path="/login"
             exact
-            render={(props) => <Login {...props} theme={this.props.theme} />}
+            render={(props) => (
+              <Login
+                {...props}
+                theme={this.props.theme}
+                themeMode={this.props.themeMode}
+                onThemeChange={this.props.onThemeChange}
+              />
+            )}
           />
           <Route
             path="/account"
             exact
-            render={(props) => <Account {...props} theme={this.props.theme} />}
+            render={(props) => (
+              <Account
+                {...props}
+                theme={this.props.theme}
+                themeMode={this.props.themeMode}
+                onThemeChange={this.props.onThemeChange}
+              />
+            )}
           />
 
           <Route
             path="/admin"
             exact
             render={(props) => (
-              <AdminDashboard {...props} theme={this.props.theme} />
+              <AdminDashboard
+                {...props}
+                theme={this.props.theme}
+                themeMode={this.props.themeMode}
+                onThemeChange={this.props.onThemeChange}
+              />
             )}
           />
 
           <Route
             path="/blogs"
             exact
-            render={(props) => <BlogList {...props} theme={this.props.theme} />}
+            render={(props) => (
+              <BlogList
+                {...props}
+                theme={this.props.theme}
+                themeMode={this.props.themeMode}
+                onThemeChange={this.props.onThemeChange}
+              />
+            )}
           />
           <Route
             path="/blogs/:slug"
             render={(props) => (
-              <BlogDetail {...props} theme={this.props.theme} />
+              <BlogDetail
+                {...props}
+                theme={this.props.theme}
+                themeMode={this.props.themeMode}
+                onThemeChange={this.props.onThemeChange}
+              />
             )}
           />
           <Route
             path="/contact"
-            render={(props) => <Contact {...props} theme={this.props.theme} />}
+            render={(props) => (
+              <Contact
+                {...props}
+                theme={this.props.theme}
+                themeMode={this.props.themeMode}
+                onThemeChange={this.props.onThemeChange}
+              />
+            )}
           />
 
           {settings.isSplash && (
             <Route
               path="/splash"
-              render={(props) => <Splash {...props} theme={this.props.theme} />}
+              render={(props) => (
+                <Splash
+                  {...props}
+                  theme={this.props.theme}
+                  themeMode={this.props.themeMode}
+                  onThemeChange={this.props.onThemeChange}
+                />
+              )}
             />
           )}
 
           <Route
             path="/projects"
-            render={(props) => <Projects {...props} theme={this.props.theme} />}
+            render={(props) => (
+              <Projects
+                {...props}
+                theme={this.props.theme}
+                themeMode={this.props.themeMode}
+                onThemeChange={this.props.onThemeChange}
+              />
+            )}
           />
           <Route
             path="*"
-            render={(props) => <Error404 {...props} theme={this.props.theme} />}
+            render={(props) => (
+              <Error404
+                {...props}
+                theme={this.props.theme}
+                themeMode={this.props.themeMode}
+                onThemeChange={this.props.onThemeChange}
+              />
+            )}
           />
         </Switch>
       </BrowserRouter>
