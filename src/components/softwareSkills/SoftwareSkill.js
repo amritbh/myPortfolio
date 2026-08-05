@@ -12,13 +12,8 @@ class SoftwareSkill extends React.Component {
             {this.props.logos.map((logo) => {
               let iconStyle = { ...logo.style };
               if (theme && iconStyle.color === "#000000") {
-                // If theme body is dark, make it white, else keep it pitch black
-                const isDark =
-                  theme.body === "#0D1117" ||
-                  theme.body === "#000000" ||
-                  theme.body === "#010409" ||
-                  theme.body === "#03071e";
-                iconStyle.color = isDark ? "#FFFFFF" : "#000000";
+                // Remove the hardcoded black color so it can be styled by CSS
+                delete iconStyle.color;
               }
               return (
                 <OverlayTrigger
