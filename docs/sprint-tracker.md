@@ -12,7 +12,7 @@
 | Sprint | Name                                | Status            | Branch                | PR                                                    |
 | ------ | ----------------------------------- | ----------------- | --------------------- | ----------------------------------------------------- |
 | 1      | Theme Switcher System               | ✅ Merged         | `feat/theme-switcher` | [#86](https://github.com/amritbh/myPortfolio/pull/86) |
-| 2      | Hero Section Redesign               | ✅ Done (PR open) | `feat/hero-redesign`  |                                                       |
+| 2      | Hero Section Redesign               | ✅ Done (PR open) | `feat/hero-redesign`  | [#87](https://github.com/amritbh/myPortfolio/pull/87) |
 | 3      | Blog Preview + Travel Teaser        | ⬜ Not Started    | —                     | —                                                     |
 | 4      | Travel Page + Footer                | ⬜ Not Started    | —                     | —                                                     |
 | 5      | Stack Modernization (post-redesign) | ⬜ Not Started    | —                     | —                                                     |
