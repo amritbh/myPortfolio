@@ -1017,6 +1017,41 @@ const contactPageData = {
   },
 };
 
+export const travelData = {
+  tagline:
+    "From the trails of the Himalayas to the roads of Oregon, I document every journey.",
+  destinations: {
+    nepal: [
+      "ABC",
+      "Tilicho Lake",
+      "Gosaikunda",
+      "Mustang",
+      "Pokhara",
+      "Badimalika",
+      "Aama Yangri",
+    ],
+    usa: ["Oregon", "Pacific Coast", "Crater Lake"],
+    moto: ["Nepal Mountain Roads"],
+  },
+  nepalCard: {
+    icon: "\ud83c\udfd4\ufe0f",
+    title: "Himalayan Adventures",
+    subtitle: "7+ Trek Destinations",
+    link: "/travel",
+  },
+  usaCard: {
+    icon: "\ud83c\uddfa\ud83c\uddf8",
+    title: "Exploring America",
+    subtitle: "Oregon and beyond, since 2023",
+    link: "/travel",
+  },
+  motoStrip: {
+    icon: "\ud83c\udfd4\ufe0f",
+    label: "Also: Motorcycling through Nepal's mountain roads",
+    link: "/travel",
+  },
+};
+
 export {
   settings,
   seo,
