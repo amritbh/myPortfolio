@@ -21,13 +21,22 @@ const seo = {
 const greeting = {
   title: "Amrit Bhattarai",
   logo_name: "AmritBhattarai",
-  //nickname: "be-amrit",
   subTitle:
-    "A passionate individual who always thrives to work on end to end products which develop sustainable and scalable social and technical systems to create impact.",
+    "Sr. Cloud Architect at HP, building Agentic AI systems and cloud infrastructure at scale. Nepal born, Oregon based. I write technical blogs and document adventures from Himalayan trails to Oregon coastlines.",
   resumeLink:
     "https://drive.google.com/file/d/1wu7cCnwAQny08dUcX5mnCoPap-2R4Yql/view",
   portfolio_repository: "https://github.com/amritbh/myPortfolio",
   githubProfile: "https://github.com/amritbh",
+  heroChips: [
+    { icon: "☁️", label: "Cloud Architect @ HP" },
+    { icon: "🏔️", label: "Nepal Trekker" },
+    { icon: "✍️", label: "Technical Blogger" },
+  ],
+  heroStats: [
+    { value: "5+", label: "Himalayan Treks" },
+    { value: "10+", label: "Yrs Engineering" },
+    { value: "Active", label: "Writer" },
+  ],
 };
 
 const socialMediaLinks = [

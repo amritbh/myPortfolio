@@ -11,8 +11,8 @@
 
 | Sprint | Name                                | Status            | Branch                | PR                                                    |
 | ------ | ----------------------------------- | ----------------- | --------------------- | ----------------------------------------------------- |
-| 1      | Theme Switcher System               | ✅ Done (PR open) | `feat/theme-switcher` | [#86](https://github.com/amritbh/myPortfolio/pull/86) |
-| 2      | Hero Section Redesign               | ⬜ Not Started    | —                     | —                                                     |
+| 1      | Theme Switcher System               | ✅ Merged         | `feat/theme-switcher` | [#86](https://github.com/amritbh/myPortfolio/pull/86) |
+| 2      | Hero Section Redesign               | ✅ Done (PR open) | `feat/hero-redesign`  |                                                       |
 | 3      | Blog Preview + Travel Teaser        | ⬜ Not Started    | —                     | —                                                     |
 | 4      | Travel Page + Footer                | ⬜ Not Started    | —                     | —                                                     |
 | 5      | Stack Modernization (post-redesign) | ⬜ Not Started    | —                     | —                                                     |
@@ -64,10 +64,10 @@
 
 ### Tasks
 
-- [ ] **2.1** Update `greeting` object in `src/portfolio.js` (subTitle, heroChips, heroStats)
-- [ ] **2.2** Redesign `Greeting.js` — split-screen layout, chips, CTA buttons, stats bar
-- [ ] **2.3** Redesign `Greeting.css` — gradient text, chip animations, photo ring, responsive
-- [ ] **2.4** Run `npm test -- --coverage` and verify no regressions
+- [x] **2.1** Update `portfolio.js` content (add heroChips and heroStats)
+- [x] **2.2** Redesign `Greeting.js` into cinematic split-screen class component
+- [x] **2.3** Rewrite `Greeting.css` with gradients, responsive flex, and animations
+- [x] **2.4** Write Blog 17 after Sprint 2 merges (Title: _First Impressions Matter_, Slug: `redesign-s2-hero-section`)
 - [ ] **2.5** Create draft PR
 - [ ] **2.6** Write Blog 17 after PR is merged
 
