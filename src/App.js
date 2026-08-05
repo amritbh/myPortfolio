@@ -13,10 +13,7 @@ function resolveTheme(mode) {
   if (mode === "dark") return darkTheme;
   if (mode === "light") return lightTheme;
   // "system" mode: follow OS preference
-  if (
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
-  ) {
+  if (window.matchMedia?.("(prefers-color-scheme: dark)")?.matches) {
     return darkTheme;
   }
   return lightTheme;
@@ -41,23 +38,19 @@ class App extends Component {
 
   componentDidMount() {
     // Attach system preference listener when in "system" mode
-    if (window.matchMedia) {
-      this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      this.mediaQuery.addEventListener(
-        "change",
-        this.handleSystemPreferenceChange
-      );
-    }
+    this.mediaQuery = window.matchMedia?.("(prefers-color-scheme: dark)");
+    this.mediaQuery?.addEventListener(
+      "change",
+      this.handleSystemPreferenceChange
+    );
   }
 
   componentWillUnmount() {
     // Clean up listener to prevent memory leaks
-    if (this.mediaQuery) {
-      this.mediaQuery.removeEventListener(
-        "change",
-        this.handleSystemPreferenceChange
-      );
-    }
+    this.mediaQuery?.removeEventListener(
+      "change",
+      this.handleSystemPreferenceChange
+    );
   }
 
   handleSystemPreferenceChange() {
