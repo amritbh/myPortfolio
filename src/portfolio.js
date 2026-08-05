@@ -90,6 +90,9 @@ const skills = {
         "⚡ Experience with Agentic AI, Large Language Models (LLMs) and RAG",
         "⚡ Developing multi-agent AI architectures and applications",
         "⚡ Integrating Agentic AI frameworks and advanced LLMs into engineering workflows",
+        "⚡ Fine-tuning and prompt engineering for state-of-the-art models like GPT-4 and Claude 3",
+        "⚡ Designing self-reflecting and goal-oriented autonomous AI agents",
+        "⚡ Optimizing inference latency and vector database search strategies for semantic retrieval",
       ],
       softwareSkills: [
         {
