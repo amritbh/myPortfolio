@@ -20,7 +20,7 @@ class SkillSection extends Component {
                     src={require(`../../assests/images/${skill.imagePath}`)}
                   ></img> */}
                   <SkillImg
-                    src={`https://amrit.cloud/media/${skill.fileName}`}
+                    src={`https://amrit.cloud/media/skills/${skill.fileName}`}
                     alt={skill.title}
                     theme={theme}
                   />
