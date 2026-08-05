@@ -88,11 +88,27 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+  border-radius: 20px; /* Modern rounded edges */
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+  aspect-ratio: 1 / 1; /* Force square to match the raw image */
+  position: relative;
 }
 
 .skill-img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+  width: 112%; /* Scale up by 12% to crop off the baked-in white AI borders */
+  height: 112%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* On hover, slightly zoom in on the inner content */
+.skill-img-wrapper:hover .skill-img {
+  transform: scale(1.05);
+}
+
+/* Light mode specific blending */
+.skill-img-light-blend {
+  /* Inverts the dark #0D1117 to light (#F2EEE8), hue-rotates back to original colors */
+  filter: invert(0.95) hue-rotate(180deg) saturate(1.2);
 }
