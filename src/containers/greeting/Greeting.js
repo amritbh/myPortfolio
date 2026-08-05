@@ -63,6 +63,17 @@ class Greeting extends Component {
                 </span>{" "}
                 Star on GitHub
               </a>
+
+              <a
+                href="#travel-teaser"
+                className="btn-ghost"
+                style={{ color: theme.secondaryText }}
+              >
+                <span role="img" aria-label="airplane">
+                  ✈️
+                </span>{" "}
+                Travel
+              </a>
             </div>
 
             <SocialMedia theme={theme} />
