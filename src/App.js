@@ -24,7 +24,7 @@ const STORAGE_KEY = "amrit-theme-preference";
 class App extends Component {
   constructor(props) {
     super(props);
-    const savedMode = localStorage.getItem(STORAGE_KEY) || "system";
+    const savedMode = localStorage.getItem(STORAGE_KEY) || "dark";
     this.state = {
       themeMode: savedMode,
       activeTheme: resolveTheme(savedMode),

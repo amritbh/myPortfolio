@@ -17,9 +17,9 @@ This project maintains a series of technical blog posts describing its own archi
 
 - **No Markdown Titles:** Do not include a top-level heading (e.g., `# Blog Title`) at the very beginning of the file. The file should start directly with the introductory paragraph, as titles are managed separately in the Admin UI/Database.
 - **Images & Architecture Diagrams:**
-  - The correct S3 media URL format is `https://amrit.cloud/media/{filename.png}` (do not use double `/media/media/`).
+  - The correct S3 media URL format is `https://amrit.cloud/media/blogs/<blog-slug>/{filename.png}`. Do not store images in the root `/media/` folder.
   - When drafting a new blog, proactively generate high-quality AI images for the **Blog Cover** and any **Architecture Diagrams** using the image generation tool. **CRITICAL**: For BOTH cover images and architecture diagrams, ALWAYS instruct the image generator to create a "minimalist, flat, and professional draw.io / Excalidraw-style diagram using standard AWS icons. Avoid all complex 3D rendering and glowing neon effects so it looks exactly like a natural, hand-crafted system design chart drawn up by an engineer." Additionally, instruct the generator to embed the diagram's title EXACTLY ONCE at the top center of the image.
-  - Upload these generated images directly to the S3 bucket (`s3://amrit-portfolio-prod-media/media/`) using `aws s3 cp`.
+  - Upload these generated images directly to the entity-based directory in the S3 bucket (`s3://amrit-portfolio-prod-media/media/blogs/<blog-slug>/`) using `aws s3 cp`.
   - **Important**: For architecture diagrams, always **retain the original ASCII text diagram** directly below the image tag in the markdown file. This ensures the raw technical flow is preserved alongside the visual diagram.
 - **Syntax:** Use standard GitHub-flavored Markdown for code blocks (specifying the language, e.g., ```python) and blockquotes.
 - **No Horizontal Rules:** Do not use markdown horizontal dividers (`---`) between sections or anywhere in the body of the blog post, as they cause excessive visual gaps in the custom rendering UI. Use simple heading spacing instead.

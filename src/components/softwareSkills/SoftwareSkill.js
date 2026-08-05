@@ -4,18 +4,17 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 class SoftwareSkill extends React.Component {
   render() {
+    const theme = this.props.theme;
     return (
       <div>
         <div className="software-skills-main-div">
           <ul className="dev-icons">
-            {/* {skillsSection.softwareSkills.map(skills => {
-            return (
-              <li className="software-skill-inline" name={skills.skillName}>
-                <i className={skills.fontAwesomeClassname}></i>
-              </li>
-            );
-          })} */}
             {this.props.logos.map((logo) => {
+              let iconStyle = { ...logo.style };
+              if (theme && iconStyle.color === "#000000") {
+                // Remove the hardcoded black color so it can be styled by CSS
+                delete iconStyle.color;
+              }
               return (
                 <OverlayTrigger
                   key={logo.skillName}
@@ -31,7 +30,7 @@ class SoftwareSkill extends React.Component {
                       <span
                         className="iconify"
                         data-icon={logo.fontAwesomeClassname}
-                        style={logo.style}
+                        style={iconStyle}
                         data-inline="false"
                       ></span>
                     )}

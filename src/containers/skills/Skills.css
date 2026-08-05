@@ -1,6 +1,8 @@
 .skills-main-div {
   display: flex;
   overflow: hidden;
+  padding: 0 5%;
+  align-items: center;
 }
 
 .skills-header {
@@ -19,15 +21,21 @@
   font-family: "Google Sans Regular";
 }
 
-.skills-main-div > * {
-  flex: 1;
+.skills-main-div > .skills-image-div {
+  flex: 0 1 40%;
+  max-width: 480px;
+  margin-bottom: 30px;
+}
+
+.skills-main-div > .skills-text-div {
+  flex: 1 1 60%;
   margin-bottom: 30px;
 }
 
 .skills-image-div > * {
   max-width: 100%;
   height: auto;
-  margin-top: 100px;
+  margin-top: 50px;
 }
 
 .skills-heading {
@@ -82,4 +90,33 @@
   .skills-image-div > * {
     margin-top: 0px;
   }
+}
+
+.skill-img-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 20px; /* Modern rounded edges */
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+  aspect-ratio: 1 / 1; /* Force square to match the raw image */
+  position: relative;
+}
+
+.skill-img {
+  width: 112%; /* Scale up by 12% to crop off the baked-in white AI borders */
+  height: 112%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* On hover, slightly zoom in on the inner content */
+.skill-img-wrapper:hover .skill-img {
+  transform: scale(1.05);
+}
+
+/* Light mode specific blending */
+.skill-img-light-blend {
+  /* Inverts the dark #0D1117 to light (#F2EEE8), hue-rotates back to original colors */
+  filter: invert(0.95) hue-rotate(180deg) saturate(1.2);
 }

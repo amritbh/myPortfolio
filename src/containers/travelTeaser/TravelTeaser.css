@@ -1,0 +1,167 @@
+.travel-teaser-section {
+  position: relative;
+  padding: 5rem 5%;
+  overflow: hidden;
+}
+
+.mountain-bg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  fill: currentColor;
+}
+
+.travel-teaser-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.travel-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.travel-header .section-title {
+  font-size: 2.5rem;
+  font-family: "Google Sans Bold", sans-serif;
+  margin-bottom: 0.75rem;
+}
+
+.travel-header .section-subtitle {
+  font-size: 1.1rem;
+  font-family: "Google Sans Regular", sans-serif;
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Destination chips row */
+.destination-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+}
+
+.destination-chip {
+  font-size: 0.85rem;
+  font-family: "Google Sans Medium", sans-serif;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid;
+  border-radius: 50px;
+  transition: transform 0.2s ease;
+}
+
+.destination-chip:hover {
+  transform: scale(1.05);
+}
+
+/* Travel cards */
+.travel-cards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.travel-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  border-left: 4px solid transparent;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.travel-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.nepal-card {
+  border-left-color: #dc143c;
+}
+
+.usa-card {
+  border-left-color: #003893;
+}
+
+.travel-card-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.travel-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.travel-card-text strong {
+  font-size: 1rem;
+  font-family: "Google Sans Bold", sans-serif;
+}
+
+.travel-card-text span {
+  font-size: 0.85rem;
+  font-family: "Google Sans Regular", sans-serif;
+}
+
+.travel-card-arrow {
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: transform 0.2s ease;
+}
+
+.travel-card:hover .travel-card-arrow {
+  transform: translateX(4px);
+}
+
+/* Moto strip */
+.moto-strip {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid;
+}
+
+.moto-icon {
+  font-size: 1.5rem;
+}
+
+.moto-label {
+  font-size: 0.95rem;
+  font-family: "Google Sans Regular", sans-serif;
+  flex: 1;
+}
+
+.coming-soon-badge {
+  font-size: 0.75rem;
+  font-family: "Google Sans Medium", sans-serif;
+  padding: 0.3rem 0.7rem;
+  border-radius: 50px;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .travel-cards-row {
+    grid-template-columns: 1fr;
+  }
+  .travel-header .section-title {
+    font-size: 2rem;
+  }
+}

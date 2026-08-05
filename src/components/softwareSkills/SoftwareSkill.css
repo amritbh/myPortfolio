@@ -14,11 +14,13 @@
   font-family: "Google Sans Regular";
 }
 
-.software-skill-inline > i {
+.software-skill-inline > i,
+.software-skill-inline > .iconify {
   color: #868e96;
 }
 
-.software-skill-inline > i:hover {
+.software-skill-inline > i:hover,
+.software-skill-inline > .iconify:hover {
   color: #645beb;
 }
 

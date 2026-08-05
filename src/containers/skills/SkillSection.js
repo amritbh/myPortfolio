@@ -3,20 +3,7 @@ import "./Skills.css";
 import SoftwareSkill from "../../components/softwareSkills/SoftwareSkill";
 import { skills } from "../../portfolio";
 import { Fade } from "react-reveal";
-import DataScienceImg from "./DataScienceImg";
-import FullStackImg from "./FullStackImg";
-import CloudInfraImg from "./CloudInfraImg";
-import DesignImg from "./DesignImg";
-
-function GetSkillSvg(props) {
-  if (props.fileName === "DataScienceImg")
-    return <DataScienceImg theme={props.theme} />;
-  else if (props.fileName === "FullStackImg")
-    return <FullStackImg theme={props.theme} />;
-  else if (props.fileName === "CloudInfraImg")
-    return <CloudInfraImg theme={props.theme} />;
-  return <DesignImg theme={props.theme} />;
-}
+import SkillImg from "./SkillImg";
 
 class SkillSection extends Component {
   render() {
@@ -32,7 +19,11 @@ class SkillSection extends Component {
                     alt="Amrit is Analysing Data"
                     src={require(`../../assests/images/${skill.imagePath}`)}
                   ></img> */}
-                  <GetSkillSvg fileName={skill.fileName} theme={theme} />
+                  <SkillImg
+                    src={`https://amrit.cloud/media/skills/${skill.fileName}`}
+                    alt={skill.title}
+                    theme={theme}
+                  />
                 </div>
               </Fade>
 
@@ -43,7 +34,7 @@ class SkillSection extends Component {
                   </h1>
                 </Fade>
                 <Fade right duration={1500}>
-                  <SoftwareSkill logos={skill.softwareSkills} />
+                  <SoftwareSkill logos={skill.softwareSkills} theme={theme} />
                 </Fade>
                 <Fade right duration={2000}>
                   <div>
