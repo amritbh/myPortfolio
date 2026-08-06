@@ -17,17 +17,14 @@ class TravelPage extends Component {
       <section className="travel-hero" aria-label="Travel hero">
         <div className="travel-hero-content">
           <Fade bottom duration={800}>
-            <h1
-              className="travel-hero-title"
-              style={{ color: theme ? theme.text : undefined }}
-            >
+            <h1 className="travel-hero-title" style={{ color: theme.text }}>
               Adventures and Journeys
             </h1>
           </Fade>
           <Fade bottom duration={1000} delay={100}>
             <p
               className="travel-hero-subtitle"
-              style={{ color: theme ? theme.secondaryText : undefined }}
+              style={{ color: theme.secondaryText }}
             >
               Nepal born. Mountain shaped. Documenting every trail, road, and
               horizon.
@@ -38,8 +35,8 @@ class TravelPage extends Component {
               <span
                 className="travel-chip"
                 style={{
-                  backgroundColor: theme ? theme.compImgHighlight : undefined,
-                  color: theme ? theme.text : undefined,
+                  backgroundColor: theme.compImgHighlight,
+                  color: theme.text,
                 }}
               >
                 <span role="img" aria-label="mountain">
@@ -50,8 +47,8 @@ class TravelPage extends Component {
               <span
                 className="travel-chip"
                 style={{
-                  backgroundColor: theme ? theme.compImgHighlight : undefined,
-                  color: theme ? theme.text : undefined,
+                  backgroundColor: theme.compImgHighlight,
+                  color: theme.text,
                 }}
               >
                 <span role="img" aria-label="usa flag">
@@ -62,8 +59,8 @@ class TravelPage extends Component {
               <span
                 className="travel-chip"
                 style={{
-                  backgroundColor: theme ? theme.compImgHighlight : undefined,
-                  color: theme ? theme.text : undefined,
+                  backgroundColor: theme.compImgHighlight,
+                  color: theme.text,
                 }}
               >
                 <span role="img" aria-label="motorcycle">
@@ -91,14 +88,11 @@ class TravelPage extends Component {
         id="nepal"
         className="travel-section"
         aria-label="Himalayan treks"
-        style={{ backgroundColor: theme ? theme.body : undefined }}
+        style={{ backgroundColor: theme.body }}
       >
         <div className="travel-section-inner">
           <Fade bottom duration={800}>
-            <h2
-              className="travel-section-title"
-              style={{ color: theme ? theme.text : undefined }}
-            >
+            <h2 className="travel-section-title" style={{ color: theme.text }}>
               <span role="img" aria-label="mountain">
                 ⛰️
               </span>{" "}
@@ -106,7 +100,7 @@ class TravelPage extends Component {
             </h2>
             <p
               className="travel-section-subtitle"
-              style={{ color: theme ? theme.secondaryText : undefined }}
+              style={{ color: theme.secondaryText }}
             >
               From the iconic Annapurna Base Camp to the remote trails of
               Mustang, these are the routes that shaped me.
@@ -119,8 +113,8 @@ class TravelPage extends Component {
                 <div
                   className="trek-card"
                   style={{
-                    backgroundColor: theme ? theme.headerColor : undefined,
-                    borderColor: theme ? theme.highlight : undefined,
+                    backgroundColor: theme.headerColor,
+                    borderColor: theme.highlight,
                   }}
                 >
                   <div className="trek-card-header">
@@ -145,15 +139,12 @@ class TravelPage extends Component {
                       {trek.difficulty}
                     </span>
                   </div>
-                  <h3
-                    className="trek-name"
-                    style={{ color: theme ? theme.text : undefined }}
-                  >
+                  <h3 className="trek-name" style={{ color: theme.text }}>
                     {trek.name}
                   </h3>
                   <p
                     className="trek-description"
-                    style={{ color: theme ? theme.secondaryText : undefined }}
+                    style={{ color: theme.secondaryText }}
                   >
                     {trek.description}
                   </p>
@@ -161,7 +152,7 @@ class TravelPage extends Component {
                     <span
                       className="trek-meta-item"
                       style={{
-                        color: theme ? theme.secondaryText : undefined,
+                        color: theme.secondaryText,
                       }}
                     >
                       <span role="img" aria-label="elevation">
@@ -172,7 +163,7 @@ class TravelPage extends Component {
                     <span
                       className="trek-meta-item"
                       style={{
-                        color: theme ? theme.secondaryText : undefined,
+                        color: theme.secondaryText,
                       }}
                     >
                       <span role="img" aria-label="duration">
@@ -195,14 +186,14 @@ class TravelPage extends Component {
     return (
       <section
         className="nepal-callout-section"
-        style={{ backgroundColor: theme ? theme.body : undefined }}
+        style={{ backgroundColor: theme.body }}
       >
         <div className="travel-section-inner">
           <Fade bottom duration={800}>
             <div
               className="nepal-callout"
               style={{
-                backgroundColor: theme ? theme.compImgHighlight : undefined,
+                backgroundColor: theme.compImgHighlight,
                 borderColor: "#DC143C",
               }}
             >
@@ -214,10 +205,7 @@ class TravelPage extends Component {
                 🇳🇵
               </span>
               <div>
-                <p
-                  className="nepal-callout-text"
-                  style={{ color: theme ? theme.text : undefined }}
-                >
+                <p className="nepal-callout-text" style={{ color: theme.text }}>
                   I aim to share these trails to inspire and support Nepal
                   tourism. If you love the Himalayas, share these posts when
                   they go live.
@@ -237,16 +225,13 @@ class TravelPage extends Component {
         className="travel-section moto-section"
         aria-label="Motorcycling"
         style={{
-          backgroundColor: theme ? theme.body : undefined,
-          borderTop: theme ? `1px solid ${theme.highlight}` : undefined,
+          backgroundColor: theme.body,
+          borderTop: `1px solid ${theme.highlight}`,
         }}
       >
         <div className="travel-section-inner">
           <Fade bottom duration={800}>
-            <h2
-              className="travel-section-title"
-              style={{ color: theme ? theme.text : undefined }}
-            >
+            <h2 className="travel-section-title" style={{ color: theme.text }}>
               <span role="img" aria-label="motorcycle">
                 🏍️
               </span>{" "}
@@ -254,7 +239,7 @@ class TravelPage extends Component {
             </h2>
             <p
               className="travel-section-subtitle"
-              style={{ color: theme ? theme.secondaryText : undefined }}
+              style={{ color: theme.secondaryText }}
             >
               Nepal's mountain roads on a motorcycle. Raw, remote, and
               unforgettable.
@@ -264,8 +249,8 @@ class TravelPage extends Component {
             <div
               className="moto-featured-card"
               style={{
-                backgroundColor: theme ? theme.compImgHighlight : undefined,
-                borderColor: theme ? theme.highlight : undefined,
+                backgroundColor: theme.compImgHighlight,
+                borderColor: theme.highlight,
               }}
             >
               <span
@@ -278,13 +263,13 @@ class TravelPage extends Component {
               <div>
                 <h3
                   className="moto-featured-title"
-                  style={{ color: theme ? theme.text : undefined }}
+                  style={{ color: theme.text }}
                 >
                   Nepal Mountain Roads
                 </h3>
                 <p
                   className="moto-featured-desc"
-                  style={{ color: theme ? theme.secondaryText : undefined }}
+                  style={{ color: theme.secondaryText }}
                 >
                   Documenting the raw beauty of riding through the Himalayan
                   foothills and high-altitude passes.
@@ -304,14 +289,11 @@ class TravelPage extends Component {
         id="usa"
         className="travel-section"
         aria-label="USA travel"
-        style={{ backgroundColor: theme ? theme.body : undefined }}
+        style={{ backgroundColor: theme.body }}
       >
         <div className="travel-section-inner">
           <Fade bottom duration={800}>
-            <h2
-              className="travel-section-title"
-              style={{ color: theme ? theme.text : undefined }}
-            >
+            <h2 className="travel-section-title" style={{ color: theme.text }}>
               <span role="img" aria-label="usa flag">
                 🇺🇸
               </span>{" "}
@@ -319,7 +301,7 @@ class TravelPage extends Component {
             </h2>
             <p
               className="travel-section-subtitle"
-              style={{ color: theme ? theme.secondaryText : undefined }}
+              style={{ color: theme.secondaryText }}
             >
               Moved to Oregon in 2023. Discovering the Pacific Northwest and
               beyond.
@@ -331,8 +313,8 @@ class TravelPage extends Component {
                 <div
                   className="usa-card"
                   style={{
-                    backgroundColor: theme ? theme.headerColor : undefined,
-                    borderColor: theme ? theme.highlight : undefined,
+                    backgroundColor: theme.headerColor,
+                    borderColor: theme.highlight,
                   }}
                 >
                   <span
@@ -342,15 +324,12 @@ class TravelPage extends Component {
                   >
                     {dest.emoji}
                   </span>
-                  <h3
-                    className="usa-card-name"
-                    style={{ color: theme ? theme.text : undefined }}
-                  >
+                  <h3 className="usa-card-name" style={{ color: theme.text }}>
                     {dest.name}
                   </h3>
                   <p
                     className="usa-card-desc"
-                    style={{ color: theme ? theme.secondaryText : undefined }}
+                    style={{ color: theme.secondaryText }}
                   >
                     {dest.description}
                   </p>
@@ -368,19 +347,19 @@ class TravelPage extends Component {
     return (
       <section
         className="travel-subscribe-cta"
-        style={{ backgroundColor: theme ? theme.body : undefined }}
+        style={{ backgroundColor: theme.body }}
       >
         <div className="travel-section-inner" style={{ textAlign: "center" }}>
           <Fade bottom duration={800}>
             <p
               className="travel-cta-text"
-              style={{ color: theme ? theme.secondaryText : undefined }}
+              style={{ color: theme.secondaryText }}
             >
               Get notified when new travel posts go live.{" "}
               <a
                 href="#footer-newsletter"
                 className="travel-cta-link"
-                style={{ color: theme ? theme.jacketColor : "#388BFD" }}
+                style={{ color: theme.jacketColor }}
               >
                 Subscribe below
               </a>
@@ -396,10 +375,7 @@ class TravelPage extends Component {
     const { themeMode, onThemeChange } = this.props;
 
     return (
-      <div
-        className="travel-page"
-        style={{ backgroundColor: theme ? theme.body : undefined }}
-      >
+      <div className="travel-page" style={{ backgroundColor: theme.body }}>
         <Header
           theme={theme}
           themeMode={themeMode}
