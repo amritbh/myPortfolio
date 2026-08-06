@@ -166,6 +166,20 @@ class Header extends Component {
                 </li>
                 <li>
                   <NavLink
+                    to="/travel"
+                    tag={Link}
+                    activeStyle={{ WebkitTextStroke: "0.5px currentColor" }}
+                    style={{ color: theme.text }}
+                    onMouseEnter={(event) =>
+                      onMouseEnter(event, theme.highlight)
+                    }
+                    onMouseOut={(event) => onMouseOut(event)}
+                  >
+                    Travel
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
                     to="/contact"
                     tag={Link}
                     activeStyle={{ WebkitTextStroke: "0.5px currentColor" }}
