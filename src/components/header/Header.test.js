@@ -173,6 +173,20 @@ describe("Header Component", () => {
     );
   });
 
+  it("renders the Travel nav link to /travel", () => {
+    jest.spyOn(apiClient, "getStoredUser").mockReturnValue(null);
+    renderWithRouter(
+      <Header
+        theme={mockTheme}
+        themeMode="system"
+        onThemeChange={mockOnThemeChange}
+      />
+    );
+    const travelLink = screen.getByText("Travel");
+    expect(travelLink).toBeInTheDocument();
+    expect(travelLink.closest("a")).toHaveAttribute("href", "/travel");
+  });
+
   it("handles mouse hover and out on all nav links", () => {
     jest.spyOn(apiClient, "getStoredUser").mockReturnValue(null);
     renderWithRouter(<Header theme={mockTheme} />);
@@ -183,6 +197,7 @@ describe("Header Component", () => {
       "Experience",
       "Projects",
       "Blog",
+      "Travel",
       "Contact Me",
       "Login",
     ];

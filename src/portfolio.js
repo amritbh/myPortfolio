@@ -1053,6 +1053,98 @@ export const travelData = {
     label: "Also: Motorcycling through Nepal's mountain roads",
     link: "/travel",
   },
+  nepalTreks: [
+    {
+      name: "Annapurna Base Camp",
+      shortName: "ABC",
+      emoji: "\u26f0\ufe0f",
+      description:
+        "The iconic trek through rhododendron forests and glacial moraines to the foot of Annapurna I.",
+      elevation: "4,130m",
+      duration: "12 days",
+      difficulty: "Moderate",
+    },
+    {
+      name: "Tilicho Lake",
+      shortName: "Tilicho Lake",
+      emoji: "\ud83e\uddca",
+      description:
+        "One of the highest lakes in the world, nestled in a remote valley off the Annapurna Circuit.",
+      elevation: "4,919m",
+      duration: "14 days",
+      difficulty: "Strenuous",
+    },
+    {
+      name: "Gosaikunda",
+      shortName: "Gosaikunda",
+      emoji: "\ud83d\udc19",
+      description:
+        "A sacred alpine lake in the Langtang region, revered by both Hindus and Buddhists.",
+      elevation: "4,380m",
+      duration: "7 days",
+      difficulty: "Moderate",
+    },
+    {
+      name: "Upper Mustang",
+      shortName: "Mustang",
+      emoji: "\ud83c\udfdc\ufe0f",
+      description:
+        "A restricted, ancient kingdom tucked in the rain shadow of the Himalayas, with surreal desert landscapes.",
+      elevation: "3,800m",
+      duration: "10 days",
+      difficulty: "Moderate",
+    },
+    {
+      name: "Pokhara",
+      shortName: "Pokhara",
+      emoji: "\ud83d\udea3",
+      description:
+        "The gateway to the Annapurnas, with pristine Phewa Lake and unobstructed views of Machhapuchhre.",
+      elevation: "827m",
+      duration: "3 days",
+      difficulty: "Easy",
+    },
+    {
+      name: "Badimalika",
+      shortName: "Badimalika",
+      emoji: "\ud83d\udeb6",
+      description:
+        "A sacred peak in the remote far-western hills, rarely visited and spiritually significant.",
+      elevation: "4,542m",
+      duration: "8 days",
+      difficulty: "Strenuous",
+    },
+    {
+      name: "Aama Yangri",
+      shortName: "Aama Yangri",
+      emoji: "\ud83c\udf04",
+      description:
+        "A stunning sunrise hike near Kathmandu with 360-degree views of the Langtang range.",
+      elevation: "2,520m",
+      duration: "2 days",
+      difficulty: "Easy",
+    },
+  ],
+  usaDestinations: [
+    {
+      name: "Oregon",
+      emoji: "\ud83c\udf32",
+      description:
+        "Lush forests, dramatic coastlines, and volcanic peaks. Home since 2023.",
+    },
+    {
+      name: "Pacific Coast",
+      emoji: "\ud83c\udf0a",
+      description:
+        "The Pacific Coast Highway from Oregon to California. One of the most scenic drives in the world.",
+    },
+    {
+      name: "Crater Lake",
+      emoji: "\ud83d\udc19",
+      description:
+        "The deepest lake in the USA, formed in the caldera of a collapsed volcano.",
+    },
+  ],
 };
 
 export {

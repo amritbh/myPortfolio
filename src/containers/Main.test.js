@@ -46,6 +46,9 @@ jest.mock("../pages/blog/BlogDetail", () => () => (
 jest.mock("../pages/projects/Projects", () => () => (
   <div data-testid="projects-page">Projects</div>
 ));
+jest.mock("../pages/travel/TravelPage", () => () => (
+  <div data-testid="travel-page">Travel</div>
+));
 
 describe("Main Component Routing", () => {
   let originalLocation;
@@ -77,6 +80,7 @@ describe("Main Component Routing", () => {
     { path: "/blogs/some-slug", id: "blogdetail-page" },
     { path: "/contact", id: "contact-page" },
     { path: "/projects", id: "projects-page" },
+    { path: "/travel", id: "travel-page" },
     { path: "/unknown-route", id: "error-page" },
     { path: "/splash", id: "error-page" }, // settings.isSplash is false by default
   ];

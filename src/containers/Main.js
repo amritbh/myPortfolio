@@ -13,6 +13,7 @@ import Projects from "../pages/projects/Projects";
 import { settings } from "../portfolio.js";
 import Error404 from "../pages/errors/error404/Error";
 import Account from "../pages/account/Account";
+import TravelPage from "../pages/travel/TravelPage";
 
 export default class Main extends Component {
   render() {
@@ -157,6 +158,17 @@ export default class Main extends Component {
             />
           )}
 
+          <Route
+            path="/travel"
+            render={(props) => (
+              <TravelPage
+                {...props}
+                theme={this.props.theme}
+                themeMode={this.props.themeMode}
+                onThemeChange={this.props.onThemeChange}
+              />
+            )}
+          />
           <Route
             path="/projects"
             render={(props) => (
