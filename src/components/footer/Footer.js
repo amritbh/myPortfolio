@@ -94,12 +94,12 @@ class Footer extends Component {
             Stay updated on new posts
           </p>
           {submitted ? (
-            <p className="footer-newsletter-confirm" role="status">
+            <output className="footer-newsletter-confirm">
               <span role="img" aria-label="check">
                 ✅
               </span>{" "}
               Thanks! You'll be notified when new posts go live.
-            </p>
+            </output>
           ) : (
             <form
               className="footer-newsletter-form"
