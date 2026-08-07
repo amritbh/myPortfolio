@@ -10,7 +10,7 @@
     "dev": "vite",
     "preview": "vite preview",
     "start": "vite",
-    "test": "vitest run --coverage",
+    "test": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
