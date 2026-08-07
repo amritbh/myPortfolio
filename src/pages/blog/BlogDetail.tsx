@@ -251,6 +251,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
           {/* Like */}
           <div className="medium-engagement-item">
             <button
+              type="button"
               className={`medium-engagement-btn ${isLiked ? "liked" : ""}`}
               onClick={handleLike}
               disabled={isLiking}
@@ -293,6 +294,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
           {/* Comments */}
           <div className="medium-engagement-item">
             <button
+              type="button"
               className="medium-engagement-btn"
               onClick={scrollToComments}
               title="Jump to responses"
@@ -323,6 +325,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
           {/* Share */}
           <div className="medium-engagement-item">
             <button
+              type="button"
               className="medium-engagement-btn"
               onClick={handleShareLink}
               title="Copy link"
@@ -374,9 +377,9 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
         <article className="medium-article" ref={articleRef}>
           {/* Tags above title */}
           <div className="medium-article-tags">
-            {displayTags.map((tag: string, i: number) => (
+            {displayTags.map((tag: string) => (
               <span
-                key={i}
+                key={tag}
                 className="medium-article-tag"
                 style={{ color: "#1a8917" }}
               >

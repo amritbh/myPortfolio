@@ -17,7 +17,7 @@ const Issues = (props: any) => {
         </div>
         <div className="issues-body-div">
           {issuesData["data"].map((issue) => {
-            return <IssueCard issue={issue} />;
+            return <IssueCard key={issue.id} issue={issue} />;
           })}
         </div>
       </div>

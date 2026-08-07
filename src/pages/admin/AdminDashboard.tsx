@@ -576,7 +576,7 @@ const AdminDashboard: React.FC = () => {
       }));
       loadBlogs();
     } else {
-      if (response.error && response.error.includes("expired")) handleLogout();
+      if (response.error?.includes("expired")) handleLogout();
       setStatusMessage(`Error: ${response.error}`);
       setStatusType("error");
       setIsPublishing(false);

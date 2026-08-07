@@ -17,7 +17,7 @@ const Certifications = (props: any) => {
         </div>
         <div className="certs-body-div">
           {certifications.certifications.map((cert) => {
-            return <CertificationCard certificate={cert} theme={theme} />;
+            return <CertificationCard key={cert.title} certificate={cert} theme={theme} />;
           })}
         </div>
       </div>

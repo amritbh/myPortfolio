@@ -65,7 +65,8 @@ export default function TopButton({ theme }: TopButtonProps) {
   };
 
   return (
-    <div
+    <button
+      type="button"
       onClick={GoUpEvent}
       id="topButton"
       style={{
@@ -78,6 +79,6 @@ export default function TopButton({ theme }: TopButtonProps) {
       onMouseLeave={() => onMouseLeave(theme.body, theme.text)}
     >
       <i className="fas fa-arrow-up" id="arrow" aria-hidden="true" />
-    </div>
+    </button>
   );
 }

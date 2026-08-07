@@ -114,8 +114,8 @@ const ExperienceCard = (props: any) => {
                     // Description can be either an array of strings or a long string
                     Array.isArray(experience["description"]) ? (
                       <ul style={{ marginTop: 0 }}>
-                        {experience["description"].map((item, idx) => (
-                          <li key={idx} style={{ marginBottom: 6 }}>
+                        {experience["description"].map((item: string) => (
+                          <li key={item.substring(0, 20)} style={{ marginBottom: 6 }}>
                             {item}
                           </li>
                         ))}
@@ -127,17 +127,17 @@ const ExperienceCard = (props: any) => {
                         const sections = text.split(/\n\n+/).filter(Boolean);
                         return (
                           <div>
-                            {sections.map((sec: any, sidx: any) => {
+                            {sections.map((sec: any) => {
                               const lines = sec.split(/\n+/).filter(Boolean);
-                              const isBullet = lines.every((l) =>
+                              const isBullet = lines.every((l: any) =>
                                 l.trim().startsWith("•")
                               );
                               if (isBullet) {
                                 return (
-                                  <ul key={sidx} style={{ marginTop: 0 }}>
-                                    {lines.map((l: any, lidx: any) => (
+                                  <ul key={sec.substring(0, 20)} style={{ marginTop: 0 }}>
+                                    {lines.map((l: any) => (
                                       <li
-                                        key={lidx}
+                                        key={l.substring(0, 20)}
                                         style={{ marginBottom: 6 }}
                                       >
                                         {l.replace(/^•\s*/, "")}
@@ -147,7 +147,7 @@ const ExperienceCard = (props: any) => {
                                 );
                               }
                               return (
-                                <p key={sidx} style={{ marginBottom: 8 }}>
+                                <p key={sec.substring(0, 20)} style={{ marginBottom: 8 }}>
                                   {lines.join(" ")}
                                 </p>
                               );

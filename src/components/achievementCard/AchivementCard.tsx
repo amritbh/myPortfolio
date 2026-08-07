@@ -17,10 +17,6 @@ interface AchievementCardProps {
 }
 
 export default function AchivementCard({ cardInfo }: AchievementCardProps) {
-  function openUrlInNewTab(url: string) {
-    var win = window.open(url, "_blank");
-    win?.focus();
-  }
 
   return (
     <div className="certificate-card">
@@ -32,8 +28,17 @@ export default function AchivementCard({ cardInfo }: AchievementCardProps) {
         <p className="card-subtitle">{cardInfo.description}</p>
       </div>
       <div className="certificate-card-footer">
-        {cardInfo.footer.map((v, i) => {
-          return <p key={i} onClick={() => openUrlInNewTab(v.url)}>{v.name}</p>;
+        {cardInfo.footer.map((v) => {
+          return (
+            <a 
+              key={v.name} 
+              href={v.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              {v.name}
+            </a>
+          );
         })}
       </div>
     </div>

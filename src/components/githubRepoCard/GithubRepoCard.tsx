@@ -23,7 +23,7 @@ interface GithubRepoCardProps {
 
 export default function GithubRepoCard({ repo, theme }: GithubRepoCardProps) {
   function openRepoinNewTab(url: string) {
-    var win = window.open(url, "_blank");
+    const win = window.open(url, "_blank");
     win?.focus();
   }
 

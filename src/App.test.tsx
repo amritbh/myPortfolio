@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React from "react";
 import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import App from "./App";
 import { render, act } from "@testing-library/react";
 
@@ -33,8 +34,9 @@ describe("App Theme Management", () => {
 
   it("renders without crashing", () => {
     const div = document.createElement("div");
-    ReactDOM.render(<App />, div);
-    ReactDOM.unmountComponentAtNode(div);
+    const root = createRoot(div);
+    root.render(<App />);
+    root.unmount();
   });
 
   it("handles system preference change event when mode is system", () => {

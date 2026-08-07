@@ -14,13 +14,13 @@ const onMouseOut = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, colo
 };
 
 interface ButtonProps {
-  text: string;
-  className?: string;
-  href: string;
-  newTab?: boolean;
-  theme: {
-    body: string;
-    text: string;
+  readonly text: string;
+  readonly className?: string;
+  readonly href: string;
+  readonly newTab?: boolean;
+  readonly theme: {
+    readonly body: string;
+    readonly text: string;
   };
 }
 

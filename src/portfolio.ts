@@ -1,6 +1,6 @@
 /* Change this file to get your personal Porfolio */
 
-import type { SocialLink, TravelData } from "./types";
+import type { SocialLink } from "./types";
 
 // Website related settings
 const settings = {

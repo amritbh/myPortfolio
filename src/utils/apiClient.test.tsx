@@ -574,7 +574,7 @@ describe("apiClient API unreachable", () => {
       open: vi.fn(),
       setRequestHeader: vi.fn(),
       send: vi.fn(function () {
-        if (this.upload && this.upload.onprogress) {
+        if (this.upload?.onprogress) {
           this.upload.onprogress({
             lengthComputable: true,
             loaded: 50,

@@ -109,126 +109,143 @@ const Login: React.FC = () => {
     setConfirmPassword("");
   };
 
-  const handleAuthSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (authMode === "forgotPassword") {
-      if (!email || !email.includes("@")) {
-        setAuthError("Please enter a valid email address.");
-        return;
-      }
-      setIsSubmitting(true);
-      setAuthError("");
-      setStatusMessage("");
-      const response = await requestPasswordReset(email.trim());
-      if (response.success) {
-        setStatusMessage(response.message || "");
-        setIsSubmitting(false);
-        setEmail("");
-      } else {
-        setAuthError(response.error || "");
-        setIsSubmitting(false);
-      }
+  const handleForgotPassword = async () => {
+    if (!email || !email.includes("@")) {
+      setAuthError("Please enter a valid email address.");
       return;
     }
-
-    if (authMode === "resetPassword") {
-      if (!password || password.length < 6) {
-        setAuthError("Password must be at least 6 characters.");
-        return;
-      }
-      if (password !== confirmPassword) {
-        setAuthError("Passwords do not match.");
-        return;
-      }
-      setIsSubmitting(true);
-      setAuthError("");
-      setStatusMessage("");
-      const response = await resetPassword(resetToken, password);
-      if (response.success) {
-        setAuthMode("signin");
-        setStatusMessage("Password reset! Please sign in.");
-        setIsSubmitting(false);
-        setPassword("");
-        setConfirmPassword("");
-      } else {
-        setAuthError(response.error || "");
-        setIsSubmitting(false);
-      }
-      return;
-    }
-
-    if (authMode === "signup" || authMode === "signin") {
-      if (!email || !email.includes("@")) {
-        setAuthError("Please enter a valid email address.");
-        return;
-      }
-      if (!password || password.length < 6) {
-        setAuthError("Password must be at least 6 characters.");
-        return;
-      }
-    }
-
-    if (authMode === "signup") {
-      if (password !== confirmPassword) {
-        setAuthError("Passwords do not match.");
-        return;
-      }
-    }
-
-    if (authMode === "login2FA") {
-      if (!totpCode || totpCode.length < 6) {
-        setAuthError("Code must be 6 digits.");
-        return;
-      }
-      setIsSubmitting(true);
-      setAuthError("");
-      setStatusMessage("");
-      const response = await login2FA(tempToken, totpCode);
-      if (response.success && response.token && response.user) {
-        setSession(response.token, response.user);
-        history.push(response.user.role === "admin" ? "/admin" : "/home");
-      } else {
-        setAuthError(response.error || "Invalid 2FA code");
-        setIsSubmitting(false);
-      }
-      return;
-    }
-
     setIsSubmitting(true);
     setAuthError("");
     setStatusMessage("");
-
-    let response;
-    if (authMode === "signup") {
-      response = await signupAdmin(email.trim(), email.trim(), password);
-    } else {
-      response = await loginAdmin(email.trim(), password);
-    }
-
+    const response = await requestPasswordReset(email.trim());
     if (response.success) {
-      if (authMode === "signup") {
-        setStatusMessage("Account created! Check your email to verify.");
+      setStatusMessage(response.message || "");
+      setIsSubmitting(false);
+      setEmail("");
+    } else {
+      setAuthError(response.error || "");
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!password || password.length < 6) {
+      setAuthError("Password must be at least 6 characters.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setAuthError("Passwords do not match.");
+      return;
+    }
+    setIsSubmitting(true);
+    setAuthError("");
+    setStatusMessage("");
+    const response = await resetPassword(resetToken, password);
+    if (response.success) {
+      setAuthMode("signin");
+      setStatusMessage("Password reset! Please sign in.");
+      setIsSubmitting(false);
+      setPassword("");
+      setConfirmPassword("");
+    } else {
+      setAuthError(response.error || "");
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLogin2FA = async () => {
+    if (!totpCode || totpCode.length < 6) {
+      setAuthError("Code must be 6 digits.");
+      return;
+    }
+    setIsSubmitting(true);
+    setAuthError("");
+    setStatusMessage("");
+    const response = await login2FA(tempToken, totpCode);
+    if (response.success && response.token && response.user) {
+      setSession(response.token, response.user);
+      history.push(response.user.role === "admin" ? "/admin" : "/home");
+    } else {
+      setAuthError(response.error || "Invalid 2FA code");
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSignup = async () => {
+    if (!email || !email.includes("@")) {
+      setAuthError("Please enter a valid email address.");
+      return;
+    }
+    if (!password || password.length < 6) {
+      setAuthError("Password must be at least 6 characters.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setAuthError("Passwords do not match.");
+      return;
+    }
+    setIsSubmitting(true);
+    setAuthError("");
+    setStatusMessage("");
+    const response = await signupAdmin(email.trim(), email.trim(), password);
+    if (response.success) {
+      setStatusMessage("Account created! Check your email to verify.");
+      setIsSubmitting(false);
+      setAuthMode("signin");
+      setShowEmailForm(false);
+      setPassword("");
+      setConfirmPassword("");
+    } else {
+      setAuthError(response.error || "Authentication failed.");
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSignin = async () => {
+    if (!email || !email.includes("@")) {
+      setAuthError("Please enter a valid email address.");
+      return;
+    }
+    if (!password || password.length < 6) {
+      setAuthError("Password must be at least 6 characters.");
+      return;
+    }
+    setIsSubmitting(true);
+    setAuthError("");
+    setStatusMessage("");
+    const response = await loginAdmin(email.trim(), password);
+    if (response.success) {
+      if ((response as any).requires_2fa) {
+        setAuthMode("login2FA");
+        setTempToken((response as any).temp_token || "");
         setIsSubmitting(false);
-        setAuthMode("signin");
-        setShowEmailForm(false);
-        setPassword("");
-        setConfirmPassword("");
-      } else {
-        if ((response as any).requires_2fa) {
-          setAuthMode("login2FA");
-          setTempToken((response as any).temp_token || "");
-          setIsSubmitting(false);
-          setStatusMessage("2-Step Verification required");
-          return;
-        }
-        if (response.user) {
-          history.push(response.user.role === "admin" ? "/admin" : "/home");
-        }
+        setStatusMessage("2-Step Verification required");
+        return;
+      }
+      if (response.user) {
+        history.push(response.user.role === "admin" ? "/admin" : "/home");
       }
     } else {
       setAuthError(response.error || "Authentication failed.");
       setIsSubmitting(false);
+    }
+  };
+
+  const handleAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    switch (authMode) {
+      case "forgotPassword":
+        return handleForgotPassword();
+      case "resetPassword":
+        return handleResetPassword();
+      case "login2FA":
+        return handleLogin2FA();
+      case "signup":
+        return handleSignup();
+      case "signin":
+        return handleSignin();
+      default:
+        return;
     }
   };
 

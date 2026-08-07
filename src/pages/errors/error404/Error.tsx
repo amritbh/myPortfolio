@@ -6,7 +6,7 @@ import { Fade } from "react-reveal";
 import "./Error.css";
 import { Link } from "react-router-dom";
 
-const Error = (props: any) => {
+const ErrorPage = (props: any) => {
     const theme = props.theme;
     return (
       <div className="error-main">
@@ -40,4 +40,4 @@ const Error = (props: any) => {
     );
   }
 
-export default Error;
+export default ErrorPage;

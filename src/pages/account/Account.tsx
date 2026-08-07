@@ -174,9 +174,9 @@ const Account: React.FC<AccountProps> = ({ theme, themeMode, onThemeChange }) =>
                   <h2 style={{ color: theme.text }}>Profile Information</h2>
                   <form onSubmit={handleSaveProfile}>
                     <div className="account-form-group">
-                      <label style={{ color: theme.text }}>
+                      <span style={{ color: theme.text, display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
                         Email Address
-                      </label>
+                      </span>
                       <div
                         style={{
                           color: theme.secondaryText,

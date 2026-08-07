@@ -95,6 +95,7 @@ const Header: React.FC<HeaderProps> = ({
             <input className="menu-btn" type="checkbox" id="menu-btn" />
             <label className="menu-icon" htmlFor="menu-btn">
               <span className="navicon"></span>
+              <span style={{ position: "absolute", width: "1px", height: "1px", margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)" }}>Menu</span>
             </label>
             <ul className="menu" style={{ backgroundColor: theme.body }}>
               <li>

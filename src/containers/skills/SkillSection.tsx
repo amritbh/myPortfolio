@@ -15,7 +15,7 @@ const SkillSection: React.FC<SkillSectionProps> = ({ theme }) => {
     <div>
       {skills.data.map((skill, i) => {
         return (
-          <div key={i} className="skills-main-div">
+          <div key={skill.title} className="skills-main-div">
             <Fade left duration={2000}>
               <div className="skills-image-div">
                 <SkillImg
@@ -40,7 +40,7 @@ const SkillSection: React.FC<SkillSectionProps> = ({ theme }) => {
                   {skill.skills.map((skillSentence, i) => {
                     return (
                       <p
-                        key={i}
+                        key={skillSentence}
                         className="subTitle skills-text"
                         style={{ color: theme.secondaryText }}
                       >
