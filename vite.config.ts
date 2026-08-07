@@ -20,10 +20,11 @@ export default defineConfig({
         "**/FeelingProud.tsx", 
         "src/types/*", 
         "src/portfolio.ts",
-        "src/global.ts"
+        "src/global.ts",
+        "src/assests/**/*"
       ],
       thresholds: {
-        lines: 64,
+        lines: 80,
         branches: 80,
       },
     },
