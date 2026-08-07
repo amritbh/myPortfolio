@@ -3,9 +3,9 @@ import "./StartupProjects.css";
 import { bigProjects } from "../../portfolio";
 
 export default function StartupProject() {
-  function openProjectInNewWindow(url) {
+  function openProjectInNewWindow(url: string) {
     var win = window.open(url, "_blank");
-    win.focus();
+    win?.focus();
   }
 
   return (
@@ -18,6 +18,7 @@ export default function StartupProject() {
             {bigProjects.projects.map((project) => {
               return (
                 <div
+                  key={project.link}
                   className="saaya-health-div"
                   onClick={() => openProjectInNewWindow(project.link)}
                 >

@@ -15,11 +15,18 @@ export default function Blogs() {
           {blogSection.blogs.map((blog) => {
             return (
               <BlogCard
+                key={blog.url}
                 blog={{
-                  url: blog.url,
-                  image: blog.image,
+                  slug: blog.url,
+                  coverImage: blog.image,
                   title: blog.title,
-                  description: blog.description,
+                  summary: blog.description,
+                  publishDate: new Date().toISOString(),
+                }}
+                theme={{
+                  compImgHighlight: "#ffffff",
+                  text: "#000000",
+                  secondaryText: "#333333"
                 }}
               />
             );

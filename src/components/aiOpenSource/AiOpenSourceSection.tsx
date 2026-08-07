@@ -3,7 +3,15 @@ import "./AiOpenSourceSection.css";
 import { Fade } from "react-reveal";
 import { aiOpenSourceData } from "../../portfolio";
 
-export default function AiOpenSourceSection({ theme }) {
+interface AiOpenSourceSectionProps {
+  theme: {
+    text: string;
+    highlight: string;
+    secondaryText: string;
+  };
+}
+
+export default function AiOpenSourceSection({ theme }: AiOpenSourceSectionProps) {
   return (
     <div className="ai-trends-main">
       <div className="ai-trends-header-div">

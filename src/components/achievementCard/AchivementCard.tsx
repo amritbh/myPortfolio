@@ -1,9 +1,25 @@
 import React from "react";
 
-export default function AchivementCard({ cardInfo }) {
-  function openUrlInNewTab(url) {
+interface FooterLink {
+  name: string;
+  url: string;
+}
+
+interface AchievementCardInfo {
+  image: string;
+  title: string;
+  description: string;
+  footer: FooterLink[];
+}
+
+interface AchievementCardProps {
+  cardInfo: AchievementCardInfo;
+}
+
+export default function AchivementCard({ cardInfo }: AchievementCardProps) {
+  function openUrlInNewTab(url: string) {
     var win = window.open(url, "_blank");
-    win.focus();
+    win?.focus();
   }
 
   return (
@@ -17,7 +33,7 @@ export default function AchivementCard({ cardInfo }) {
       </div>
       <div className="certificate-card-footer">
         {cardInfo.footer.map((v, i) => {
-          return <p onClick={() => openUrlInNewTab(v.url)}>{v.name}</p>;
+          return <p key={i} onClick={() => openUrlInNewTab(v.url)}>{v.name}</p>;
         })}
       </div>
     </div>

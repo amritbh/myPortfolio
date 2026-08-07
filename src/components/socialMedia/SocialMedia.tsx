@@ -3,7 +3,7 @@ import "./SocialMedia.css";
 import { socialMediaLinks } from "../../portfolio";
 import styled from "styled-components";
 
-const IconWrapper = styled.span`
+const IconWrapper = styled.span<{ backgroundColor: string; theme?: any }>`
   i {
     background-color: ${(props) => props.backgroundColor};
   }
@@ -13,7 +13,11 @@ const IconWrapper = styled.span`
   }
 `;
 
-export default function socialMedia(props) {
+interface SocialMediaProps {
+  theme?: any;
+}
+
+export default function socialMedia(props: SocialMediaProps) {
   return (
     <div className="social-media-div">
       {socialMediaLinks.map((media, i) => {

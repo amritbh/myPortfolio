@@ -3,7 +3,31 @@ import { Link } from "react-router-dom";
 import "./BlogCard.css";
 import amritPic from "../../assests/images/amrit-pp.jpg";
 
-export default function BlogCard({ blog, theme }) {
+interface Blog {
+  title: string;
+  summary: string;
+  publishDate: string;
+  slug: string;
+  coverImage?: string;
+  tags?: string[];
+  readTime?: string;
+  likes?: any[];
+  comments?: any[];
+  updatedAt?: string;
+  isExternal?: boolean;
+  externalLink?: string;
+}
+
+interface BlogCardProps {
+  blog: Blog;
+  theme: {
+    compImgHighlight: string;
+    text: string;
+    secondaryText: string;
+  };
+}
+
+export default function BlogCard({ blog, theme }: BlogCardProps) {
   const {
     title,
     summary,

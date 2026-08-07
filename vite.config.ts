@@ -23,8 +23,8 @@ export default defineConfig({
         "src/global.ts"
       ],
       thresholds: {
-        lines: 60,
-        branches: 75,
+        lines: 80,
+        branches: 80,
       },
     },
   },

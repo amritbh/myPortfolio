@@ -3,7 +3,16 @@ import { upcomingProjectsData } from "../../portfolio";
 import { Fade } from "react-reveal";
 import "./UpcomingProjectsSection.css";
 
-export default function UpcomingProjectsSection(props) {
+interface UpcomingProjectsSectionProps {
+  theme: {
+    text: string;
+    compImgHighlight: string;
+    imageHighlight: string;
+    secondaryText: string;
+  };
+}
+
+export default function UpcomingProjectsSection(props: UpcomingProjectsSectionProps) {
   const theme = props.theme;
   return (
     <div className="upcoming-main">

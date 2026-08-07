@@ -23,6 +23,7 @@ export default function Achievement() {
           {achievementSection.achivementsCards.map((card) => {
             return (
               <AchivementCard
+                key={card.title}
                 cardInfo={{
                   title: card.title,
                   description: card.subtitle,
