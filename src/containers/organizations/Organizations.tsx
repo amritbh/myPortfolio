@@ -1,0 +1,23 @@
+import React from "react";
+import "./Organizations.css";
+import { Fade } from "react-reveal";
+import OrganizationList from "../../components/organizationList/OrganizationList";
+import OrganizationsData from "../../shared/opensource/organizations.json";
+
+const Organizations = (props: any) => {
+    const theme = props.theme;
+    return (
+      <div id="organizations">
+        <div className="organizations-header-div">
+          <Fade bottom duration={2000} distance="20px">
+            <h1 className="organizations-header" style={{ color: theme.text }}>
+              Interested in OpenSource Projects, tools and technologies for
+              devops, software development and SRE
+            </h1>
+          </Fade>
+        </div>
+        <OrganizationList logos={OrganizationsData["data"]} />
+      </div>
+    );
+  }
+export default Organizations;

@@ -10,10 +10,10 @@ A highly scalable, secure, and responsive portfolio website built with React, sh
 
 This project is not just a static webpage—it is a fully engineered cloud application utilizing modern Serverless and Infrastructure as Code (IaC) principles.
 
-- **Frontend:** React, JavaScript, Styled Components (Hosted on AWS S3 & CloudFront)
+- **Frontend:** React 18, TypeScript, Vite, Styled Components (Hosted on AWS S3 & CloudFront)
 - **Backend:** AWS Lambda (Python), API Gateway v2, DynamoDB
 - **Infrastructure as Code:** Terraform & Terragrunt
-- **Testing & Quality:** Jest, Pytest, Moto
+- **Testing & Quality:** Vitest (Frontend), Pytest, Moto (Backend)
 - **Security & SAST/DAST:** SonarCloud, Bandit, Trivy, OWASP ZAP Baseline
 - **CI/CD:** Fully automated via GitHub Actions
 
@@ -25,7 +25,7 @@ The complete technical design and infrastructure of this project is deeply docum
 
 - **[CI/CD & Security Architecture](docs/CICD_Architecture.md):** Details the automated deployment pipelines, security scans (Trivy/Bandit/ZAP), and SonarCloud integration.
 - **[Backend Architecture](docs/Backend_Architecture.md):** Details the Serverless Python API, DynamoDB schema, and Pytest mocking strategy.
-- **[Frontend Architecture](docs/Frontend_Architecture.md):** Details the React component structure, dynamic API integration, and Jest testing framework.
+- **[Frontend Architecture](docs/Frontend_Architecture.md):** Details the React component structure, Vite build toolchain, dynamic API integration, and Vitest testing framework.
 - **[Historical Decisions](docs/Historical_Decisions.md):** A log of architectural choices made during development, such as CloudFront SPA routing fixes and Route53 domain transfers.
 
 ---
@@ -42,16 +42,16 @@ The complete technical design and infrastructure of this project is deeply docum
 
 ```bash
 npm install
-npm start
+npm run dev
 ```
 
-The app runs at `http://localhost:3000`.
+The app runs at `http://localhost:5173`.
 
 ### 2. Run the Tests
 
 ```bash
-# Frontend Tests & Coverage (Jest)
-CI=true npm run test -- --coverage
+# Frontend Tests & Coverage (Vitest)
+npm run test
 
 # Backend Tests & Coverage (Pytest)
 cd infra/modules/backend/src
