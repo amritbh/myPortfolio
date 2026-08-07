@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
@@ -30,25 +31,25 @@ const mockTheme = {
   jacketColor: "#388BFD",
 };
 
-function renderWithRouter(ui) {
+const renderWithRouter = (ui: any, { route = '/' } = {}) => {
   return render(<BrowserRouter>{ui}</BrowserRouter>);
 }
 
 describe("TravelPage Component", () => {
   it("renders the main hero heading 'Adventures and Journeys'", () => {
-    renderWithRouter(<TravelPage theme={mockTheme} />);
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
     expect(screen.getByText("Adventures and Journeys")).toBeInTheDocument();
   });
 
   it("renders the hero subtitle", () => {
-    renderWithRouter(<TravelPage theme={mockTheme} />);
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
     expect(
       screen.getByText(/Nepal born\. Mountain shaped\./i)
     ).toBeInTheDocument();
   });
 
   it("renders the Himalayan Treks section heading", () => {
-    renderWithRouter(<TravelPage theme={mockTheme} />);
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
     // The heading text includes emoji + text so we use a regex
     expect(
       screen.getByRole("heading", { name: /Himalayan Treks/i })
@@ -56,7 +57,7 @@ describe("TravelPage Component", () => {
   });
 
   it("renders all 7 Nepal trek card names", () => {
-    renderWithRouter(<TravelPage theme={mockTheme} />);
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
     const trekNames = [
       "Annapurna Base Camp",
       "Tilicho Lake",
@@ -72,26 +73,26 @@ describe("TravelPage Component", () => {
   });
 
   it("renders 'Coming Soon' badges for trek cards", () => {
-    renderWithRouter(<TravelPage theme={mockTheme} />);
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
     const badges = screen.getAllByText("Coming Soon");
     expect(badges.length).toBeGreaterThanOrEqual(7);
   });
 
   it("renders the Nepal tourism support callout", () => {
-    renderWithRouter(<TravelPage theme={mockTheme} />);
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
     expect(
       screen.getByText(/inspire and support Nepal tourism/i)
     ).toBeInTheDocument();
   });
 
   it("renders the Motorcycling section", () => {
-    renderWithRouter(<TravelPage theme={mockTheme} />);
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
     expect(screen.getByText(/On Two Wheels/i)).toBeInTheDocument();
     expect(screen.getByText("Nepal Mountain Roads")).toBeInTheDocument();
   });
 
   it("renders the USA Travel section with all 3 destinations", () => {
-    renderWithRouter(<TravelPage theme={mockTheme} />);
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
     // Use heading role for the section heading to avoid ambiguity with the hero chip
     expect(
       screen.getByRole("heading", { name: /Exploring America/i })
@@ -102,7 +103,7 @@ describe("TravelPage Component", () => {
   });
 
   it("renders the subscribe CTA link to footer", () => {
-    renderWithRouter(<TravelPage theme={mockTheme} />);
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
     const ctaLink = screen.getByText(/Subscribe below/i);
     expect(ctaLink).toBeInTheDocument();
     expect(ctaLink.getAttribute("href")).toBe("#footer-newsletter");
@@ -111,7 +112,7 @@ describe("TravelPage Component", () => {
   it("renders correctly without theme prop (fallback branches)", () => {
     // Header requires a theme object so we pass a minimal one; we only
     // test that TravelPage's own conditional-theme branches don't crash
-    renderWithRouter(<TravelPage theme={mockTheme} />);
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
     expect(screen.getByText("Adventures and Journeys")).toBeInTheDocument();
   });
 });

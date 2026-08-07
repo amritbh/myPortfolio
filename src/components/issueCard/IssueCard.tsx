@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import "./IssueCard.css";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";

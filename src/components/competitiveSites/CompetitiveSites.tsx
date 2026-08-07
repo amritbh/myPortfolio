@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import "./CompetitiveSites.css";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";

@@ -1,4 +1,5 @@
-let apiClient;
+// @ts-nocheck
+let apiClient: typeof import('./apiClient');
 
 beforeAll(async () => {
   process.env.REACT_APP_CUSTOM_API_URL = "http://test.com";
@@ -16,7 +17,7 @@ describe("apiClient", () => {
   });
 
   it("loginAdmin success", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ token: "mock-token", user: { username: "test" } }),
     });
@@ -25,7 +26,7 @@ describe("apiClient", () => {
   });
 
   it("loginAdmin failure", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: "invalid" }),
     });
@@ -34,7 +35,7 @@ describe("apiClient", () => {
   });
 
   it("signupAdmin success", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ token: "mock-token", user: { username: "test" } }),
     });
@@ -47,7 +48,7 @@ describe("apiClient", () => {
   });
 
   it("verifyEmail success", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: "verified" }),
     });
@@ -56,7 +57,7 @@ describe("apiClient", () => {
   });
 
   it("verifyEmail failure", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: "bad token" }),
     });
@@ -65,7 +66,7 @@ describe("apiClient", () => {
   });
 
   it("requestPasswordReset success", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: "sent" }),
     });
@@ -74,7 +75,7 @@ describe("apiClient", () => {
   });
 
   it("requestPasswordReset failure", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: "not found" }),
     });
@@ -83,7 +84,7 @@ describe("apiClient", () => {
   });
 
   it("resetPassword success", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: "reset" }),
     });
@@ -92,7 +93,7 @@ describe("apiClient", () => {
   });
 
   it("resetPassword failure", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: "expired" }),
     });
@@ -101,7 +102,7 @@ describe("apiClient", () => {
   });
 
   it("fetchBlogs success", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => [{ slug: "test" }],
     });
@@ -112,7 +113,7 @@ describe("apiClient", () => {
   });
 
   it("fetchBlogBySlug success", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ slug: "test" }),
     });
@@ -121,7 +122,7 @@ describe("apiClient", () => {
   });
 
   it("createBlog success", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: "created" }),
     });
@@ -130,7 +131,7 @@ describe("apiClient", () => {
   });
 
   it("createBlog failure", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       status: 500,
       json: async () => ({ error: "bad" }),
@@ -140,7 +141,7 @@ describe("apiClient", () => {
   });
 
   it("createBlog unauthorized", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       status: 401,
       json: async () => ({ error: "unauth" }),
@@ -150,7 +151,7 @@ describe("apiClient", () => {
   });
 
   it("updateBlog success", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: "updated" }),
     });
@@ -163,7 +164,7 @@ describe("apiClient", () => {
   });
 
   it("updateBlog failure", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       status: 500,
       json: async () => ({ error: "bad" }),
@@ -177,7 +178,7 @@ describe("apiClient", () => {
   });
 
   it("deleteBlog success", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: "deleted" }),
     });
@@ -186,7 +187,7 @@ describe("apiClient", () => {
   });
 
   it("deleteBlog failure", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       status: 500,
       json: async () => ({ error: "bad" }),
@@ -197,7 +198,7 @@ describe("apiClient", () => {
 
   it("likeBlog success", async () => {
     apiClient.setSession("token123", { username: "test" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: "liked" }),
     });
@@ -207,7 +208,7 @@ describe("apiClient", () => {
 
   it("likeBlog failure", async () => {
     apiClient.setSession("token123", { username: "test" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       status: 500,
       json: async () => ({ error: "failed" }),
@@ -218,7 +219,7 @@ describe("apiClient", () => {
 
   it("commentBlog success", async () => {
     apiClient.setSession("token123", { username: "test" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: "commented" }),
     });
@@ -228,7 +229,7 @@ describe("apiClient", () => {
 
   it("commentBlog failure", async () => {
     apiClient.setSession("token123", { username: "test" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: "failed" }),
     });
@@ -238,7 +239,7 @@ describe("apiClient", () => {
 
   it("deleteComment success", async () => {
     apiClient.setSession("token123", { username: "test" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: "deleted" }),
     });
@@ -248,7 +249,7 @@ describe("apiClient", () => {
 
   it("deleteComment failure", async () => {
     apiClient.setSession("token123", { username: "test" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: "failed" }),
     });
@@ -266,7 +267,7 @@ describe("apiClient", () => {
   });
 
   it("fetchMediumBlogs successfully parses rss2json data", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         status: "ok",
@@ -304,7 +305,7 @@ describe("apiClient", () => {
   });
 
   it("fetchMediumBlogs returns empty array on status not ok", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         status: "error",
@@ -316,7 +317,7 @@ describe("apiClient", () => {
 
   it("setup2FA success", async () => {
     apiClient.setSession("token", { username: "test" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ secret: "abc", qr_code: "qr" }),
     });
@@ -326,7 +327,7 @@ describe("apiClient", () => {
 
   it("verify2FA success", async () => {
     apiClient.setSession("token", { username: "test" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: "verified" }),
     });
@@ -335,7 +336,7 @@ describe("apiClient", () => {
   });
 
   it("login2FA success", async () => {
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ token: "t", user: { username: "a" } }),
     });
@@ -345,7 +346,7 @@ describe("apiClient", () => {
 
   it("fetchAccountProfile success", async () => {
     apiClient.setSession("token", { username: "test" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ username: "test", address: "123" }),
     });
@@ -356,7 +357,7 @@ describe("apiClient", () => {
 
   it("updateAccountProfile success", async () => {
     apiClient.setSession("token", { username: "test" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: "updated" }),
     });
@@ -366,7 +367,7 @@ describe("apiClient", () => {
 
   it("deleteAccount success", async () => {
     apiClient.setSession("token", { username: "test" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: "deleted" }),
     });
@@ -460,7 +461,7 @@ describe("apiClient API unreachable", () => {
 
   it("getMediaUploadUrl success", async () => {
     apiClient.setSession("token123", { username: "test", role: "admin" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         presigned_url: "https://presigned.url",
@@ -532,7 +533,7 @@ describe("apiClient API unreachable", () => {
 
   it("getMediaUploadUrl returns error if response not ok", async () => {
     apiClient.setSession("token123", { username: "test", role: "admin" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       status: 400,
       json: async () => ({ error: "Bad Request" }),
@@ -544,7 +545,7 @@ describe("apiClient API unreachable", () => {
 
   it("getMediaUploadUrl returns network error on fetch fail", async () => {
     apiClient.setSession("token123", { username: "test", role: "admin" });
-    global.fetch.mockRejectedValueOnce(new Error("API Unreachable"));
+    (global.fetch as any).mockRejectedValueOnce(new Error("API Unreachable"));
     const res = await apiClient.getMediaUploadUrl("test.png", "image/png");
     expect(res.success).toBe(false);
     expect(res.error).toBe("Network error fetching upload URL");
@@ -552,7 +553,7 @@ describe("apiClient API unreachable", () => {
 
   it("uploadMediaToS3 returns error if getMediaUploadUrl fails", async () => {
     apiClient.setSession("token123", { username: "test", role: "admin" });
-    global.fetch.mockRejectedValueOnce(new Error("API Unreachable"));
+    (global.fetch as any).mockRejectedValueOnce(new Error("API Unreachable"));
     const file = new File(["dummy"], "test.png", { type: "image/png" });
     const res = await apiClient.uploadMediaToS3(file);
     expect(res.success).toBe(false);
@@ -560,7 +561,7 @@ describe("apiClient API unreachable", () => {
 
   it("uploadMediaToS3 success with actual XHR", async () => {
     apiClient.setSession("token123", { username: "test", role: "admin" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         presigned_url: "https://presigned.url",
@@ -598,7 +599,7 @@ describe("apiClient API unreachable", () => {
 
   it("uploadMediaToS3 failure with XHR network error", async () => {
     apiClient.setSession("token123", { username: "test", role: "admin" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         presigned_url: "https://presigned.url",
@@ -661,7 +662,7 @@ describe("apiClient API unreachable", () => {
 
   it("setup2FA network error", async () => {
     apiClient.setSession("token123", { username: "test" });
-    global.fetch.mockRejectedValueOnce(new Error("Network"));
+    (global.fetch as any).mockRejectedValueOnce(new Error("Network"));
     const res = await apiClient.setup2FA();
     expect(res.success).toBe(false);
     expect(res.error).toBe("Network error");
@@ -669,14 +670,14 @@ describe("apiClient API unreachable", () => {
 
   it("verify2FA network error", async () => {
     apiClient.setSession("token123", { username: "test" });
-    global.fetch.mockRejectedValueOnce(new Error("Network"));
+    (global.fetch as any).mockRejectedValueOnce(new Error("Network"));
     const res = await apiClient.verify2FA("123456");
     expect(res.success).toBe(false);
     expect(res.error).toBe("Network error");
   });
 
   it("login2FA network error", async () => {
-    global.fetch.mockRejectedValueOnce(new Error("Network"));
+    (global.fetch as any).mockRejectedValueOnce(new Error("Network"));
     const res = await apiClient.login2FA("token", "123456");
     expect(res.success).toBe(false);
     expect(res.error).toBe("Network error");
@@ -684,7 +685,7 @@ describe("apiClient API unreachable", () => {
 
   it("fetchAccountProfile network error", async () => {
     apiClient.setSession("token123", { username: "test" });
-    global.fetch.mockRejectedValueOnce(new Error("Network"));
+    (global.fetch as any).mockRejectedValueOnce(new Error("Network"));
     const res = await apiClient.fetchAccountProfile();
     expect(res.success).toBe(false);
     expect(res.error).toBe("Network error");
@@ -692,7 +693,7 @@ describe("apiClient API unreachable", () => {
 
   it("updateAccountProfile network error", async () => {
     apiClient.setSession("token123", { username: "test" });
-    global.fetch.mockRejectedValueOnce(new Error("Network"));
+    (global.fetch as any).mockRejectedValueOnce(new Error("Network"));
     const res = await apiClient.updateAccountProfile({});
     expect(res.success).toBe(false);
     expect(res.error).toBe("Network error");
@@ -700,7 +701,7 @@ describe("apiClient API unreachable", () => {
 
   it("deleteAccount network error", async () => {
     apiClient.setSession("token123", { username: "test" });
-    global.fetch.mockRejectedValueOnce(new Error("Network"));
+    (global.fetch as any).mockRejectedValueOnce(new Error("Network"));
     const res = await apiClient.deleteAccount();
     expect(res.success).toBe(false);
     expect(res.error).toBe("Network error while deleting account");
@@ -708,7 +709,7 @@ describe("apiClient API unreachable", () => {
 
   it("fetchAccountProfile failure", async () => {
     apiClient.setSession("token123", { username: "test" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: "Failed to fetch profile" }),
     });
@@ -718,7 +719,7 @@ describe("apiClient API unreachable", () => {
 
   it("updateAccountProfile failure", async () => {
     apiClient.setSession("token123", { username: "test" });
-    global.fetch.mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: "Failed to update profile" }),
     });

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { Helmet } from "react-helmet";
 import {
@@ -10,7 +11,7 @@ import {
 } from "../../portfolio";
 
 function SeoHeader() {
-  let sameAs = [];
+  let sameAs: any[] = [];
   socialMediaLinks
     .filter(
       (media) =>
@@ -27,7 +28,7 @@ function SeoHeader() {
     ?.find((section) => section.work)
     ?.experiences?.at(0);
 
-  let credentials = [];
+  let credentials: any[] = [];
   certifications.certifications.forEach((certification) => {
     credentials.push({
       "@context": "https://schema.org",

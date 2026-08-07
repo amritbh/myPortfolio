@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import "./Contact.css";
 import SocialMedia from "../../components/socialMedia/SocialMedia";

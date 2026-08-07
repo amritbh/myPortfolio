@@ -52,7 +52,7 @@ const Contact = (props: any) => {
             </div>
           </Fade>
         </div>
-        <Footer theme={props.theme} onToggle={props.onToggle} />
+        <Footer theme={theme} />
         <TopButton theme={props.theme} />
       </div>
     );

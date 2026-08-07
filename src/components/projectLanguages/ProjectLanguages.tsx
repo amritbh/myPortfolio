@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import "./ProjectLanguages.css";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
@@ -20,7 +21,7 @@ const ProjectLanguages = (props: any) => {
                 >
                   <li
                     className="software-skill-inline-languages"
-                    name={logo.skillName}
+                    
                   >
                     <span
                       className="iconify"

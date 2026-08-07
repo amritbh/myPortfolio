@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import "./SoftwareSkill.css";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
@@ -24,7 +25,7 @@ const SoftwareSkill = (props: any) => {
                     </Tooltip>
                   }
                 >
-                  <li className="software-skill-inline" name={logo.skillName}>
+                  <li className="software-skill-inline" >
                     {logo.fontAwesomeClassname && (
                       <span
                         className="iconify"

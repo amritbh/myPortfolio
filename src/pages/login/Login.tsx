@@ -215,9 +215,9 @@ const Login: React.FC = () => {
         setPassword("");
         setConfirmPassword("");
       } else {
-        if (response.requires_2fa) {
+        if ((response as any).requires_2fa) {
           setAuthMode("login2FA");
-          setTempToken(response.temp_token || "");
+          setTempToken((response as any).temp_token || "");
           setIsSubmitting(false);
           setStatusMessage("2-Step Verification required");
           return;

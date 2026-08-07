@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState } from "react";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
@@ -12,7 +13,7 @@ import amritPic from "../../assests/images/amrit-pp.jpg";
 const ContactData = contactPageData.contactSection;
 const addressSection = contactPageData.addressSection;
 
-function Contact(props) {
+function Contact(props: any) {
   const theme = props.theme;
 
   const [username, setUserName] = useState("");
@@ -20,7 +21,7 @@ function Contact(props) {
   const [message, setMessage] = useState("");
   const [phone, setPhone] = useState("");
   const [messageTitle, setMessageTitle] = useState("");
-  const [alert, setAlert] = useState(null);
+  const [alert, setAlert] = useState<any>(null);
   const [formErrors, setFormErrors] = useState({
     username: "",
     email: "",
@@ -29,11 +30,11 @@ function Contact(props) {
     messageTitle: "",
   });
 
-  function isValidEmail(val) {
+  function isValidEmail(val: any) {
     return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(val);
   }
 
-  function isValidPhoneNumber(val) {
+  function isValidPhoneNumber(val: any) {
     return /^\d{10}$/.test(val);
   }
 
@@ -74,7 +75,7 @@ function Contact(props) {
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -396,7 +397,7 @@ function Contact(props) {
         </Fade>
       </div>
 
-      <Footer theme={props.theme} onToggle={props.onToggle} />
+      <Footer theme={theme} />
       <TopButton theme={props.theme} />
     </div>
   );

@@ -62,7 +62,7 @@ const Projects = (props: any) => {
         <UpcomingProjectsSection theme={theme} />
         <AiOpenSourceSection theme={theme} />
 
-        <Footer theme={props.theme} onToggle={props.onToggle} />
+        <Footer theme={theme} />
         <TopButton theme={props.theme} />
       </div>
     );

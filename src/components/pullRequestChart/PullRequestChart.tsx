@@ -28,8 +28,7 @@ const PullRequestChart = (props: any) => {
         <Doughnut
           data={data}
           options={{
-            padding: "0",
-            margin: "0",
+            
             responsive: true,
             maintainAspectRatio: true,
             animation: {

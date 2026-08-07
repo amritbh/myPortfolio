@@ -39,7 +39,6 @@ const PullRequestCard = (props: any) => {
         <OverlayTrigger
           key={name}
           placement={"top"}
-          style={{ marginBottom: "5px" }}
           overlay={
             <Tooltip id={`tooltip-top`}>
               <strong>{`Merged by ${name}`}</strong>

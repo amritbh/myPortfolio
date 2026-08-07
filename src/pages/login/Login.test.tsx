@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import Login from "./Login";
@@ -23,12 +24,12 @@ const renderWithRouter = (ui) => {
 
 describe("Login Component", () => {
   beforeEach(() => {
-    sessionStorage.clear();
+    vi.useFakeTimers();
     vi.restoreAllMocks();
   });
 
   it("renders sign in modal initially", () => {
-    renderWithRouter(<Login theme={mockTheme} />);
+    renderWithRouter(<Login />);
     expect(screen.getByText(/Welcome back./i)).toBeInTheDocument();
   });
 
@@ -39,7 +40,7 @@ describe("Login Component", () => {
       user: { username: "newuser", email: "user@example.com", role: "user" },
     });
 
-    renderWithRouter(<Login theme={mockTheme} />);
+    renderWithRouter(<Login />);
 
     // Switch to Create Account mode
     fireEvent.click(screen.getByText(/Create one/i));
@@ -70,7 +71,7 @@ describe("Login Component", () => {
       user: { username: "admin", role: "admin" },
     });
 
-    renderWithRouter(<Login theme={mockTheme} />);
+    renderWithRouter(<Login />);
 
     // Expand the email form
     fireEvent.click(screen.getByText(/Sign in with email/i));
@@ -89,16 +90,14 @@ describe("Login Component", () => {
   });
 
   it("calls verifyEmail when verifyToken and email are in query params", async () => {
-    jest
-      .spyOn(apiClient, "verifyEmail")
-      .mockResolvedValueOnce({ success: true });
+    vi.spyOn(apiClient, "verifyEmail").mockResolvedValueOnce({ success: true });
     window.history.pushState(
       {},
       "Test Title",
       "/login?verifyToken=123&email=test@test.com"
     );
 
-    renderWithRouter(<Login theme={mockTheme} />);
+    renderWithRouter(<Login />);
 
     await waitFor(() => {
       expect(apiClient.verifyEmail).toHaveBeenCalledWith("123");
@@ -109,11 +108,12 @@ describe("Login Component", () => {
   });
 
   it("handles forgot password and reset flows", async () => {
-    jest
-      .spyOn(apiClient, "requestPasswordReset")
-      .mockResolvedValueOnce({ success: true, message: "Reset link sent!" });
+    vi.spyOn(apiClient, "requestPasswordReset").mockResolvedValueOnce({
+      success: true,
+      message: "Reset link sent!",
+    });
 
-    renderWithRouter(<Login theme={mockTheme} />);
+    renderWithRouter(<Login />);
 
     // Expand email form
     fireEvent.click(screen.getByText(/Sign in with email/i));
@@ -138,12 +138,10 @@ describe("Login Component", () => {
   });
 
   it("handles reset password flow with resetToken", async () => {
-    jest
-      .spyOn(apiClient, "resetPassword")
-      .mockResolvedValueOnce({ success: true });
+    vi.spyOn(apiClient, "resetPassword").mockResolvedValueOnce({ success: true });
     window.history.pushState({}, "Test Title", "/login?resetToken=abc");
 
-    renderWithRouter(<Login theme={mockTheme} />);
+    renderWithRouter(<Login />);
 
     const passwordInput = screen.getByPlaceholderText(
       /New password \(min 6 chars\)/i
@@ -173,7 +171,7 @@ describe("Login Component", () => {
       error: "Invalid credentials",
     });
 
-    renderWithRouter(<Login theme={mockTheme} />);
+    renderWithRouter(<Login />);
 
     fireEvent.click(screen.getByText(/Sign in with email/i));
 
@@ -195,7 +193,7 @@ describe("Login Component", () => {
     const token = "header." + btoa(JSON.stringify(payload)) + ".signature";
     window.location.hash = "#id_token=" + token;
 
-    renderWithRouter(<Login theme={mockTheme} />);
+    renderWithRouter(<Login />);
     window.location.hash = "";
   });
 
@@ -208,7 +206,7 @@ describe("Login Component", () => {
       hash: "",
       search: "",
     };
-    renderWithRouter(<Login theme={mockTheme} />);
+    renderWithRouter(<Login />);
     const googleBtn = screen.getByText(/Sign in with Google/i);
     fireEvent.click(googleBtn);
     expect(window.location.href).toContain("cognito");

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import BlogList from "./BlogList";

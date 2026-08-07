@@ -46,7 +46,7 @@ const Education = (props: any) => {
             <Certifications theme={props.theme} />
           ) : null}
         </div>
-        <Footer theme={props.theme} />
+        <Footer theme={theme} />
         <TopButton theme={props.theme} />
       </div>
     );

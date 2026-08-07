@@ -34,7 +34,7 @@ const Error = (props: any) => {
             </Link>
           </Fade>
         </div>
-        <Footer theme={props.theme} />
+        <Footer theme={theme} />
         <TopButton theme={props.theme} />
       </div>
     );

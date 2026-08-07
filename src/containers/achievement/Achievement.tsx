@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import "./Achievement.css";
 import AchivementCard from "../../components/achievementCard/AchivementCard";

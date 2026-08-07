@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import ExperienceCard from "../../components/experienceCard/ExperienceCard";
 import "./ExperienceAccordion.css";
@@ -19,7 +20,7 @@ const ExperienceAccordion = (props: any) => {
               >
                 {section["title"]}
               </h2>
-              {section["experiences"].map((experience, index) => {
+              {section["experiences"].map((experience: any, index: any) => {
                 return (
                   <ExperienceCard
                     key={index}

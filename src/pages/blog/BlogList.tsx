@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from "react";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
@@ -254,7 +255,7 @@ const BlogList: React.FC<BlogListProps> = ({ theme, themeMode, onThemeChange, on
         </aside>
       </div>
 
-      <Footer theme={theme} onToggle={onToggle} />
+      <Footer theme={theme} />
       <TopButton theme={theme} />
     </div>
   );

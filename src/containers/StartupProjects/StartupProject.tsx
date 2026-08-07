@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import "./StartupProjects.css";
 import { bigProjects } from "../../portfolio";

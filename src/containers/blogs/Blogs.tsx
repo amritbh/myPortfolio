@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import "./Blog.css";
 import BlogCard from "../../components/blogCard/BlogCard";

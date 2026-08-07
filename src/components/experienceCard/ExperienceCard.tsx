@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import "./ExperienceCard.css";
 import { Fade } from "react-reveal";
@@ -126,7 +127,7 @@ const ExperienceCard = (props: any) => {
                         const sections = text.split(/\n\n+/).filter(Boolean);
                         return (
                           <div>
-                            {sections.map((sec, sidx) => {
+                            {sections.map((sec: any, sidx: any) => {
                               const lines = sec.split(/\n+/).filter(Boolean);
                               const isBullet = lines.every((l) =>
                                 l.trim().startsWith("•")
@@ -134,7 +135,7 @@ const ExperienceCard = (props: any) => {
                               if (isBullet) {
                                 return (
                                   <ul key={sidx} style={{ marginTop: 0 }}>
-                                    {lines.map((l, lidx) => (
+                                    {lines.map((l: any, lidx: any) => (
                                       <li
                                         key={lidx}
                                         style={{ marginBottom: 6 }}

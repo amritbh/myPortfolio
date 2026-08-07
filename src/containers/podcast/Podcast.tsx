@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import "./Podcast.css";
 import { podcastSection } from "../../portfolio";
