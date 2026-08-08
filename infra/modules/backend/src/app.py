@@ -21,10 +21,11 @@ except ImportError as e:
 COGNITO_USER_POOL_ID = os.environ.get('COGNITO_USER_POOL_ID')
 COGNITO_REGION = os.environ.get('COGNITO_REGION')
 
-sqs = boto3.client('sqs', region_name=os.environ.get('AWS_REGION', 'us-east-1'))
+config = Config(connect_timeout=5, read_timeout=5)
+sqs = boto3.client('sqs', region_name=os.environ.get('AWS_REGION', 'us-east-1'), config=config)
 BROADCAST_QUEUE_URL = os.environ.get('BROADCAST_QUEUE_URL')
 
-dynamodb = boto3.resource('dynamodb')
+dynamodb = boto3.resource('dynamodb', region_name=os.environ.get('AWS_REGION', 'us-east-1'), config=config)
 table_name = os.environ.get('TABLE_NAME', 'amrit-cloud-prod-blogs')
 table = dynamodb.Table(table_name)
 users_table_name = os.environ.get('USERS_TABLE_NAME', 'amrit-cloud-prod-users')

@@ -14,7 +14,7 @@ def mock_ses():
     with patch('broadcast_handler.ses') as mock:
         yield mock
 
-def test_broadcast_handler_success(mock_dynamo, mock_ses):
+def test_broadcast_handler_success(mock_dynamo, mock_ses, monkeypatch):
     # Setup mock dynamo table scan
     mock_table = MagicMock()
     mock_table.scan.return_value = {
@@ -36,7 +36,7 @@ def test_broadcast_handler_success(mock_dynamo, mock_ses):
         ]
     }
     
-    broadcast_handler.subscribers_table_name = "test-table"
+    monkeypatch.setattr(broadcast_handler, 'subscribers_table_name', 'test-table')
     
     res = broadcast_handler.lambda_handler(event, None)
     
@@ -55,12 +55,12 @@ def test_broadcast_handler_success(mock_dynamo, mock_ses):
     assert call_args['Message']['Subject']['Data'] == 'New Blog Published: My Awesome Blog'
     assert 'https://amrit.cloud/blogs/my-awesome-blog' in call_args['Message']['Body']['Text']['Data']
 
-def test_broadcast_handler_missing_table():
-    broadcast_handler.subscribers_table_name = None
+def test_broadcast_handler_missing_table(monkeypatch):
+    monkeypatch.setattr(broadcast_handler, 'subscribers_table_name', None)
     res = broadcast_handler.lambda_handler({}, None)
     assert res is None
 
-def test_broadcast_handler_missing_body_fields(mock_dynamo, mock_ses):
+def test_broadcast_handler_missing_body_fields(mock_dynamo, mock_ses, monkeypatch):
     event = {
         'Records': [
             {
@@ -71,7 +71,7 @@ def test_broadcast_handler_missing_body_fields(mock_dynamo, mock_ses):
             }
         ]
     }
-    broadcast_handler.subscribers_table_name = "test-table"
+    monkeypatch.setattr(broadcast_handler, 'subscribers_table_name', 'test-table')
     
     res = broadcast_handler.lambda_handler(event, None)
     
