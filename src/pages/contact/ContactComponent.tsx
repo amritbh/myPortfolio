@@ -96,8 +96,7 @@ function Contact(props: any) {
     };
 
     const baseApiUrl =
-      process.env.REACT_APP_CUSTOM_API_URL ||
-      process.env.REACT_APP_API_URL ||
+      import.meta.env.VITE_CUSTOM_API_URL ||
       "";
     const apiUrl = `${baseApiUrl}/portfolio`;
 

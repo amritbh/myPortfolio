@@ -2,7 +2,7 @@
 let apiClient: typeof import('./apiClient');
 
 beforeAll(async () => {
-  process.env.REACT_APP_CUSTOM_API_URL = "https://test.com";
+  vi.stubEnv("VITE_CUSTOM_API_URL", "https://test.com");
   apiClient = await import("./apiClient");
 });
 
@@ -106,8 +106,7 @@ describe("apiClient", () => {
       ok: true,
       json: async () => [{ slug: "test" }],
     });
-    // Need to set REACT_APP_CUSTOM_API_URL or it will return mock
-    process.env.REACT_APP_CUSTOM_API_URL = "https://localhost";
+    // Need to set VITE_CUSTOM_API_URL or it will return mock (already set in beforeAll)
     const res = await apiClient.fetchBlogs();
     expect(res).toBeTruthy();
   });
@@ -498,8 +497,7 @@ describe("apiClient API unreachable", () => {
 
   it("getMediaUploadUrl returns mock when API_URL is null", async () => {
     // temporarily unset API_URL
-    const originalApi = process.env.REACT_APP_CUSTOM_API_URL;
-    delete process.env.REACT_APP_CUSTOM_API_URL;
+    vi.unstubAllEnvs();
 
     // We need to re-require the module to apply the null API_URL
     vi.resetModules();
@@ -511,12 +509,11 @@ describe("apiClient API unreachable", () => {
     expect(res.cloudfront_url).toContain("mock");
 
     // restore
-    process.env.REACT_APP_CUSTOM_API_URL = originalApi;
+    vi.stubEnv("VITE_CUSTOM_API_URL", "https://test.com");
   });
 
   it("uploadMediaToS3 mock mode", async () => {
-    const originalApi = process.env.REACT_APP_CUSTOM_API_URL;
-    delete process.env.REACT_APP_CUSTOM_API_URL;
+    vi.unstubAllEnvs();
     vi.resetModules();
     const newApiClient = await import("./apiClient");
 
@@ -528,7 +525,7 @@ describe("apiClient API unreachable", () => {
     expect(progressSpy).toHaveBeenCalledWith(100);
     expect(res.url).toContain("mock");
 
-    process.env.REACT_APP_CUSTOM_API_URL = originalApi;
+    vi.stubEnv("VITE_CUSTOM_API_URL", "https://test.com");
   });
 
   it("getMediaUploadUrl returns error if response not ok", async () => {
