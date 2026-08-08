@@ -616,19 +616,6 @@ def create_blog(event):
             return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing slug or title'})}
             
         table.put_item(Item=body)
-        
-        # Send a message to SQS for broadcasting
-        if BROADCAST_QUEUE_URL:
-            try:
-                sqs.send_message(
-                    QueueUrl=BROADCAST_QUEUE_URL,
-                    MessageBody=json.dumps({
-                        'slug': body.get('slug'),
-                        'title': body.get('title')
-                    })
-                )
-            except Exception as e:
-                print(f"Failed to send SQS message for broadcasting: {e}")
                 
         return {'statusCode': 201, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Blog created successfully!', 'item': body})}
     except Exception as e:
