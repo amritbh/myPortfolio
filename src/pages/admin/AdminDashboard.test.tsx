@@ -5,7 +5,7 @@ import {
   screen,
   fireEvent,
   waitFor,
-  act,
+  waitFor,
 } from "@testing-library/react";
 import AdminDashboard from "./AdminDashboard";
 import { MemoryRouter, Route } from "react-router-dom";

@@ -32,23 +32,7 @@ export default function TopButton({ theme }: Readonly<TopButtonProps>) {
     scrollFunction();
   };
 
-  const onMouseEnter = (color: string, bgColor: string) => {
-    /* For the button */
-    const topButton = document.getElementById("topButton");
-    if (topButton) {
-      topButton.style.color = color;
-      topButton.style.backgroundColor = bgColor;
-    }
-
-    /* For arrow icon */
-    const arrow = document.getElementById("arrow");
-    if (arrow) {
-      arrow.style.color = color;
-      arrow.style.backgroundColor = bgColor;
-    }
-  };
-
-  const onMouseLeave = (color: string, bgColor: string) => {
+  const changeIconStyle = (color: string, bgColor: string) => {
     /* For the button */
     const topButton = document.getElementById("topButton");
     if (topButton) {
@@ -75,8 +59,8 @@ export default function TopButton({ theme }: Readonly<TopButtonProps>) {
         border: `solid 1px ${theme.text}`,
       }}
       title="Go up"
-      onMouseEnter={() => onMouseEnter(theme.text, theme.body)}
-      onMouseLeave={() => onMouseLeave(theme.body, theme.text)}
+      onMouseEnter={() => changeIconStyle(theme.text, theme.body)}
+      onMouseLeave={() => changeIconStyle(theme.body, theme.text)}
     >
       <i className="fas fa-arrow-up" id="arrow" aria-hidden="true" />
     </button>

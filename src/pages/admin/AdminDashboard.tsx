@@ -603,6 +603,184 @@ const AdminDashboard: React.FC = () => {
     setStatusMessage("");
   };
 
+  const renderStoriesView = () => (
+    <div className="ag-stories-full-view">
+      <div className="ag-stories-grid">
+        {blogs.length === 0 ? (
+          <div className="ag-empty-state">
+            <h3>No stories yet</h3>
+            <p>Start writing your first blog post!</p>
+            <button type="button" onClick={() => setActiveTab("editor")}>
+              Write a Story
+            </button>
+          </div>
+        ) : (
+          blogs.map((blog) => (
+            <StoryCard
+              key={blog.slug}
+              blog={blog}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))
+        )}
+      </div>
+    </div>
+  );
+
+  const renderEditorView = () => (
+    <div className="ag-editor-grid">
+      <div className="ag-editor-pane">
+        {!previewMode && (
+          <FormatToolbar
+            onFormat={applyFormat}
+            onInsertMedia={handleInsertMedia}
+          />
+        )}
+
+        {previewMode ? (
+          <div
+            className="ag-preview-body markdown-body"
+            dangerouslySetInnerHTML={{ __html: htmlPreview }}
+          />
+        ) : (
+          <>
+            <textarea
+              className="ag-title-input"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              placeholder="Your story title…"
+              rows={1}
+              onInput={(e: any) => {
+                e.target.style.height = "auto";
+                e.target.style.height = e.target.scrollHeight + "px";
+              }}
+            />
+            <textarea
+              className="ag-subtitle-input"
+              name="summary"
+              value={formData.summary}
+              onChange={handleInputChange}
+              placeholder="Write a compelling summary…"
+              rows={2}
+              onInput={(e: any) => {
+                e.target.style.height = "auto";
+                e.target.style.height = e.target.scrollHeight + "px";
+              }}
+            />
+            <textarea
+              ref={textareaRef}
+              className="ag-content-input"
+              name="content"
+              value={formData.content}
+              onChange={handleInputChange}
+              placeholder="Write your story… Markdown is supported"
+              onInput={(e: any) => {
+                e.target.style.height = "auto";
+                e.target.style.height = e.target.scrollHeight + "px";
+              }}
+            />
+          </>
+        )}
+      </div>
+
+      <aside className="ag-sidebar">
+        <div className="ag-sidebar-inner">
+          <section className="ag-sidebar-section">
+            <div className="ag-sidebar-section-header">
+              <span className="ag-sidebar-section-icon">🖼</span>
+              <span className="ag-sidebar-section-label">Cover Media</span>
+            </div>
+            <div className="ag-cover-uploader-wrapper">
+              <CoverMediaUploader
+                value={formData.coverImage}
+                onChange={(url: string) =>
+                  setFormData((prev) => ({ ...prev, coverImage: url }))
+                }
+                blogSlug={formData.slug || "drafts"}
+              />
+            </div>
+          </section>
+
+          <section className="ag-sidebar-section">
+            <div className="ag-sidebar-section-header">
+              <span
+                className="ag-sidebar-section-icon"
+                role="img"
+                aria-label="URL"
+              >
+                🔗
+              </span>
+              <span className="ag-sidebar-section-label">URL Slug</span>
+            </div>
+            <div className="ag-slug-preview">
+              <span className="ag-slug-base">amrit.cloud/blogs/</span>
+              <input
+                type="text"
+                name="slug"
+                className="ag-sidebar-input"
+                value={formData.slug}
+                onChange={handleInputChange}
+                placeholder="my-post-slug"
+                required
+              />
+            </div>
+          </section>
+
+          <section className="ag-sidebar-section">
+            <div className="ag-sidebar-section-header">
+              <span className="ag-sidebar-section-icon">🏷</span>
+              <span className="ag-sidebar-section-label">
+                Topics
+                <span className="ag-sidebar-section-count">
+                  {` ${formData.tags.split(",").filter((t) => t.trim()).length}/5`}
+                </span>
+              </span>
+            </div>
+            <TagInput
+              tags={formData.tags}
+              onChange={(val: string) =>
+                setFormData((prev) => ({ ...prev, tags: val }))
+              }
+            />
+          </section>
+
+          <section className="ag-sidebar-section">
+            <div className="ag-sidebar-section-header">
+              <span className="ag-sidebar-section-icon">⏱</span>
+              <span className="ag-sidebar-section-label">Read Time</span>
+            </div>
+            <input
+              type="text"
+              name="readTime"
+              className="ag-sidebar-input"
+              value={formData.readTime}
+              onChange={handleInputChange}
+              placeholder={estimateReadTime(formData.content)}
+            />
+            <div className="ag-sidebar-hint">
+              Auto-calculated from word count
+            </div>
+          </section>
+
+          <button
+            type="button"
+            className={`ag-publish-btn${canPublish ? "" : " disabled"}`}
+            disabled={!canPublish}
+            onClick={handlePublish}
+          >
+            {(() => {
+              if (isPublishing) return "Publishing…";
+              if (editingSlug) return "✓ Update Story";
+              return "🚀 Publish Now";
+            })()}
+          </button>
+        </div>
+      </aside>
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="ag-root">

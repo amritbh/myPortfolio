@@ -51,8 +51,7 @@ const BlogList: React.FC<BlogListProps> = ({ theme, themeMode, onThemeChange, on
     if (activeTopic === "All") return blogs;
     return blogs.filter(
       (b) =>
-        b.tags &&
-        b.tags.some((t: string) => t.toLowerCase() === activeTopic.toLowerCase())
+        b.tags?.some((t: string) => t.toLowerCase() === activeTopic.toLowerCase())
     );
   };
 

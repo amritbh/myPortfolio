@@ -39,7 +39,7 @@ describe("App Theme Management", () => {
   });
 
   it("handles system preference change event when mode is system", () => {
-    const { getByRole } = render(<App />);
+    render(<App />);
 
     // Default mode is system. When system preference changes to dark, App should update theme.
     act(() => {
