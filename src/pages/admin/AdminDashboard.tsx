@@ -734,7 +734,7 @@ const AdminDashboard: React.FC = () => {
               <span className="ag-sidebar-section-label">
                 Topics
                 <span className="ag-sidebar-section-count">
-                  {` ${formData.tags.split(",").filter((t) => t.trim()).length}/5`}
+                  ({formData.tags.split(",").filter((t) => t.trim()).length}/5)
                 </span>
               </span>
             </div>

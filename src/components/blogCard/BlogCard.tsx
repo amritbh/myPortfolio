@@ -119,7 +119,7 @@ export default function BlogCard({ blog, theme }: Readonly<BlogCardProps>) {
           <div className="medium-story-tags">
             {displayTags.slice(0, 2).map((tag, i) => (
               <span
-                key={i}
+                key={tag}
                 className="medium-story-tag"
                 style={{
                   backgroundColor: theme.compImgHighlight,

@@ -33,6 +33,7 @@ export default function Button({ text, className, href, newTab, theme }: ButtonP
         }}
         onMouseEnter={(event) => changeButtonStyle(event, theme.text, theme.body)}
         onMouseOut={(event) => changeButtonStyle(event, theme.body, theme.text)}
+        onBlur={(event) => changeButtonStyle(event, theme.body, theme.text)}
       >
         {text}
       </a>

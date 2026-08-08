@@ -19,9 +19,10 @@ vi.mock('../../portfolio', async (importOriginal) => {
 });
 
 test('renders Talks without crashing', () => {
-  render(
+  const { container } = render(
     <BrowserRouter>
       <Talks theme={{ text: 'black', body: 'white', compImgHighlight: 'white', highlight: 'white', secondaryText: 'gray', imageHighlight: 'white' }} />
     </BrowserRouter>
   );
+  expect(container).toBeTruthy();
 });

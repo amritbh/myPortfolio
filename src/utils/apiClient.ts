@@ -427,7 +427,7 @@ export const fetchMediumBlogs = async () => {
           const doc = new DOMParser().parseFromString(item.description, "text/html");
           textContent = doc.body.textContent || "";
         } else {
-          textContent = item.description.replace(/<[^>]+>/g, " ");
+          textContent = item.description.split("<").map(part => part.includes(">") ? part.split(">")[1] : part).join(" ");
         }
         
         const summary = textContent

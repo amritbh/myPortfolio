@@ -84,7 +84,7 @@ describe("BlogCard Component", () => {
     expect(anchor).toHaveAttribute("target", "_blank");
   });
 
-  it("renders external blog correctly", () => {
+  it("renders external blog without tags correctly", () => {
     const blog = {
       slug: "external-blog",
       title: "External Blog",

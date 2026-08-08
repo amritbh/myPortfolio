@@ -19,9 +19,10 @@ vi.mock('../../portfolio', async (importOriginal) => {
 });
 
 test('renders Achievement without crashing', () => {
-  render(
+  const { container } = render(
     <BrowserRouter>
       <Achievement theme={{ text: 'black', body: 'white', compImgHighlight: 'white', highlight: 'white', secondaryText: 'gray', imageHighlight: 'white' }} />
     </BrowserRouter>
   );
+  expect(container).toBeTruthy();
 });
