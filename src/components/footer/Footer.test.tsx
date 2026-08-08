@@ -3,6 +3,8 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import Footer from "./Footer";
+import * as apiClient from "../../utils/apiClient";
+import { vi } from "vitest";
 
 const mockTheme = {
   body: "#ffffff",
@@ -31,20 +33,30 @@ describe("Footer Component", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows confirmation message after submitting with a valid email", () => {
+  it("shows confirmation message after submitting with a valid email", async () => {
+    vi.spyOn(apiClient, "subscribeToNewsletter").mockResolvedValueOnce({ success: true });
     renderWithRouter(<Footer theme={mockTheme} />);
     const input = screen.getByLabelText("Email address");
     fireEvent.change(input, { target: { value: "test@example.com" } });
     fireEvent.click(screen.getByRole("button", { name: /Subscribe/i }));
-    expect(screen.getByText(/Thanks! You'll be notified/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Thanks! You'll be notified/i)).toBeInTheDocument();
   });
 
-  it("does NOT show confirmation when submitting with an empty email", () => {
+  it("does NOT show confirmation when submitting with an empty email", async () => {
     renderWithRouter(<Footer theme={mockTheme} />);
     fireEvent.click(screen.getByRole("button", { name: /Subscribe/i }));
     expect(
       screen.queryByText(/Thanks! You'll be notified/i)
     ).not.toBeInTheDocument();
+  });
+  
+  it("shows error message if API fails", async () => {
+    vi.spyOn(apiClient, "subscribeToNewsletter").mockResolvedValueOnce({ success: false, error: "Custom mock error" });
+    renderWithRouter(<Footer theme={mockTheme} />);
+    const input = screen.getByLabelText("Email address");
+    fireEvent.change(input, { target: { value: "error@example.com" } });
+    fireEvent.click(screen.getByRole("button", { name: /Subscribe/i }));
+    expect(await screen.findByText(/Custom mock error/i)).toBeInTheDocument();
   });
 
   it("renders all 4 quick links", () => {

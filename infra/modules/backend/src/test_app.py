@@ -1139,3 +1139,60 @@ def test_update_account_profile_missing_fields(setup_dynamodb):
     # users_table.update_item(...)
     # It doesn't error on missing fields, it updates them to whatever they are in the body.
 
+@patch('app.send_email')
+def test_subscribe_success(mock_send_email, setup_dynamodb):
+    import app
+    
+    # Needs a mock subscribers table
+    os.environ['SUBSCRIBERS_TABLE_NAME'] = 'test-subscribers-table'
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    dynamodb.create_table(
+        TableName='test-subscribers-table',
+        KeySchema=[{'AttributeName': 'email', 'KeyType': 'HASH'}],
+        AttributeDefinitions=[{'AttributeName': 'email', 'AttributeType': 'S'}],
+        BillingMode='PAY_PER_REQUEST'
+    )
+    
+    event = {
+        'rawPath': '/subscribe',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({'email': 'test@example.com'})
+    }
+    response = app.lambda_handler(event, None)
+    
+    assert response['statusCode'] == 200
+    assert 'Subscribed successfully' in json.loads(response['body'])['message']
+    
+    mock_send_email.assert_called_once_with(
+        'test@example.com',
+        'Welcome to the amrit.cloud Newsletter!',
+        "Thank you for subscribing to my newsletter. I'm excited to share my latest technical blogs and travel stories with you!\n\nBest,\nAmrit"
+    )
+    
+    # Verify in DB
+    sub_table = dynamodb.Table('test-subscribers-table')
+    item = sub_table.get_item(Key={'email': 'test@example.com'}).get('Item')
+    assert item is not None
+    assert item['email'] == 'test@example.com'
+
+def test_subscribe_missing_email(setup_dynamodb):
+    import app
+    event = {
+        'rawPath': '/subscribe',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 400
+    assert 'Valid email is required' in json.loads(response['body'])['error']
+
+def test_subscribe_invalid_email(setup_dynamodb):
+    import app
+    event = {
+        'rawPath': '/subscribe',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({'email': 'notanemail'})
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 400
+    assert 'Valid email is required' in json.loads(response['body'])['error']

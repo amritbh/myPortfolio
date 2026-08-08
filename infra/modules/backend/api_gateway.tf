@@ -101,6 +101,12 @@ resource "aws_apigatewayv2_route" "post_portfolio" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
+resource "aws_apigatewayv2_route" "post_subscribe" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "POST /subscribe"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
 resource "aws_apigatewayv2_route" "post_media_upload_url" {
   api_id    = aws_apigatewayv2_api.http_api.id
   route_key = "POST /media/upload-url"

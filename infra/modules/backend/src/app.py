@@ -687,6 +687,42 @@ def contact_portfolio(event):
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 
             'body': json.dumps({'error': 'Internal server error'})
         }
+
+def subscribe_handler(event):
+    try:
+        body = json.loads(event.get('body', '{}'))
+        email = body.get('email', '').strip()
+        
+        if not email or '@' not in email:
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Valid email is required'})}
+            
+        subscribers_table_name = os.environ.get('SUBSCRIBERS_TABLE_NAME', 'amrit-cloud-prod-subscribers')
+        sub_table = dynamodb.Table(subscribers_table_name)
+        
+        # Save to DynamoDB
+        sub_table.put_item(Item={
+            'email': email,
+            'subscribed_at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+        })
+        
+        # Send Thank You email
+        subject = "Welcome to the amrit.cloud Newsletter!"
+        email_body = "Thank you for subscribing to my newsletter. I'm excited to share my latest technical blogs and travel stories with you!\n\nBest,\nAmrit"
+        send_email(email, subject, email_body)
+        
+        return {
+            'statusCode': 200, 
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 
+            'body': json.dumps({'message': 'Subscribed successfully!'})
+        }
+    except Exception as e:
+        print(f"Error subscribing: {e}")
+        return {
+            'statusCode': 500, 
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 
+            'body': json.dumps({'error': 'Internal server error'})
+        }
+
 def authenticate(event):
     headers = event.get('headers', {})
     auth_header = headers.get('authorization', headers.get('Authorization', ''))
@@ -920,6 +956,9 @@ def lambda_handler(event, context):
 
     if path == '/media/upload-url' and method == 'POST':
         return get_media_upload_url(event)
+        
+    if path == '/subscribe' and method == 'POST':
+        return subscribe_handler(event)
 
     if path == '/blogs':
         if method == 'POST':
