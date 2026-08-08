@@ -58,13 +58,6 @@ resource "aws_iam_role_policy" "dynamodb_read_policy" {
         ]
         Effect   = "Allow"
         Resource = "${aws_s3_bucket.media_bucket.arn}/media/*"
-      },
-      {
-        Action = [
-          "sqs:SendMessage"
-        ]
-        Effect   = "Allow"
-        Resource = aws_sqs_queue.broadcast_queue.arn
       }
     ]
   })
