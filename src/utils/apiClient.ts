@@ -2,10 +2,7 @@
 // We fetch from the custom API deployed via API Gateway
 import amritPic from "../assests/images/amrit-pp.jpg";
 
-const API_URL =
-  typeof process !== "undefined" && process.env
-    ? process.env.REACT_APP_CUSTOM_API_URL
-    : null;
+const API_URL = import.meta.env.VITE_CUSTOM_API_URL || null;
 
 const TOKEN_KEY = "admin_auth_token";
 const USER_KEY = "admin_user_info";
