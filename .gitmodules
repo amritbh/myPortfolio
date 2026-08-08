@@ -1,3 +1,18 @@
 [submodule ".agents/skills/design-dna"]
 	path = .agents/skills/design-dna
 	url = https://github.com/zanwei/design-dna.git
+[submodule ".agents/skills/genjutsu"]
+	path = .agents/skills/genjutsu
+	url = https://github.com/athevon/genjutsu.git
+[submodule ".agents/skills/gsap-skills"]
+	path = .agents/skills/gsap-skills
+	url = https://github.com/greensock/gsap-skills.git
+[submodule ".agents/skills/motion-design-skill"]
+	path = .agents/skills/motion-design-skill
+	url = https://github.com/lottiefiles/motion-design-skill.git
+[submodule ".agents/skills/threejs-skills"]
+	path = .agents/skills/threejs-skills
+	url = https://github.com/cloudai-x/threejs-skills.git
+[submodule ".agents/skills/ui-ux-pro-max-skill"]
+	path = .agents/skills/ui-ux-pro-max-skill
+	url = https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git
