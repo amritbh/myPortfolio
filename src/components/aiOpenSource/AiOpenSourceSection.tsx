@@ -11,7 +11,7 @@ interface AiOpenSourceSectionProps {
   };
 }
 
-export default function AiOpenSourceSection({ theme }: AiOpenSourceSectionProps) {
+export default function AiOpenSourceSection({ theme }: Readonly<AiOpenSourceSectionProps>) {
   return (
     <div className="ai-trends-main">
       <div className="ai-trends-header-div">

@@ -24,7 +24,7 @@ interface AccountProps {
 }
 
 const Account: React.FC<AccountProps> = ({ theme, themeMode, onThemeChange }) => {
-  const [username, setUsername] = useState("");
+
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
@@ -49,7 +49,6 @@ const Account: React.FC<AccountProps> = ({ theme, themeMode, onThemeChange }) =>
     const result = await fetchAccountProfile();
     const storedUser = getStoredUser() || {};
     if (result.success && result.profile) {
-      setUsername(result.profile.username || "");
       setEmail(result.profile.email || storedUser.email || storedUser.username || "");
       setName(result.profile.name || storedUser.name || "");
       setAddress(result.profile.address || "");

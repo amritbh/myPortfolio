@@ -14,9 +14,10 @@ interface AchievementCardInfo {
 
 interface AchievementCardProps {
   cardInfo: AchievementCardInfo;
+  isDark?: boolean;
 }
 
-export default function AchivementCard({ cardInfo }: AchievementCardProps) {
+export default function AchievementCard({ cardInfo, isDark }: Readonly<AchievementCardProps>) {
 
   return (
     <div className="certificate-card">

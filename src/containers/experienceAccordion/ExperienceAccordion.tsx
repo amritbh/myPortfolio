@@ -23,7 +23,7 @@ const ExperienceAccordion = (props: any) => {
               {section["experiences"].map((experience: any, index: any) => {
                 return (
                   <ExperienceCard
-                    key={index}
+                    key={experience.title || experience.company || index}
                     index={index}
                     totalCards={section["experiences"].length}
                     experience={experience}

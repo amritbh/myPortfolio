@@ -422,12 +422,12 @@ export const fetchMediumBlogs = async () => {
           if (imgMatch) imageUrl = imgMatch[1];
         }
 
-        let textContent = item.description;
+        let textContent = "";
         if (typeof DOMParser !== "undefined") {
           const doc = new DOMParser().parseFromString(item.description, "text/html");
           textContent = doc.body.textContent || "";
         } else {
-          textContent = item.description.replace(/<[^>]*>/g, " ");
+          textContent = item.description.replace(/<[^>]+>/g, " ");
         }
         
         const summary = textContent

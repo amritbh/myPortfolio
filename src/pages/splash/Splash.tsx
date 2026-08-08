@@ -12,7 +12,7 @@ const AnimatedSplash: React.FC<SplashProps> = ({ theme }) => {
   return (
     <div className="logo_wrapper">
       <div className="screen" style={{ backgroundColor: theme.splashBg }}>
-        <LoaderLogo id="logo" theme={theme} />
+        <LoaderLogo id="logo" theme={theme} strokeMiterlimit="10" />
       </div>
     </div>
   );

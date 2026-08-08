@@ -21,7 +21,7 @@ export const MoonSvg = styled.svg`
 
 const ToggleSwitch = (props: any) => {
     const theme = props.theme;
-    const isOn = props.theme === lightTheme ? false : true;
+    const isOn = props.theme !== lightTheme;
     const back = theme.text;
     const butt = theme.body;
     return (
@@ -54,11 +54,7 @@ const ToggleSwitch = (props: any) => {
           id={`react-switch-new`}
           type="checkbox"
         />
-        <label
-          style={{ background: back }}
-          className="react-switch-label"
-          htmlFor={`react-switch-new`}
-        >
+        <label htmlFor={`react-switch-new`} className="toggle-switch-label" aria-label="Toggle theme" style={{ background: back }}>
           <span
             style={{ background: butt }}
             className={`react-switch-button`}

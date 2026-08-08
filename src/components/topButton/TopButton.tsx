@@ -13,21 +13,21 @@ function GoUpEvent() {
   document.documentElement.scrollTop = 0;
 }
 
-export default function TopButton({ theme }: Readonly<TopButtonProps>) {
-  function scrollFunction() {
-    const topButton = document.getElementById("topButton");
-    if (!topButton) return;
-    
-    if (
-      document.body.scrollTop > 30 ||
-      document.documentElement.scrollTop > 30
-    ) {
-      topButton.style.visibility = "visible";
-    } else {
-      topButton.style.visibility = "hidden";
-    }
+function scrollFunction() {
+  const topButton = document.getElementById("topButton");
+  if (!topButton) return;
+  
+  if (
+    document.body.scrollTop > 20 ||
+    document.documentElement.scrollTop > 20
+  ) {
+    topButton.style.visibility = "visible";
+  } else {
+    topButton.style.visibility = "hidden";
   }
+}
 
+export default function TopButton({ theme }: Readonly<TopButtonProps>) {
   window.onscroll = function () {
     scrollFunction();
   };

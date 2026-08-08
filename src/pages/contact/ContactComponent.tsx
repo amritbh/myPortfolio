@@ -13,6 +13,14 @@ import amritPic from "../../assests/images/amrit-pp.jpg";
 const ContactData = contactPageData.contactSection;
 const addressSection = contactPageData.addressSection;
 
+function isValidEmail(val: any) {
+  return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(val);
+}
+
+function isValidPhoneNumber(val: any) {
+  return /^\d{10}$/.test(val);
+}
+
 function Contact(props: any) {
   const theme = props.theme;
 
@@ -29,14 +37,6 @@ function Contact(props: any) {
     message: "",
     messageTitle: "",
   });
-
-  function isValidEmail(val: any) {
-    return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(val);
-  }
-
-  function isValidPhoneNumber(val: any) {
-    return /^\d{10}$/.test(val);
-  }
 
   const validateForm = () => {
     const errors = {

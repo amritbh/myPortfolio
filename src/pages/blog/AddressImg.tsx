@@ -85,7 +85,7 @@ const AddressImg = (props: any) => {
           y2="608.49156"
           fill="none"
           stroke={theme.text}
-          stroke-miterlimit="10"
+          strokeMiterlimit="10"
         />
         <path
           d="M93.27537,630.2124c0,58.96027,36.98858,106.67017,82.69935,106.67017"

@@ -231,6 +231,137 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
     return "U";
   };
 
+  const renderEngagementBar = () => (
+    <div
+      className="medium-engagement-bar"
+      style={{ backgroundColor: theme.body }}
+    >
+      {/* Like */}
+      <div className="medium-engagement-item">
+        <button
+          type="button"
+          className={`medium-engagement-btn ${isLiked ? "liked" : ""}`}
+          onClick={handleLike}
+          disabled={isLiking}
+          title={user ? "Like this story" : "Log in to like"}
+          style={{
+            borderColor: isLiked ? "#e74c3c" : theme.compImgHighlight,
+            color: isLiked ? "#e74c3c" : theme.secondaryText,
+          }}
+        >
+          {isLiked ? (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="#e74c3c"
+            >
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          ) : (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          )}
+        </button>
+        <span
+          className="medium-engagement-count"
+          style={{ color: theme.secondaryText }}
+        >
+          {likes.length}
+        </span>
+      </div>
+
+      {/* Comments */}
+      <div className="medium-engagement-item">
+        <button
+          type="button"
+          className="medium-engagement-btn"
+          onClick={scrollToComments}
+          title="Jump to responses"
+          style={{
+            borderColor: theme.compImgHighlight,
+            color: theme.secondaryText,
+          }}
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+        </button>
+        <span
+          className="medium-engagement-count"
+          style={{ color: theme.secondaryText }}
+        >
+          {comments.length}
+        </span>
+      </div>
+
+      {/* Share */}
+      <div className="medium-engagement-item">
+        <button
+          type="button"
+          className="medium-engagement-btn"
+          onClick={handleShareLink}
+          title="Copy link"
+          style={{
+            borderColor: theme.compImgHighlight,
+            color: linkCopied ? "#1a8917" : theme.secondaryText,
+          }}
+        >
+          {linkCopied ? (
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#1a8917"
+              strokeWidth="2"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          ) : (
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              <circle cx="18" cy="5" r="3" />
+              <circle cx="6" cy="12" r="3" />
+              <circle cx="18" cy="19" r="3" />
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+            </svg>
+          )}
+        </button>
+        {linkCopied && (
+          <span
+            className="medium-engagement-count"
+            style={{ color: "#1a8917", fontSize: "0.7rem" }}
+          >
+            Copied!
+          </span>
+        )}
+      </div>
+    </div>
+  );
+
   const renderResponseItem = (c: any) => (
     <div
       key={c.id}
@@ -319,134 +450,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
 
       <div className="medium-article-layout">
         {/* Floating Engagement Bar (or bottom bar on mobile) */}
-        <div
-          className="medium-engagement-bar"
-          style={{ backgroundColor: theme.body }}
-        >
-          {/* Like */}
-          <div className="medium-engagement-item">
-            <button
-              type="button"
-              className={`medium-engagement-btn ${isLiked ? "liked" : ""}`}
-              onClick={handleLike}
-              disabled={isLiking}
-              title={user ? "Like this story" : "Log in to like"}
-              style={{
-                borderColor: isLiked ? "#e74c3c" : theme.compImgHighlight,
-                color: isLiked ? "#e74c3c" : theme.secondaryText,
-              }}
-            >
-              {isLiked ? (
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="#e74c3c"
-                >
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                </svg>
-              ) : (
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                >
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                </svg>
-              )}
-            </button>
-            <span
-              className="medium-engagement-count"
-              style={{ color: theme.secondaryText }}
-            >
-              {likes.length}
-            </span>
-          </div>
-
-          {/* Comments */}
-          <div className="medium-engagement-item">
-            <button
-              type="button"
-              className="medium-engagement-btn"
-              onClick={scrollToComments}
-              title="Jump to responses"
-              style={{
-                borderColor: theme.compImgHighlight,
-                color: theme.secondaryText,
-              }}
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-            </button>
-            <span
-              className="medium-engagement-count"
-              style={{ color: theme.secondaryText }}
-            >
-              {comments.length}
-            </span>
-          </div>
-
-          {/* Share */}
-          <div className="medium-engagement-item">
-            <button
-              type="button"
-              className="medium-engagement-btn"
-              onClick={handleShareLink}
-              title="Copy link"
-              style={{
-                borderColor: theme.compImgHighlight,
-                color: linkCopied ? "#1a8917" : theme.secondaryText,
-              }}
-            >
-              {linkCopied ? (
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#1a8917"
-                  strokeWidth="2"
-                >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              ) : (
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                >
-                  <circle cx="18" cy="5" r="3" />
-                  <circle cx="6" cy="12" r="3" />
-                  <circle cx="18" cy="19" r="3" />
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-                </svg>
-              )}
-            </button>
-            {linkCopied && (
-              <span
-                className="medium-engagement-count"
-                style={{ color: "#1a8917", fontSize: "0.7rem" }}
-              >
-                Copied!
-              </span>
-            )}
-          </div>
-        </div>
+        {renderEngagementBar()}
 
         {/* Article */}
         <article className="medium-article" ref={articleRef}>
@@ -600,7 +604,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                   boxShadow: "0 8px 30px rgba(0, 0, 0, 0.12)",
                 }}
               >
-                {user && user.picture ? (
+                {user?.picture ? (
                   <img
                     src={user.picture}
                     alt={user.name || "You"}
