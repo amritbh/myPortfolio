@@ -23,7 +23,7 @@ export default function socialMedia(props: SocialMediaProps) {
       {socialMediaLinks.map((media, i) => {
         return (
           <a
-            key={i}
+            key={media.link}
             href={media.link}
             className={`icon-button`}
             target="_blank"

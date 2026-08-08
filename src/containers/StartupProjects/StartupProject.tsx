@@ -4,11 +4,6 @@ import "./StartupProjects.css";
 import { bigProjects } from "../../portfolio";
 
 export default function StartupProject() {
-  function openProjectInNewWindow(url: string) {
-    var win = window.open(url, "_blank");
-    win?.focus();
-  }
-
   return (
     <div className="main" id="projects">
       <div>
@@ -18,13 +13,16 @@ export default function StartupProject() {
           <div className="startup-project-text">
             {bigProjects.projects.map((project) => {
               return (
-                <div
+                <a
                   key={project.link}
                   className="saaya-health-div"
-                  onClick={() => openProjectInNewWindow(project.link)}
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: "block" }}
                 >
                   <img alt="Saad Working" src={project.image}></img>
-                </div>
+                </a>
               );
             })}
           </div>

@@ -29,7 +29,14 @@ const TravelTeaser: React.FC<TravelTeaserProps> = ({ theme }) => {
     ...travelData.destinations.usa,
     ...travelData.destinations.moto,
   ];
-  const svgOpacity = theme && theme.body === "#0D1117" ? 0.04 : 0.035;
+  const svgOpacity = theme?.body === "#0D1117" ? 0.04 : 0.035;
+
+  const textStyle = { color: theme?.text };
+  const secondaryTextStyle = { color: theme?.secondaryText };
+  const chipStyle = { color: theme?.text, borderColor: theme?.highlight, backgroundColor: theme?.headerColor };
+  const cardStyle = { backgroundColor: theme?.headerColor, color: theme?.text };
+  const motoStyle = { backgroundColor: theme?.headerColor, borderColor: theme?.highlight };
+  const badgeStyle = { backgroundColor: theme?.highlight, color: theme?.text };
 
   return (
     <section className="travel-teaser-section" id="travel-teaser">
@@ -39,13 +46,13 @@ const TravelTeaser: React.FC<TravelTeaserProps> = ({ theme }) => {
         <div className="travel-header">
           <h2
             className="section-title"
-            style={{ color: theme ? theme.text : undefined }}
+            style={textStyle}
           >
             Beyond the Code
           </h2>
           <p
             className="section-subtitle"
-            style={{ color: theme ? theme.secondaryText : undefined }}
+            style={secondaryTextStyle}
           >
             {travelData.tagline}
           </p>
@@ -56,11 +63,7 @@ const TravelTeaser: React.FC<TravelTeaserProps> = ({ theme }) => {
             <span
               key={dest}
               className="destination-chip"
-              style={{
-                color: theme ? theme.text : undefined,
-                borderColor: theme ? theme.highlight : undefined,
-                backgroundColor: theme ? theme.headerColor : undefined,
-              }}
+              style={chipStyle}
             >
               {dest}
             </span>
@@ -71,19 +74,16 @@ const TravelTeaser: React.FC<TravelTeaserProps> = ({ theme }) => {
           <Link
             to={travelData.nepalCard.link}
             className="travel-card nepal-card"
-            style={{
-              backgroundColor: theme ? theme.headerColor : undefined,
-              color: theme ? theme.text : undefined,
-            }}
+            style={cardStyle}
           >
             <span className="travel-card-icon">
               {travelData.nepalCard.icon}
             </span>
             <div className="travel-card-text">
-              <strong style={{ color: theme ? theme.text : undefined }}>
+              <strong style={textStyle}>
                 {travelData.nepalCard.title}
               </strong>
-              <span style={{ color: theme ? theme.text : undefined }}>
+              <span style={textStyle}>
                 {travelData.nepalCard.subtitle}
               </span>
             </div>
@@ -95,10 +95,7 @@ const TravelTeaser: React.FC<TravelTeaserProps> = ({ theme }) => {
           <Link
             to={travelData.usaCard.link}
             className="travel-card usa-card"
-            style={{
-              backgroundColor: theme ? theme.headerColor : undefined,
-              color: theme ? theme.text : undefined,
-            }}
+            style={cardStyle}
           >
             <span className="travel-card-icon">
               {travelData.usaCard.icon}
@@ -119,26 +116,20 @@ const TravelTeaser: React.FC<TravelTeaserProps> = ({ theme }) => {
 
         <div
           className="moto-strip"
-          style={{
-            backgroundColor: theme ? theme.headerColor : undefined,
-            borderColor: theme ? theme.highlight : undefined,
-          }}
+          style={motoStyle}
         >
           <span className="moto-icon" role="img" aria-label="motorcycle">
             🏍️
           </span>
           <span
             className="moto-label"
-            style={{ color: theme ? theme.text : undefined }}
+            style={textStyle}
           >
             {travelData.motoStrip.label}
           </span>
           <span
             className="coming-soon-badge"
-            style={{
-              backgroundColor: theme ? theme.highlight : undefined,
-              color: theme ? theme.text : undefined,
-            }}
+            style={badgeStyle}
           >
             Coming Soon
           </span>

@@ -86,6 +86,7 @@ const BlogList: React.FC<BlogListProps> = ({ theme, themeMode, onThemeChange, on
           {TOPICS.map((topic) => (
             <button
               key={topic}
+              type="button"
               className={`medium-topic-pill ${
                 activeTopic === topic ? "active" : ""
               }`}
@@ -197,6 +198,7 @@ const BlogList: React.FC<BlogListProps> = ({ theme, themeMode, onThemeChange, on
               {TOPICS.filter((t) => t !== "All").map((topic) => (
                 <button
                   key={topic}
+                  type="button"
                   className="medium-sidebar-topic-pill"
                   style={{
                     backgroundColor: theme.compImgHighlight,

@@ -314,12 +314,14 @@ function StoryCard({ blog, onEdit, onDelete }: any) {
       </div>
       <div className="ag-story-card-actions">
         <button
+          type="button"
           className="ag-story-action-btn edit"
           onClick={() => onEdit(blog)}
         >
           ✎ Edit
         </button>
         <button
+          type="button"
           className="ag-story-action-btn delete"
           onClick={() => onDelete(blog.slug)}
         >
@@ -903,11 +905,11 @@ const AdminDashboard: React.FC = () => {
                   disabled={!canPublish}
                   onClick={handlePublish}
                 >
-                  {isPublishing
-                    ? "Publishing…"
-                    : editingSlug
-                    ? "✓ Update Story"
-                    : "🚀 Publish Now"}
+                  {(() => {
+                    if (isPublishing) return "Publishing…";
+                    if (editingSlug) return "✓ Update Story";
+                    return "🚀 Publish Now";
+                  })()}
                 </button>
               </div>
             </aside>

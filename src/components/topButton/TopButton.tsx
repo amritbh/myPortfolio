@@ -8,12 +8,12 @@ interface TopButtonProps {
   };
 }
 
-export default function TopButton({ theme }: TopButtonProps) {
-  function GoUpEvent() {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-  }
+function GoUpEvent() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
 
+export default function TopButton({ theme }: Readonly<TopButtonProps>) {
   function scrollFunction() {
     const topButton = document.getElementById("topButton");
     if (!topButton) return;

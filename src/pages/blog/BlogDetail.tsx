@@ -225,6 +225,12 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
   const htmlContent = marked(content || "") as string;
   const isLiked = user && likes.includes(user.username);
 
+  const getUserInitial = (u: any) => {
+    if (u?.name) return u.name[0].toUpperCase();
+    if (u?.username) return u.username[0].toUpperCase();
+    return "U";
+  };
+
   return (
     <div
       className="medium-article-root"
@@ -544,11 +550,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                       fontWeight: "bold",
                     }}
                   >
-                    {user && user.name
-                      ? user.name[0].toUpperCase()
-                      : user && user.username
-                      ? user.username[0].toUpperCase()
-                      : "U"}
+                    {getUserInitial(user)}
                   </div>
                 )}
                 <div className="medium-response-input-wrap">
@@ -654,7 +656,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                             className="medium-response-username"
                             style={{ color: theme.text }}
                           >
-                            {(c.name && c.name.includes("@")
+                            {(c.name?.includes("@")
                               ? c.name.split("@")[0]
                               : c.name) ||
                               c.username?.split("@")[0] ||

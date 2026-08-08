@@ -12,7 +12,7 @@ interface TalkCardProps {
   talkDetails: TalkDetails;
 }
 
-export default function TalkCard({ talkDetails }: TalkCardProps) {
+export default function TalkCard({ talkDetails }: Readonly<TalkCardProps>) {
   return (
     <div>
       <div className="container">

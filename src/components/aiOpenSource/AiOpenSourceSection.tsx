@@ -24,17 +24,12 @@ export default function AiOpenSourceSection({ theme }: AiOpenSourceSectionProps)
       <div className="ai-trends-body-div">
         {aiOpenSourceData.data.map((item) => (
           <Fade bottom duration={2000} distance="40px" key={item.id}>
-            <div
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
               className="ai-trend-card"
-              onClick={() => window.open(item.url, "_blank")}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  window.open(item.url, "_blank");
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              style={{ backgroundColor: theme.highlight }}
+              style={{ backgroundColor: theme.highlight, display: "block", textDecoration: "none" }}
             >
               <div className="ai-trend-name-div">
                 <p className="ai-trend-name" style={{ color: theme.text }}>
@@ -52,7 +47,7 @@ export default function AiOpenSourceSection({ theme }: AiOpenSourceSectionProps)
                   Released/Trending: {item.releaseDate}
                 </p>
               </div>
-            </div>
+            </a>
           </Fade>
         ))}
       </div>

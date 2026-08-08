@@ -110,7 +110,7 @@ const Login: React.FC = () => {
   };
 
   const handleForgotPassword = async () => {
-    if (!email || !email.includes("@")) {
+    if (!email?.includes("@")) {
       setAuthError("Please enter a valid email address.");
       return;
     }
@@ -172,7 +172,7 @@ const Login: React.FC = () => {
   };
 
   const handleSignup = async () => {
-    if (!email || !email.includes("@")) {
+    if (!email?.includes("@")) {
       setAuthError("Please enter a valid email address.");
       return;
     }
@@ -202,7 +202,7 @@ const Login: React.FC = () => {
   };
 
   const handleSignin = async () => {
-    if (!email || !email.includes("@")) {
+    if (!email?.includes("@")) {
       setAuthError("Please enter a valid email address.");
       return;
     }
@@ -366,6 +366,7 @@ const Login: React.FC = () => {
               <div className="medium-auth-footer">
                 No account?{" "}
                 <button
+                  type="button"
                   onClick={() => switchAuthMode("signup")}
                   className="medium-auth-link"
                 >

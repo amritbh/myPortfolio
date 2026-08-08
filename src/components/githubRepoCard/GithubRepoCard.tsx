@@ -21,16 +21,17 @@ interface GithubRepoCardProps {
   };
 }
 
-export default function GithubRepoCard({ repo, theme }: GithubRepoCardProps) {
-  function openRepoinNewTab(url: string) {
-    const win = window.open(url, "_blank");
-    win?.focus();
-  }
-
+export default function GithubRepoCard({ repo, theme }: Readonly<GithubRepoCardProps>) {
   return (
     <div className="repo-card-div" style={{ backgroundColor: theme.highlight }}>
       <Fade bottom duration={2000} distance="40px">
-        <div key={repo.id} onClick={() => openRepoinNewTab(repo.url)}>
+        <a 
+          key={repo.id} 
+          href={repo.url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          style={{ textDecoration: "none", color: "inherit", display: "block" }}
+        >
           <div className="repo-name-div">
             <svg
               aria-hidden="true"
@@ -90,7 +91,7 @@ export default function GithubRepoCard({ repo, theme }: GithubRepoCardProps) {
             <p>{repo.node.diskUsage} KB</p>
           </div>
         </div> */}
-        </div>
+        </a>
       </Fade>
     </div>
   );

@@ -2,7 +2,7 @@
 let apiClient: typeof import('./apiClient');
 
 beforeAll(async () => {
-  process.env.REACT_APP_CUSTOM_API_URL = "http://test.com";
+  process.env.REACT_APP_CUSTOM_API_URL = "https://test.com";
   apiClient = await import("./apiClient");
 });
 
@@ -107,7 +107,7 @@ describe("apiClient", () => {
       json: async () => [{ slug: "test" }],
     });
     // Need to set REACT_APP_CUSTOM_API_URL or it will return mock
-    process.env.REACT_APP_CUSTOM_API_URL = "http://localhost";
+    process.env.REACT_APP_CUSTOM_API_URL = "https://localhost";
     const res = await apiClient.fetchBlogs();
     expect(res).toBeTruthy();
   });

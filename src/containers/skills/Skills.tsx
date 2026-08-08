@@ -9,7 +9,7 @@ interface SkillsProps {
   theme: Theme;
 }
 
-export default function Skills({ theme }: SkillsProps) {
+export default function Skills({ theme }: Readonly<SkillsProps>) {
   return (
     <div className="main" id="skills">
       <div className="skills-header-div">

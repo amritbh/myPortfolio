@@ -229,7 +229,7 @@ const Header: React.FC<HeaderProps> = ({
                           <div
                             style={{ fontWeight: "bold", color: theme.text }}
                           >
-                            {user.name && user.name.trim()
+                            {user.name?.trim()
                               ? user.name
                               : user.username || user.email || "User"}
                           </div>
@@ -239,7 +239,7 @@ const Header: React.FC<HeaderProps> = ({
                               color: theme.secondaryText,
                             }}
                           >
-                            {user.email && user.email.trim()
+                            {user.email?.trim()
                               ? user.email
                               : user.username || "Unknown Email"}
                           </div>

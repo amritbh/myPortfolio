@@ -12,7 +12,7 @@ interface UpcomingProjectsSectionProps {
   };
 }
 
-export default function UpcomingProjectsSection(props: UpcomingProjectsSectionProps) {
+export default function UpcomingProjectsSection(props: Readonly<UpcomingProjectsSectionProps>) {
   const theme = props.theme;
   return (
     <div className="upcoming-main">

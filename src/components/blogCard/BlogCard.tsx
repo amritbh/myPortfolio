@@ -27,7 +27,7 @@ interface BlogCardProps {
   };
 }
 
-export default function BlogCard({ blog, theme }: BlogCardProps) {
+export default function BlogCard({ blog, theme }: Readonly<BlogCardProps>) {
   const {
     title,
     summary,

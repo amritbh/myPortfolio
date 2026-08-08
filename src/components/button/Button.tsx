@@ -1,13 +1,7 @@
 import React from "react";
 import "./Button.css";
 
-const onMouseEnter = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, color: string, bgColor: string) => {
-  const el = event.target as HTMLAnchorElement;
-  el.style.color = color;
-  el.style.backgroundColor = bgColor;
-};
-
-const onMouseOut = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, color: string, bgColor: string) => {
+const changeButtonStyle = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, color: string, bgColor: string) => {
   const el = event.target as HTMLAnchorElement;
   el.style.color = color;
   el.style.backgroundColor = bgColor;
@@ -37,8 +31,8 @@ export default function Button({ text, className, href, newTab, theme }: ButtonP
           backgroundColor: theme.text,
           border: `solid 1px ${theme.text}`,
         }}
-        onMouseEnter={(event) => onMouseEnter(event, theme.text, theme.body)}
-        onMouseOut={(event) => onMouseOut(event, theme.body, theme.text)}
+        onMouseEnter={(event) => changeButtonStyle(event, theme.text, theme.body)}
+        onMouseOut={(event) => changeButtonStyle(event, theme.body, theme.text)}
       >
         {text}
       </a>

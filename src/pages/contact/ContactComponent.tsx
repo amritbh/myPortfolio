@@ -16,7 +16,7 @@ const addressSection = contactPageData.addressSection;
 function Contact(props: any) {
   const theme = props.theme;
 
-  const [username, setUserName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [phone, setPhone] = useState("");
@@ -105,7 +105,7 @@ function Contact(props: any) {
       .post(apiUrl, userData, { headers: { Accept: "application/json" } })
       .then(() => {
         setAlert({ type: "success", text: "Message sent successfully!" });
-        setUserName("");
+        setUsername("");
         setEmail("");
         setPhone("");
         setMessageTitle("");
@@ -296,7 +296,7 @@ function Contact(props: any) {
                     placeholder="Your Name *"
                     value={username}
                     onChange={(e) => {
-                      setUserName(e.target.value);
+                      setUsername(e.target.value);
                       setFormErrors({ ...formErrors, username: "" });
                     }}
                     style={{ color: theme.text }}
@@ -389,7 +389,7 @@ function Contact(props: any) {
                   color: "#fff",
                 }}
               >
-                Send Message
+                Send Message{" "}
                 <span className="contact-submit-icon">→</span>
               </button>
             </form>
