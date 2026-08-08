@@ -1,6 +1,7 @@
 data "aws_region" "current" {}
 
 # DynamoDB Table
+# tfsec:ignore:AVD-AWS-0024
 resource "aws_dynamodb_table" "blogs_table" {
   name         = "${var.project_name}-${var.environment}-blogs"
   billing_mode = "PAY_PER_REQUEST"
@@ -8,6 +9,7 @@ resource "aws_dynamodb_table" "blogs_table" {
 
   deletion_protection_enabled = true
 
+  # tfsec:ignore:AVD-AWS-0024
   #tfsec:ignore:aws-dynamodb-table-customer-key
   #tfsec:ignore:aws-dynamodb-enable-recovery
   server_side_encryption {
@@ -36,6 +38,7 @@ resource "aws_dynamodb_table" "blogs_table" {
 }
 
 # DynamoDB Users Table
+# tfsec:ignore:AVD-AWS-0024
 resource "aws_dynamodb_table" "users_table" {
   name         = "${var.project_name}-${var.environment}-users"
   billing_mode = "PAY_PER_REQUEST"
@@ -43,6 +46,7 @@ resource "aws_dynamodb_table" "users_table" {
 
   deletion_protection_enabled = true
 
+  # tfsec:ignore:AVD-AWS-0024
   #tfsec:ignore:aws-dynamodb-table-customer-key
   #tfsec:ignore:aws-dynamodb-enable-recovery
   server_side_encryption {
@@ -56,6 +60,7 @@ resource "aws_dynamodb_table" "users_table" {
 }
 
 # DynamoDB Subscribers Table
+# tfsec:ignore:AVD-AWS-0024
 resource "aws_dynamodb_table" "subscribers_table" {
   name         = "${var.project_name}-${var.environment}-subscribers"
   billing_mode = "PAY_PER_REQUEST"
@@ -63,6 +68,7 @@ resource "aws_dynamodb_table" "subscribers_table" {
 
   deletion_protection_enabled = true
 
+  # tfsec:ignore:AVD-AWS-0024
   #tfsec:ignore:aws-dynamodb-table-customer-key
   #tfsec:ignore:aws-dynamodb-enable-recovery
   server_side_encryption {
@@ -104,6 +110,10 @@ resource "aws_lambda_function" "api_lambda" {
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   runtime          = "python3.11"
 
+  tracing_config {
+    mode = "Active"
+  }
+
   environment {
     variables = {
       TABLE_NAME             = aws_dynamodb_table.blogs_table.name
@@ -127,8 +137,7 @@ resource "aws_lambda_function" "api_lambda" {
 resource "aws_sqs_queue" "broadcast_queue" {
   name = "${var.project_name}-${var.environment}-broadcast-queue"
 
-  #tfsec:ignore:aws-sqs-enable-queue-encryption
-  # Default AWS managed encryption is enabled, explicit KMS not strictly required for this portfolio
+  sqs_managed_sse_enabled = true
 }
 
 # -------------------------------------------------------------------------
@@ -142,6 +151,10 @@ resource "aws_lambda_function" "broadcast_lambda" {
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   runtime          = "python3.11"
   timeout          = 60 # Allow enough time to process the batch of emails
+
+  tracing_config {
+    mode = "Active"
+  }
 
   environment {
     variables = {

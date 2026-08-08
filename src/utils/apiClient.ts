@@ -185,6 +185,16 @@ export const fetchBlogs = async () => {
       const response = await fetch(`${API_URL}/blogs`);
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
+      if (Array.isArray(data)) {
+        return data.sort((a, b) => {
+          const numA = parseInt(a.title?.match(/^(\d+)\./)?.[1]);
+          const numB = parseInt(b.title?.match(/^(\d+)\./)?.[1]);
+          if (!isNaN(numA) && !isNaN(numB)) {
+            return numB - numA;
+          }
+          return new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime();
+        });
+      }
       return data;
     } catch (error) {
       console.error("Error fetching blogs from API:", error);
@@ -192,7 +202,14 @@ export const fetchBlogs = async () => {
     }
   } else {
     console.warn("API URL not configured in .env, returning mock data.");
-    return mockBlogs;
+    return [...mockBlogs].sort((a, b) => {
+      const numA = parseInt(a.title?.match(/^(\d+)\./)?.[1]);
+      const numB = parseInt(b.title?.match(/^(\d+)\./)?.[1]);
+      if (!isNaN(numA) && !isNaN(numB)) {
+        return numB - numA;
+      }
+      return new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime();
+    });
   }
 };
 
