@@ -30,7 +30,7 @@ This project maintains a series of technical blog posts describing its own archi
 
 - **Mandatory Updates:** Whenever a new blog topic is drafted, brainstormed, or shifted, you MUST update the `docs/blog-content-plan.md` file to reflect the new structure.
 - Maintain the table format in the content plan for topics, read time, tags, and the expected publishing schedule.
-- Unlike individual blog drafts, the `docs/blog-content-plan.md` file _is_ typically committed to the repository (if not ignored), so ensure it is tracked appropriately.
+- Ensure the `docs/blog-content-plan.md` file (and any root `blog-content-plan.md`) is kept strictly local and NEVER committed to the repository. They should be explicitly ignored in `.gitignore`.
 
 ## 4. Content Guidelines
 
