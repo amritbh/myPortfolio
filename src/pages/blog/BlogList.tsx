@@ -18,7 +18,7 @@ const TOPICS = [
   "Frontend",
   "Architecture",
   "Serverless",
-  "CI/CD",
+  "AI, ML & LLM",
   "TypeScript",
   "Python",
   "Security",
