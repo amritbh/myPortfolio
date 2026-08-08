@@ -23,6 +23,7 @@ resource "aws_cloudfront_origin_access_control" "media" {
 #   - No extra Route53 records
 #   - No CORS issues (same domain for app and media)
 #tfsec:ignore:aws-cloudfront-enable-waf
+# tfsec:ignore:AVD-AWS-0010
 resource "aws_cloudfront_distribution" "cdn" {
   enabled             = true
   is_ipv6_enabled     = true

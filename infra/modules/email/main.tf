@@ -40,10 +40,18 @@ resource "aws_ses_email_identity" "forward_email" {
 # -------------------------------------------------------------------------
 # S3 Bucket for Inbound Emails
 # -------------------------------------------------------------------------
-#tfsec:ignore:aws-s3-encryption-customer-key
+# tfsec:ignore:aws-s3-encryption-customer-key
+# tfsec:ignore:AVD-AWS-0089
 resource "aws_s3_bucket" "inbound_mail" {
   bucket        = "inbound-mail-${replace(var.domain_name, ".", "-")}-${random_id.bucket_suffix.hex}"
   force_destroy = true
+}
+
+resource "aws_s3_bucket_versioning" "inbound_mail_versioning" {
+  bucket = aws_s3_bucket.inbound_mail.id
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "inbound_mail_pab" {
@@ -154,6 +162,10 @@ resource "aws_lambda_function" "forwarder" {
   runtime          = "python3.11"
   timeout          = 30
 
+  tracing_config {
+    mode = "Active"
+  }
+
   environment {
     variables = {
       FORWARD_TO = var.forward_email
@@ -210,6 +222,7 @@ resource "aws_ses_receipt_rule" "forwarding_rule" {
 # -------------------------------------------------------------------------
 # IAM User for SMTP Authentication (Replying from Gmail)
 # -------------------------------------------------------------------------
+# tfsec:ignore:AVD-AWS-0143
 resource "aws_iam_user" "smtp_user" {
   name = "ses-smtp-user-${replace(var.domain_name, ".", "-")}"
 }

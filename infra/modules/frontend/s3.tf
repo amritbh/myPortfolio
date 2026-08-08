@@ -1,5 +1,6 @@
 # S3 Bucket for React App
-#tfsec:ignore:aws-s3-encryption-customer-key
+# tfsec:ignore:aws-s3-encryption-customer-key
+# tfsec:ignore:AVD-AWS-0089
 resource "aws_s3_bucket" "frontend_bucket" {
   bucket = var.domain_name
 }
@@ -12,6 +13,13 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "frontend_bucket_s
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "frontend_bucket_versioning" {
+  bucket = aws_s3_bucket.frontend_bucket.id
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 

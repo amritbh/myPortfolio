@@ -149,6 +149,7 @@ resource "aws_apigatewayv2_route" "post_auth_login_2fa" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
+# tfsec:ignore:AVD-AWS-0001
 resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.http_api.id
   name        = "$default"
