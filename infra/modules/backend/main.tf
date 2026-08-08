@@ -137,7 +137,7 @@ resource "aws_lambda_function" "api_lambda" {
 resource "aws_sqs_queue" "broadcast_queue" {
   name = "${var.project_name}-${var.environment}-broadcast-queue"
 
-  sqs_managed_sse_enabled = true
+  sqs_managed_sse_enabled    = true
   visibility_timeout_seconds = 300
 }
 
