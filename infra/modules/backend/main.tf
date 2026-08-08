@@ -116,6 +116,46 @@ resource "aws_lambda_function" "api_lambda" {
       COGNITO_CLIENT_ID      = aws_cognito_user_pool_client.client.id
       MEDIA_BUCKET_NAME      = aws_s3_bucket.media_bucket.id
       CLOUDFRONT_MEDIA_URL   = "https://amrit.cloud"
+      BROADCAST_QUEUE_URL    = aws_sqs_queue.broadcast_queue.id
     }
   }
+}
+
+# -------------------------------------------------------------------------
+# SQS Queue for Email Broadcasting
+# -------------------------------------------------------------------------
+resource "aws_sqs_queue" "broadcast_queue" {
+  name = "${var.project_name}-${var.environment}-broadcast-queue"
+
+  #tfsec:ignore:aws-sqs-enable-queue-encryption
+  # Default AWS managed encryption is enabled, explicit KMS not strictly required for this portfolio
+}
+
+# -------------------------------------------------------------------------
+# Broadcast Lambda Function
+# -------------------------------------------------------------------------
+resource "aws_lambda_function" "broadcast_lambda" {
+  filename         = data.archive_file.lambda_zip.output_path
+  function_name    = "${var.project_name}-${var.environment}-broadcast"
+  role             = aws_iam_role.broadcast_lambda_role.arn
+  handler          = "broadcast_handler.lambda_handler"
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  runtime          = "python3.11"
+  timeout          = 60 # Allow enough time to process the batch of emails
+
+  environment {
+    variables = {
+      SUBSCRIBERS_TABLE_NAME = aws_dynamodb_table.subscribers_table.name
+      SENDER_EMAIL           = "newsletter@amrit.cloud"
+    }
+  }
+}
+
+# -------------------------------------------------------------------------
+# SQS to Lambda Event Source Mapping
+# -------------------------------------------------------------------------
+resource "aws_lambda_event_source_mapping" "broadcast_sqs_mapping" {
+  event_source_arn = aws_sqs_queue.broadcast_queue.arn
+  function_name    = aws_lambda_function.broadcast_lambda.arn
+  batch_size       = 1
 }
