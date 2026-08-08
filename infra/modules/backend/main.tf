@@ -55,6 +55,26 @@ resource "aws_dynamodb_table" "users_table" {
   }
 }
 
+# DynamoDB Subscribers Table
+resource "aws_dynamodb_table" "subscribers_table" {
+  name         = "${var.project_name}-${var.environment}-subscribers"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "email"
+
+  deletion_protection_enabled = true
+
+  #tfsec:ignore:aws-dynamodb-table-customer-key
+  #tfsec:ignore:aws-dynamodb-enable-recovery
+  server_side_encryption {
+    enabled = true
+  }
+
+  attribute {
+    name = "email"
+    type = "S"
+  }
+}
+
 # Install Pip Dependencies
 resource "null_resource" "pip_install" {
   triggers = {
@@ -86,15 +106,16 @@ resource "aws_lambda_function" "api_lambda" {
 
   environment {
     variables = {
-      TABLE_NAME           = aws_dynamodb_table.blogs_table.name
-      USERS_TABLE_NAME     = aws_dynamodb_table.users_table.name
-      ADMIN_EMAIL          = var.admin_email
-      SENDER_EMAIL         = var.system_email
-      COGNITO_USER_POOL_ID = aws_cognito_user_pool.pool.id
-      COGNITO_REGION       = data.aws_region.current.region
-      COGNITO_CLIENT_ID    = aws_cognito_user_pool_client.client.id
-      MEDIA_BUCKET_NAME    = aws_s3_bucket.media_bucket.id
-      CLOUDFRONT_MEDIA_URL = "https://amrit.cloud"
+      TABLE_NAME             = aws_dynamodb_table.blogs_table.name
+      USERS_TABLE_NAME       = aws_dynamodb_table.users_table.name
+      SUBSCRIBERS_TABLE_NAME = aws_dynamodb_table.subscribers_table.name
+      ADMIN_EMAIL            = var.admin_email
+      SENDER_EMAIL           = var.system_email
+      COGNITO_USER_POOL_ID   = aws_cognito_user_pool.pool.id
+      COGNITO_REGION         = data.aws_region.current.region
+      COGNITO_CLIENT_ID      = aws_cognito_user_pool_client.client.id
+      MEDIA_BUCKET_NAME      = aws_s3_bucket.media_bucket.id
+      CLOUDFRONT_MEDIA_URL   = "https://amrit.cloud"
     }
   }
 }

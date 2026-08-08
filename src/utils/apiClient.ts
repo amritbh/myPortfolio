@@ -686,3 +686,23 @@ export const updateAccountProfile = async (name, address, phoneNumber) => {
     return { success: false, error: "Network error" };
   }
 };
+
+export const subscribeToNewsletter = async (email) => {
+  if (!API_URL) return { success: true, message: "Mock subscription successful." };
+  
+  try {
+    const response = await fetch(`${API_URL}/subscribe`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    
+    const data = await response.json();
+    if (response.ok) return { success: true, ...data };
+    return { success: false, error: data.error || "Failed to subscribe" };
+  } catch (err) {
+    console.error("Error subscribing to newsletter:", err);
+    return { success: false, error: "Network error" };
+  }
+};
+
