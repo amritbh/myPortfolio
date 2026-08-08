@@ -110,8 +110,8 @@ jobs:
         working-directory: infra/modules/backend/src
         run: |
           pip install -r requirements-test.txt
-          python -m pytest --cov=. --cov-report=xml test_app.py
-          bandit -r app.py
+          python -m pytest --cov=. --cov-report=xml
+          bandit -r .
 
       - name: Run Terraform Tests (Backend Module)
         working-directory: infra/modules/backend

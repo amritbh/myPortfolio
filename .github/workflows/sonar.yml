@@ -38,7 +38,7 @@ jobs:
 
       - name: Run Backend Tests with Coverage
         working-directory: infra/modules/backend/src
-        run: python -m pytest --cov=. --cov-report=xml test_app.py
+        run: python -m pytest --cov=. --cov-report=xml
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
