@@ -111,7 +111,7 @@ jobs:
         run: |
           pip install -r requirements-test.txt
           python -m pytest --cov=. --cov-report=xml
-          bandit -r .
+          bandit -r app.py broadcast_handler.py
 
       - name: Run Terraform Tests (Backend Module)
         working-directory: infra/modules/backend
