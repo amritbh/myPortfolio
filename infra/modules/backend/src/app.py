@@ -42,6 +42,7 @@ TOKEN_EXPIRATION_SECONDS = 8 * 60 * 60 # 8 hours
 
 BEARER_PREFIX = 'Bearer '
 AUTH_ACCOUNT_ROUTE = '/auth/account'
+ISO_DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 
 def send_email(to_email, subject, body):
@@ -223,7 +224,7 @@ def signup_admin(event):
             'salt': pwd_salt,
             'role': 'user',
             'verified': False,
-            'createdAt': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+            'createdAt': time.strftime(ISO_DATE_FORMAT, time.gmtime())
         }
         
         try:
@@ -702,7 +703,7 @@ def subscribe_handler(event):
         # Save to DynamoDB
         sub_table.put_item(Item={
             'email': email,
-            'subscribed_at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+            'subscribed_at': time.strftime(ISO_DATE_FORMAT, time.gmtime())
         })
         
         # Send Thank You email
@@ -787,7 +788,7 @@ def comment_blog(event, slug):
             'name': name,
             'picture': picture,
             'text': text,
-            'timestamp': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
+            'timestamp': time.strftime(ISO_DATE_FORMAT, time.gmtime())
         }
         
         response = table.get_item(Key={'slug': slug})

@@ -59,7 +59,7 @@ interface FooterProps {
   theme?: Theme;
 }
 
-const Footer: React.FC<FooterProps> = ({ theme }) => {
+const NewsletterForm: React.FC<{ theme?: Theme }> = ({ theme }) => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -84,6 +84,64 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
     setLoading(false);
   };
 
+  if (submitted) {
+    return (
+      <output className="footer-newsletter-confirm">
+        <span role="img" aria-label="check">
+          ✅
+        </span>{" "}
+        Thanks! You'll be notified when new posts go live.
+      </output>
+    );
+  }
+
+  return (
+    <form
+      className="footer-newsletter-form"
+      onSubmit={handleSubmit}
+      noValidate
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '100%', maxWidth: '300px' }}>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <input
+            id="footer-email-input"
+            type="email"
+            className="footer-email-input"
+            placeholder="your@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            aria-label="Email address"
+            disabled={loading}
+            style={{
+              backgroundColor: theme ? theme.compImgHighlight : undefined,
+              color: theme ? theme.text : undefined,
+              borderColor: theme ? theme.highlight : undefined,
+            }}
+          />
+          <button
+            type="submit"
+            className="footer-subscribe-btn"
+            disabled={loading}
+            style={{
+              backgroundColor: theme ? theme.jacketColor : "#388BFD",
+              opacity: loading ? 0.7 : 1,
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {loading ? '...' : 'Subscribe'}
+          </button>
+        </div>
+        {error && (
+          <span style={{ color: '#ff6b6b', fontSize: '0.85rem' }}>
+            {error}
+          </span>
+        )}
+      </div>
+    </form>
+  );
+};
+
+const Footer: React.FC<FooterProps> = ({ theme }) => {
   return (
     <footer
       className="footer-root"
@@ -103,57 +161,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
         >
           Stay updated on new posts
         </p>
-        {submitted ? (
-          <output className="footer-newsletter-confirm">
-            <span role="img" aria-label="check">
-              ✅
-            </span>{" "}
-            Thanks! You'll be notified when new posts go live.
-          </output>
-        ) : (
-          <form
-            className="footer-newsletter-form"
-            onSubmit={handleSubmit}
-            noValidate
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '100%', maxWidth: '300px' }}>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <input
-                  id="footer-email-input"
-                  type="email"
-                  className="footer-email-input"
-                  placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  aria-label="Email address"
-                  disabled={loading}
-                  style={{
-                    backgroundColor: theme ? theme.compImgHighlight : undefined,
-                    color: theme ? theme.text : undefined,
-                    borderColor: theme ? theme.highlight : undefined,
-                  }}
-                />
-                <button
-                  type="submit"
-                  className="footer-subscribe-btn"
-                  disabled={loading}
-                  style={{
-                    backgroundColor: theme ? theme.jacketColor : "#388BFD",
-                    opacity: loading ? 0.7 : 1,
-                    cursor: loading ? 'not-allowed' : 'pointer'
-                  }}
-                >
-                  {loading ? '...' : 'Subscribe'}
-                </button>
-              </div>
-              {error && (
-                <span style={{ color: '#ff6b6b', fontSize: '0.85rem' }}>
-                  {error}
-                </span>
-              )}
-            </div>
-          </form>
-        )}
+        <NewsletterForm theme={theme} />
       </div>
 
       {/* ── Row 2: Links + Socials ───────────────────────── */}

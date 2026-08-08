@@ -1140,11 +1140,11 @@ def test_update_account_profile_missing_fields(setup_dynamodb):
     # It doesn't error on missing fields, it updates them to whatever they are in the body.
 
 @patch('app.send_email')
-def test_subscribe_success(mock_send_email, setup_dynamodb):
+def test_subscribe_success(mock_send_email, setup_dynamodb, monkeypatch):
     import app
     
     # Needs a mock subscribers table
-    os.environ['SUBSCRIBERS_TABLE_NAME'] = 'test-subscribers-table'
+    monkeypatch.setenv('SUBSCRIBERS_TABLE_NAME', 'test-subscribers-table')
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     dynamodb.create_table(
         TableName='test-subscribers-table',
