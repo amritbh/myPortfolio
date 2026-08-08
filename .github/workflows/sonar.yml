@@ -22,7 +22,7 @@ jobs:
           node-version: '18'
           
       - name: Install Frontend Dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Run Frontend Tests with Coverage
         run: CI=true npm run test -- --coverage

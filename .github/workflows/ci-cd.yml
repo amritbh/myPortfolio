@@ -170,7 +170,7 @@ jobs:
           terragrunt --version
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Run Frontend Tests & Coverage
         run: CI=true npm run test -- --coverage

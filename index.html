@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Amrit Bhattarai — Sr. Cloud Architect, Nepal born, Oregon based. Technical blog on AWS, Terraform, and Agentic AI." />
+    <meta property="og:title" content="Amrit Bhattarai Portfolio" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://amrit.cloud/" />
+    <meta property="og:description" content="Sr. Cloud Architect at HP. Building Agentic AI systems and cloud infrastructure at scale." />
+    <meta name="keywords" content="Amrit Bhattarai, Cloud Architect, AWS, Terraform, Portfolio, Nepal, Oregon" />
+    <meta name="author" content="Amrit Bhattarai" />
+    <meta name="application-name" content="Amrit's Portfolio" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/animated_amrit.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/animated_amrit.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/animated_amrit.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0D1117">
+
+    <!-- Google Tag Manager -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-158726526-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'UA-158726526-1');
+    </script>
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+
+    <!-- SPA redirect for CloudFront -->
+    <script type="text/javascript">
+      (function (l) {
+        if (l.search[1] === "/") {
+          var decoded = l.search
+            .slice(1)
+            .split("&")
+            .map(function (s) {
+              return s.replace(/~and~/g, "&");
+            })
+            .join("?");
+          window.history.replaceState(
+            null,
+            null,
+            l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      })(window.location);
+    </script>
+
+    <title>Amrit's Portfolio</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+  </body>
+</html>
