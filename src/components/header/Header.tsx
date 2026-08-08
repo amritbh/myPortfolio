@@ -39,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({
     const user = getStoredUser();
     clearSession();
 
-    if (user && user.type === "cognito") {
+    if (user?.type === "cognito") {
       const domain =
         import.meta.env.VITE_COGNITO_DOMAIN ||
         "amrit-portfolio-auth-prod.auth.us-east-1.amazoncognito.com";

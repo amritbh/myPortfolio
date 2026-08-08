@@ -231,6 +231,75 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
     return "U";
   };
 
+  const renderResponseItem = (c: any) => (
+    <div
+      key={c.id}
+      className="medium-response-item"
+      style={{ borderBottomColor: theme.compImgHighlight }}
+    >
+      <div className="medium-response-item-header">
+        <div className="medium-response-item-author">
+          <div
+            className="medium-response-initial"
+            style={{
+              backgroundColor: "#1a8917",
+              color: "#fff",
+              overflow: "hidden",
+            }}
+          >
+            {c.picture ? (
+              <img
+                src={c.picture}
+                alt={c.name || c.username}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            ) : (
+              (c.name || c.username || "U")[0].toUpperCase()
+            )}
+          </div>
+          <div>
+            <span
+              className="medium-response-username"
+              style={{ color: theme.text }}
+            >
+              {c.name?.split("@")[0] || c.username?.split("@")[0] || "User"}
+            </span>
+            <span
+              className="medium-response-date"
+              style={{ color: theme.secondaryText }}
+            >
+              {new Date(c.timestamp).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}
+            </span>
+          </div>
+        </div>
+        {user &&
+          (user.username === c.username || user.role === "admin") && (
+            <button
+              type="button"
+              onClick={() => handleDeleteComment(c.id)}
+              className="medium-response-delete-btn"
+              title="Delete"
+            >
+              ✕
+            </button>
+          )}
+      </div>
+      <p
+        className="medium-response-text"
+        style={{ color: theme.text }}
+      >
+        {c.text}
+      </p>
+    </div>
+  );
+
   return (
     <div
       className="medium-article-root"
@@ -621,81 +690,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                   </p>
                 </div>
               ) : (
-                comments.map((c) => (
-                  <div
-                    key={c.id}
-                    className="medium-response-item"
-                    style={{ borderBottomColor: theme.compImgHighlight }}
-                  >
-                    <div className="medium-response-item-header">
-                      <div className="medium-response-item-author">
-                        <div
-                          className="medium-response-initial"
-                          style={{
-                            backgroundColor: "#1a8917",
-                            color: "#fff",
-                            overflow: "hidden",
-                          }}
-                        >
-                          {c.picture ? (
-                            <img
-                              src={c.picture}
-                              alt={c.name || c.username}
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                              }}
-                            />
-                          ) : (
-                            (c.name || c.username || "U")[0].toUpperCase()
-                          )}
-                        </div>
-                        <div>
-                          <span
-                            className="medium-response-username"
-                            style={{ color: theme.text }}
-                          >
-                            {(c.name?.includes("@")
-                              ? c.name.split("@")[0]
-                              : c.name) ||
-                              c.username?.split("@")[0] ||
-                              "User"}
-                          </span>
-                          <span
-                            className="medium-response-date"
-                            style={{ color: theme.secondaryText }}
-                          >
-                            {new Date(c.timestamp).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                              }
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                      {user &&
-                        (user.username === c.username ||
-                          user.role === "admin") && (
-                          <button
-                            onClick={() => handleDeleteComment(c.id)}
-                            className="medium-response-delete-btn"
-                            title="Delete"
-                          >
-                            ✕
-                          </button>
-                        )}
-                    </div>
-                    <p
-                      className="medium-response-text"
-                      style={{ color: theme.text }}
-                    >
-                      {c.text}
-                    </p>
-                  </div>
-                ))
+                comments.map((c) => renderResponseItem(c))
               )}
             </div>
           </div>
@@ -724,24 +719,21 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                     }}
                   >
                     <div className="medium-related-image">
-                      {(rb.coverImage ||
-                        "https://amrit.cloud/media/blog_default_cover.png") && (
-                        <img
-                          src={
-                            rb.coverImage ||
-                            "https://amrit.cloud/media/blog_default_cover.png"
-                          }
-                          alt={rb.title}
-                          className="medium-related-thumb"
-                        />
-                      )}
+                      <img
+                        src={
+                          rb.coverImage ||
+                          "https://amrit.cloud/media/blog_default_cover.png"
+                        }
+                        alt={rb.title}
+                        className="medium-related-thumb"
+                      />
                     </div>
                     <div className="medium-related-meta">
                       <span
                         className="medium-related-tag"
                         style={{ color: "#1a8917" }}
                       >
-                        {rb.tags && rb.tags[0]}
+                        {rb.tags?.[0]}
                       </span>
                       <h3
                         className="medium-related-title"

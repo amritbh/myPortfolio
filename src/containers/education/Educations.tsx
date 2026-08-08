@@ -16,8 +16,8 @@ const Educations = (props: any) => {
           </Fade>
         </div>
         <div className="educations-body-div">
-          {degrees.degrees.map((degree) => {
-            return <DegreeCard degree={degree} theme={theme} />;
+          {degrees.degrees.map((degree: any, index: number) => {
+            return <DegreeCard key={degree.title || index} degree={degree} theme={theme} />;
           })}
         </div>
       </div>

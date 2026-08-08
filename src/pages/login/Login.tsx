@@ -37,41 +37,46 @@ const Login: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleCognitoHash = (hashFragment: string) => {
+    const hashParams = new URLSearchParams(hashFragment);
+    const idToken = hashParams.get("id_token");
+    if (!idToken) return false;
+
+    try {
+      const payload = JSON.parse(atob(idToken.split(".")[1]));
+      const user = {
+        username: payload.email || payload["cognito:username"] || payload.sub,
+        name:
+          payload.name ||
+          payload.given_name ||
+          payload.email ||
+          payload["cognito:username"] ||
+          payload.sub,
+        picture: payload.picture || null,
+        type: "cognito",
+        role: "user",
+      };
+      setSession(idToken, user);
+      if (payload.email === "amrit.bhattarai990@gmail.com") {
+        user.role = "admin";
+        setSession(idToken, user);
+        history.push("/admin");
+      } else {
+        history.push("/home");
+      }
+      return true;
+    } catch (e) {
+      console.error("Failed to parse Cognito JWT", e);
+      setAuthError("Social login failed. Please try again.");
+      return true;
+    }
+  };
+
   const handleUrlParams = async () => {
     // Handle Cognito Hash
     const hashFragment = window.location.hash.substring(1);
     if (hashFragment) {
-      const hashParams = new URLSearchParams(hashFragment);
-      const idToken = hashParams.get("id_token");
-      if (idToken) {
-        try {
-          const payload = JSON.parse(atob(idToken.split(".")[1]));
-          const user = {
-            username: payload.email || payload["cognito:username"] || payload.sub,
-            name:
-              payload.name ||
-              payload.given_name ||
-              payload.email ||
-              payload["cognito:username"] ||
-              payload.sub,
-            picture: payload.picture || null,
-            type: "cognito",
-            role: "user",
-          };
-          setSession(idToken, user);
-          if (payload.email === "amrit.bhattarai990@gmail.com") {
-            user.role = "admin";
-            setSession(idToken, user);
-            history.push("/admin");
-          } else {
-            history.push("/home");
-          }
-          return;
-        } catch (e) {
-          console.error("Failed to parse Cognito JWT", e);
-          setAuthError("Social login failed. Please try again.");
-        }
-      }
+      if (handleCognitoHash(hashFragment)) return;
     }
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -292,18 +297,14 @@ const Login: React.FC = () => {
   };
 
   const renderBanners = () => {
+    let bannerClass = "info";
+    if (verificationStatus === "success") bannerClass = "success";
+    if (verificationStatus === "error") bannerClass = "error";
+
     return (
       <div className="medium-auth-banners">
         {verificationMessage && (
-          <div
-            className={`medium-auth-banner ${
-              verificationStatus === "success"
-                ? "success"
-                : verificationStatus === "error"
-                ? "error"
-                : "info"
-            }`}
-          >
+          <div className={`medium-auth-banner ${bannerClass}`}>
             {verificationMessage}
           </div>
         )}
@@ -494,6 +495,7 @@ const Login: React.FC = () => {
               <div className="medium-auth-footer">
                 Already have an account?{" "}
                 <button
+                  type="button"
                   onClick={() => switchAuthMode("signin")}
                   className="medium-auth-link"
                 >
