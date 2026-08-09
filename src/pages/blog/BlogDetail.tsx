@@ -692,7 +692,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                   </div>
                 </div>
               </form>
-            ) : (
+            ) : comments.length > 0 ? (
               <div className="medium-response-login-box">
                 <div className="login-box-text">
                   <h4 style={{ color: theme.text }}>Join the Conversation</h4>
@@ -705,7 +705,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                   Sign In
                 </a>
               </div>
-            )}
+            ) : null}
 
             {/* Comment List */}
             <div className="medium-response-list">
@@ -716,9 +716,19 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                       💬
                     </span>
                   </div>
-                  <p style={{ color: theme.secondaryText }}>
-                    No responses yet. Be the first to share your thoughts!
+                  <h4 style={{ color: theme.text, margin: "12px 0 8px 0", fontSize: "1.3rem", fontFamily: "'Google Sans', sans-serif" }}>
+                    No responses yet
+                  </h4>
+                  <p style={{ color: theme.secondaryText, marginBottom: user ? "0" : "24px" }}>
+                    {user 
+                      ? "Be the first to share your thoughts!" 
+                      : "Sign in to join the conversation and be the first to share your thoughts."}
                   </p>
+                  {!user && (
+                    <a href="/login" className="login-box-button" style={{ marginLeft: 0 }}>
+                      Sign In to Respond
+                    </a>
+                  )}
                 </div>
               ) : (
                 comments.map((c) => renderResponseItem(c))
