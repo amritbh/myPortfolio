@@ -251,6 +251,16 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
+  useEffect(() => {
+    if (!loading && window.location.hash) {
+      setTimeout(() => {
+        const id = window.location.hash.substring(1);
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }, [loading]);
+
   const loadBlog = async () => {
     setLoading(true);
     const [fetchedBlog, allBlogs] = await Promise.all([
@@ -349,7 +359,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
   };
 
   const scrollToComments = () => {
-    const el = document.getElementById("blog-responses");
+    const el = document.getElementById("comments");
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -631,7 +641,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
 
           {/* Responses Section */}
           <div
-            id="blog-responses"
+            id="comments"
             className="medium-responses"
             style={{ borderTopColor: theme.compImgHighlight }}
           >
