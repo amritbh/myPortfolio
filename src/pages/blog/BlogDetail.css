@@ -746,10 +746,11 @@
 }
 
 .blog-nav-card .nav-title {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 500;
+  font-style: italic;
   line-height: 1.4;
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 @media (max-width: 900px) {
