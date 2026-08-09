@@ -249,6 +249,7 @@
 .markdown-body p {
   margin-bottom: 1.6em;
   opacity: 0.95;
+  text-align: justify;
 }
 
 /* Drop Cap for the first paragraph */
