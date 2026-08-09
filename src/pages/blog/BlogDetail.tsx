@@ -714,9 +714,13 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                     with this story.
                   </p>
                 </div>
-                <a href="/login" className="login-box-button">
+                <Link 
+                  to="/login" 
+                  className="login-box-button"
+                  onClick={() => localStorage.setItem("redirect_after_login", window.location.pathname + "#comments")}
+                >
                   Sign In
-                </a>
+                </Link>
               </div>
             )}
 
@@ -738,9 +742,14 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                       : "Sign in to join the conversation and be the first to share your thoughts."}
                   </p>
                   {!user && (
-                    <a href="/login" className="login-box-button" style={{ marginLeft: 0 }}>
+                    <Link 
+                      to="/login" 
+                      className="login-box-button" 
+                      style={{ marginLeft: 0 }}
+                      onClick={() => localStorage.setItem("redirect_after_login", window.location.pathname + "#comments")}
+                    >
                       Sign In to Respond
-                    </a>
+                    </Link>
                   )}
                 </div>
               ) : (

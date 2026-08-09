@@ -57,7 +57,12 @@ const Login: React.FC = () => {
         role: "user",
       };
       setSession(idToken, user);
-      if (payload.email === "amrit.bhattarai990@gmail.com") {
+      
+      const redirectPath = localStorage.getItem("redirect_after_login");
+      if (redirectPath) {
+        localStorage.removeItem("redirect_after_login");
+        history.push(redirectPath);
+      } else if (payload.email === "amrit.bhattarai990@gmail.com") {
         user.role = "admin";
         setSession(idToken, user);
         history.push("/admin");
@@ -228,7 +233,13 @@ const Login: React.FC = () => {
         return;
       }
       if (response.user) {
-        history.push(response.user.role === "admin" ? "/admin" : "/home");
+        const redirectPath = localStorage.getItem("redirect_after_login");
+        if (redirectPath) {
+          localStorage.removeItem("redirect_after_login");
+          history.push(redirectPath);
+        } else {
+          history.push(response.user.role === "admin" ? "/admin" : "/home");
+        }
       }
     } else {
       setAuthError(response.error || "Authentication failed.");
