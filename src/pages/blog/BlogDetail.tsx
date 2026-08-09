@@ -226,7 +226,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
 
   // Add a stylistic divider before the Conclusion section
   htmlContent = htmlContent.replace(
-    /<h3>Conclusion<\/h3>/i,
+    /<h3[^>]*>Conclusion<\/h3>/i,
     '<hr class="medium-article-divider conclusion-divider" /><h3 class="conclusion-heading">Conclusion</h3>'
   );
   const isLiked = user && likes.includes(user.username);
