@@ -218,7 +218,15 @@ const Header: React.FC<HeaderProps> = ({
                       Account &#9662;
                     </span>
                     {showDropdown && (
-                      <div className="account-dropdown-menu">
+                      <div 
+                        className="account-dropdown-menu"
+                        style={{
+                          '--dropdown-bg': `${theme.body}e6`, /* 90% opacity for glassmorphism */
+                          '--dropdown-border': `${theme.text}20`,
+                          '--dropdown-shadow': theme.name === 'dark' ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.1)',
+                          '--dropdown-hover': `${theme.text}10`,
+                        } as React.CSSProperties}
+                      >
                         <div
                           style={{
                             padding: "10px 20px",
