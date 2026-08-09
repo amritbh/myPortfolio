@@ -16,6 +16,9 @@ resource "aws_dynamodb_table" "blogs_table" {
     enabled = true
   }
 
+  stream_enabled   = true
+  stream_view_type = "NEW_IMAGE"
+
   attribute {
     name = "slug"
     type = "S"
@@ -126,19 +129,8 @@ resource "aws_lambda_function" "api_lambda" {
       COGNITO_CLIENT_ID      = aws_cognito_user_pool_client.client.id
       MEDIA_BUCKET_NAME      = aws_s3_bucket.media_bucket.id
       CLOUDFRONT_MEDIA_URL   = "https://amrit.cloud"
-      BROADCAST_QUEUE_URL    = aws_sqs_queue.broadcast_queue.id
     }
   }
-}
-
-# -------------------------------------------------------------------------
-# SQS Queue for Email Broadcasting
-# -------------------------------------------------------------------------
-resource "aws_sqs_queue" "broadcast_queue" {
-  name = "${var.project_name}-${var.environment}-broadcast-queue"
-
-  sqs_managed_sse_enabled    = true
-  visibility_timeout_seconds = 300
 }
 
 # -------------------------------------------------------------------------
@@ -166,10 +158,19 @@ resource "aws_lambda_function" "broadcast_lambda" {
 }
 
 # -------------------------------------------------------------------------
-# SQS to Lambda Event Source Mapping
+# DynamoDB to Lambda Event Source Mapping
 # -------------------------------------------------------------------------
-resource "aws_lambda_event_source_mapping" "broadcast_sqs_mapping" {
-  event_source_arn = aws_sqs_queue.broadcast_queue.arn
-  function_name    = aws_lambda_function.broadcast_lambda.arn
-  batch_size       = 1
+resource "aws_lambda_event_source_mapping" "broadcast_dynamodb_mapping" {
+  event_source_arn  = aws_dynamodb_table.blogs_table.stream_arn
+  function_name     = aws_lambda_function.broadcast_lambda.arn
+  starting_position = "LATEST"
+  batch_size        = 1
+
+  filter_criteria {
+    filter {
+      pattern = jsonencode({
+        eventName = ["INSERT"]
+      })
+    }
+  }
 }

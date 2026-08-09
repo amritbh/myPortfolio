@@ -58,13 +58,6 @@ resource "aws_iam_role_policy" "dynamodb_read_policy" {
         ]
         Effect   = "Allow"
         Resource = "${aws_s3_bucket.media_bucket.arn}/media/*"
-      },
-      {
-        Action = [
-          "sqs:SendMessage"
-        ]
-        Effect   = "Allow"
-        Resource = aws_sqs_queue.broadcast_queue.arn
       }
     ]
   })
@@ -102,12 +95,13 @@ resource "aws_iam_role_policy" "broadcast_lambda_policy" {
     Statement = [
       {
         Action = [
-          "sqs:ReceiveMessage",
-          "sqs:DeleteMessage",
-          "sqs:GetQueueAttributes"
+          "dynamodb:GetRecords",
+          "dynamodb:GetShardIterator",
+          "dynamodb:DescribeStream",
+          "dynamodb:ListStreams"
         ]
         Effect   = "Allow"
-        Resource = aws_sqs_queue.broadcast_queue.arn
+        Resource = [aws_dynamodb_table.blogs_table.stream_arn]
       },
       {
         Action = [

@@ -1,82 +1,127 @@
 import json
 import pytest
-from unittest.mock import patch, MagicMock
-
+import os
+from unittest.mock import MagicMock, patch
 import broadcast_handler
 
 @pytest.fixture
-def mock_dynamo():
-    with patch('broadcast_handler.dynamodb') as mock:
-        yield mock
+def mock_dynamodb():
+    with patch('broadcast_handler.dynamodb') as mock_db:
+        yield mock_db
 
 @pytest.fixture
 def mock_ses():
-    with patch('broadcast_handler.ses') as mock:
-        yield mock
+    with patch('broadcast_handler.ses') as mock_ses:
+        yield mock_ses
 
-def test_broadcast_handler_success(mock_dynamo, mock_ses, monkeypatch):
-    # Setup mock dynamo table scan
+@pytest.fixture(autouse=True)
+def mock_env():
+    broadcast_handler.subscribers_table_name = 'test_table'
+    yield
+
+def test_broadcast_handler_manual_invocation(mock_dynamodb, mock_ses):
+    event = {
+        'subject': 'Test Subject',
+        'body': 'Test Body'
+    }
+    
+    # Mock DynamoDB table and scan
     mock_table = MagicMock()
+    mock_dynamodb.Table.return_value = mock_table
     mock_table.scan.return_value = {
         'Items': [
             {'email': 'test1@example.com'},
             {'email': 'test2@example.com'}
         ]
     }
-    mock_dynamo.Table.return_value = mock_table
     
-    event = {
-        'Records': [
-            {
-                'body': json.dumps({
-                    'title': 'My Awesome Blog',
-                    'slug': 'my-awesome-blog'
-                })
-            }
-        ]
-    }
+    response = broadcast_handler.lambda_handler(event, None)
     
-    monkeypatch.setattr(broadcast_handler, 'subscribers_table_name', 'test-table')
-    
-    res = broadcast_handler.lambda_handler(event, None)
-    
-    assert res['statusCode'] == 200
-    
-    # Assert DynamoDB was scanned
-    mock_table.scan.assert_called_once()
-    
-    # Assert SES was called twice
+    assert response['statusCode'] == 200
+    assert 'Custom broadcast complete' in response['body']
     assert mock_ses.send_email.call_count == 2
     
-    # Verify first email contents
+    # Verify the parameters of the first call
     call_args = mock_ses.send_email.call_args_list[0][1]
     assert call_args['Destination']['ToAddresses'] == ['test1@example.com']
-    assert call_args['Source'] == 'newsletter@amrit.cloud'
-    assert call_args['Message']['Subject']['Data'] == 'New Blog Published: My Awesome Blog'
-    assert 'https://amrit.cloud/blogs/my-awesome-blog' in call_args['Message']['Body']['Text']['Data']
+    assert call_args['Message']['Subject']['Data'] == 'Test Subject'
+    assert call_args['Message']['Body']['Text']['Data'] == 'Test Body'
 
-def test_broadcast_handler_missing_table(monkeypatch):
-    monkeypatch.setattr(broadcast_handler, 'subscribers_table_name', None)
-    res = broadcast_handler.lambda_handler({}, None)
-    assert res is None
-
-def test_broadcast_handler_missing_body_fields(mock_dynamo, mock_ses, monkeypatch):
+def test_broadcast_handler_dynamodb_stream_insert(mock_dynamodb, mock_ses):
     event = {
         'Records': [
             {
-                'body': json.dumps({
-                    'title': 'My Awesome Blog'
-                    # Missing slug
-                })
+                'eventSource': 'aws:dynamodb',
+                'eventName': 'INSERT',
+                'dynamodb': {
+                    'NewImage': {
+                        'title': {'S': 'My New Blog'},
+                        'slug': {'S': 'my-new-blog'}
+                    }
+                }
             }
         ]
     }
-    monkeypatch.setattr(broadcast_handler, 'subscribers_table_name', 'test-table')
     
-    res = broadcast_handler.lambda_handler(event, None)
+    # Mock DynamoDB table and scan
+    mock_table = MagicMock()
+    mock_dynamodb.Table.return_value = mock_table
+    mock_table.scan.return_value = {
+        'Items': [
+            {'email': 'subscriber@example.com'}
+        ]
+    }
     
-    assert res['statusCode'] == 200
+    response = broadcast_handler.lambda_handler(event, None)
     
-    # Assert DynamoDB was NOT scanned because the record is skipped
-    mock_dynamo.Table().scan.assert_not_called()
-    mock_ses.send_email.assert_not_called()
+    assert response['statusCode'] == 200
+    assert mock_ses.send_email.call_count == 1
+    
+    call_args = mock_ses.send_email.call_args_list[0][1]
+    assert call_args['Destination']['ToAddresses'] == ['subscriber@example.com']
+    assert 'My New Blog' in call_args['Message']['Subject']['Data']
+    assert 'my-new-blog' in call_args['Message']['Body']['Text']['Data']
+
+def test_broadcast_handler_dynamodb_stream_modify(mock_dynamodb, mock_ses):
+    # Should ignore MODIFY events
+    event = {
+        'Records': [
+            {
+                'eventSource': 'aws:dynamodb',
+                'eventName': 'MODIFY',
+                'dynamodb': {
+                    'NewImage': {
+                        'title': {'S': 'Updated Blog'},
+                        'slug': {'S': 'updated-blog'}
+                    }
+                }
+            }
+        ]
+    }
+    
+    mock_table = MagicMock()
+    mock_dynamodb.Table.return_value = mock_table
+    mock_table.scan.return_value = {'Items': [{'email': 'subscriber@example.com'}]}
+    
+    response = broadcast_handler.lambda_handler(event, None)
+    
+    assert response['statusCode'] == 200
+    assert mock_ses.send_email.call_count == 0
+
+def test_broadcast_handler_unknown_source(mock_dynamodb, mock_ses):
+    event = {
+        'Records': [
+            {
+                'eventSource': 'aws:sqs',
+                'body': '{}'
+            }
+        ]
+    }
+    
+    mock_table = MagicMock()
+    mock_dynamodb.Table.return_value = mock_table
+    
+    response = broadcast_handler.lambda_handler(event, None)
+    
+    assert response['statusCode'] == 200
+    assert mock_ses.send_email.call_count == 0

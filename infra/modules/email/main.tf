@@ -30,6 +30,22 @@ resource "aws_route53_record" "mx_record" {
   records = ["10 inbound-smtp.${var.region}.amazonaws.com"]
 }
 
+resource "aws_route53_record" "spf_record" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = var.domain_name
+  type    = "TXT"
+  ttl     = 300
+  records = ["v=spf1 include:amazonses.com ~all"]
+}
+
+resource "aws_route53_record" "dmarc_record" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = "_dmarc.${var.domain_name}"
+  type    = "TXT"
+  ttl     = 300
+  records = ["v=DMARC1; p=none;"]
+}
+
 # -------------------------------------------------------------------------
 # SES Email Identity (Destination Gmail)
 # -------------------------------------------------------------------------
