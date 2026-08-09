@@ -195,7 +195,6 @@
 .medium-article-cover-img {
   width: 100%;
   height: auto;
-  max-height: 600px;
   object-fit: contain;
   border-radius: 4px;
 }
