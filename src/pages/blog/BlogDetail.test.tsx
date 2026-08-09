@@ -355,10 +355,10 @@ describe("BlogDetail Component", () => {
       
       // Check updatedAt
       expect(screen.getByText(/Last updated:/)).toBeInTheDocument();
-      
-      // Cover scrollToComments
-      const jumpBtn = screen.getByTitle("Jump to responses");
-      fireEvent.click(jumpBtn);
     });
+
+    // Cover scrollToComments
+    const jumpBtn = screen.getByTitle("Jump to responses");
+    fireEvent.click(jumpBtn);
   });
 });
