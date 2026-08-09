@@ -361,4 +361,34 @@ describe("BlogDetail Component", () => {
     const jumpBtn = screen.getByTitle("Jump to responses");
     fireEvent.click(jumpBtn);
   });
+
+  it("saves redirect path to localStorage when clicking Sign In as guest", async () => {
+    vi.spyOn(apiClient, "getStoredUser").mockReturnValue(null);
+    vi.spyOn(apiClient, "fetchBlogBySlug").mockResolvedValueOnce({
+      slug: "test-blog",
+      title: "Test Blog",
+      content: "This is a test blog content.",
+      likes: [],
+      comments: [
+        {
+          id: "c1",
+          username: "amrit",
+          text: "Great post!",
+          timestamp: "2026-01-01T00:00:00Z",
+        },
+      ],
+    });
+    vi.spyOn(apiClient, "fetchBlogs").mockResolvedValueOnce([]);
+
+    renderWithRouter(<BlogDetail theme={mockTheme} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Sign In")).toBeInTheDocument();
+    });
+
+    const signInBtn = screen.getByText("Sign In");
+    fireEvent.click(signInBtn);
+
+    expect(localStorage.getItem("redirect_after_login")).toContain("#comments");
+  });
 });

@@ -379,4 +379,29 @@ describe("Login Component", () => {
       expect(screen.getByText(/Invalid 2FA code/i)).toBeInTheDocument();
     });
   });
+
+  it("redirects to stored path in localStorage on successful login", async () => {
+    localStorage.setItem("redirect_after_login", "/blogs/test-blog#comments");
+    vi.spyOn(apiClient, "loginAdmin").mockResolvedValueOnce({
+      success: true,
+      user: { role: "user" },
+    });
+    
+    renderWithRouter(<Login theme={mockTheme} />);
+    
+    fireEvent.click(screen.getByText(/Sign in with email/i));
+
+    fireEvent.change(screen.getByPlaceholderText(/Email address/i), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Password/i), {
+      target: { value: "password123" },
+    });
+    
+    fireEvent.click(document.getElementById("login-submit-btn"));
+    
+    await waitFor(() => {
+      expect(localStorage.getItem("redirect_after_login")).toBeNull();
+    });
+  });
 });
