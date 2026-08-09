@@ -693,13 +693,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                 </div>
               </form>
             ) : (
-              <div
-                className="medium-response-login-box"
-                style={{
-                  backgroundColor: theme.compImgHighlight,
-                  border: `1px solid ${theme.compImgHighlight}`,
-                }}
-              >
+              <div className="medium-response-login-box">
                 <div className="login-box-text">
                   <h4 style={{ color: theme.text }}>Join the Conversation</h4>
                   <p style={{ color: theme.secondaryText }}>
@@ -716,10 +710,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
             {/* Comment List */}
             <div className="medium-response-list">
               {comments.length === 0 ? (
-                <div
-                  className="medium-no-responses-empty"
-                  style={{ backgroundColor: theme.compImgHighlight }}
-                >
+                <div className="medium-no-responses-empty">
                   <div className="empty-bubble">
                     <span role="img" aria-label="comment">
                       💬
