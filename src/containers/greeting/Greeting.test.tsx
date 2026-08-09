@@ -18,18 +18,22 @@ const mockTheme = {
   expTxtColor: '#000000',
 };
 
-vi.mock('../../portfolio', () => ({
-  greeting: {
-    title: 'Amrit Bhattarai',
-    subTitle: 'A sample subtitle',
-    portfolio_repository: 'https://github.com/amritbh',
-    heroChips: [
-      { icon: '☁️', label: 'Cloud Architect @ HP', link: 'https://www.linkedin.com/in/bamrit/' },
-      { icon: '🏔️', label: 'Adventurer', link: '/travel' },
-    ],
-    heroStats: [{ value: '5+', label: 'Himalayan Treks' }],
-  },
-}));
+vi.mock('../../portfolio', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../portfolio')>();
+  return {
+    ...actual,
+    greeting: {
+      title: 'Amrit Bhattarai',
+      subTitle: 'A sample subtitle',
+      portfolio_repository: 'https://github.com/amritbh/myPortfolio',
+      heroChips: [
+        { icon: '☁️', label: 'Cloud Architect @ HP', link: 'https://www.linkedin.com/in/bamrit/' },
+        { icon: '🏔️', label: 'Adventurer', link: '/travel' },
+      ],
+      heroStats: [{ value: '5+', label: 'Himalayan Treks' }],
+    },
+  };
+});
 
 describe('Greeting Component', () => {
   it('renders correctly with correct links', () => {
