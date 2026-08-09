@@ -257,16 +257,16 @@
   line-height: inherit;
 }
 
-/* Drop Cap for the first paragraph */
-.markdown-body > p:first-of-type::first-letter {
+/* Drop Cap for the first paragraph and conclusion */
+.markdown-body > p:first-of-type::first-letter,
+.markdown-body h3.conclusion-heading + p::first-letter {
   font-size: 3.8rem;
   font-weight: 800;
   float: left;
   line-height: 0.8;
-  margin-right: 0.1em;
+  margin-right: 0.12em;
   margin-top: 0.1em;
-  color: #1a8917;
-  /* Medium-style green accent */
+  color: #1a8917; /* Medium-style green accent */
   font-family: "Georgia", serif;
 }
 
