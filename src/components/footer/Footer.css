@@ -24,11 +24,23 @@
   font-family: "Google Sans Regular", sans-serif;
 }
 
-.footer-newsletter-form {
+.footer-newsletter-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 300px;
+  width: 100%;
+}
+
+.footer-newsletter-input-group {
   display: flex;
   gap: 0.5rem;
-  max-width: 440px;
   width: 100%;
+}
+
+.footer-newsletter-error {
+  color: #ff6b6b;
+  font-size: 0.85rem;
 }
 
 .footer-email-input {
@@ -155,7 +167,7 @@
     gap: 1rem;
   }
 
-  .footer-newsletter-form {
+  .footer-newsletter-input-group {
     flex-direction: column;
   }
 

@@ -97,46 +97,44 @@ const NewsletterForm: React.FC<{ theme?: Theme }> = ({ theme }) => {
 
   return (
     <form
-      className="footer-newsletter-form"
+      className="footer-newsletter-form-wrapper"
       onSubmit={handleSubmit}
       noValidate
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '100%', maxWidth: '300px' }}>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <input
-            id="footer-email-input"
-            type="email"
-            className="footer-email-input"
-            placeholder="your@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            aria-label="Email address"
-            disabled={loading}
-            style={{
-              backgroundColor: theme ? theme.compImgHighlight : undefined,
-              color: theme ? theme.text : undefined,
-              borderColor: theme ? theme.highlight : undefined,
-            }}
-          />
-          <button
-            type="submit"
-            className="footer-subscribe-btn"
-            disabled={loading}
-            style={{
-              backgroundColor: theme ? theme.jacketColor : "#388BFD",
-              opacity: loading ? 0.7 : 1,
-              cursor: loading ? 'not-allowed' : 'pointer'
-            }}
-          >
-            {loading ? '...' : 'Subscribe'}
-          </button>
-        </div>
-        {error && (
-          <span style={{ color: '#ff6b6b', fontSize: '0.85rem' }}>
-            {error}
-          </span>
-        )}
+      <div className="footer-newsletter-input-group">
+        <input
+          id="footer-email-input"
+          type="email"
+          className="footer-email-input"
+          placeholder="your@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          aria-label="Email address"
+          disabled={loading}
+          style={{
+            backgroundColor: theme ? theme.compImgHighlight : undefined,
+            color: theme ? theme.text : undefined,
+            borderColor: theme ? theme.highlight : undefined,
+          }}
+        />
+        <button
+          type="submit"
+          className="footer-subscribe-btn"
+          disabled={loading}
+          style={{
+            backgroundColor: theme ? theme.jacketColor : "#388BFD",
+            opacity: loading ? 0.7 : 1,
+            cursor: loading ? "not-allowed" : "pointer",
+          }}
+        >
+          {loading ? "..." : "Subscribe"}
+        </button>
       </div>
+      {error && (
+        <span className="footer-newsletter-error">
+          {error}
+        </span>
+      )}
     </form>
   );
 };
