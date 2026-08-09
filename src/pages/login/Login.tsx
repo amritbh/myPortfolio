@@ -77,10 +77,17 @@ const Login: React.FC = () => {
     }
   };
 
+  const hasProcessedHash = React.useRef(false);
+
   const handleUrlParams = async () => {
+    if (hasProcessedHash.current) return;
+
     // Handle Cognito Hash
-    const hashFragment = window.location.hash.substring(1);
-    if (hashFragment) {
+    if (window.location.hash.includes("id_token")) {
+      hasProcessedHash.current = true;
+      const hashFragment = window.location.hash.substring(1);
+      // Clear hash to prevent double execution in React Strict Mode
+      window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
       if (handleCognitoHash(hashFragment)) return;
     }
 
@@ -106,7 +113,13 @@ const Login: React.FC = () => {
     const token = getStoredToken();
     const user = getStoredUser();
     if (token && user) {
-      history.push(user.role === "admin" ? "/admin" : "/home");
+      const redirectPath = localStorage.getItem("redirect_after_login");
+      if (redirectPath) {
+        localStorage.removeItem("redirect_after_login");
+        history.push(redirectPath);
+      } else {
+        history.push(user.role === "admin" ? "/admin" : "/home");
+      }
     }
   };
 
