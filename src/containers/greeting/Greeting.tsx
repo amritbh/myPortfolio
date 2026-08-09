@@ -25,20 +25,41 @@ const Greeting: React.FC<GreetingProps> = ({ theme }) => {
           <h1 className="hero-name gradient-text">{greeting.title}</h1>
 
           <div className="hero-chips">
-            {greeting.heroChips.map((chip) => (
-              <span
-                key={chip.label}
-                className="chip"
-                style={{
-                  borderColor: theme.secondaryText,
-                  color: theme.text,
-                  backgroundColor: theme.headerColor,
-                }}
-              >
-                <span className="chip-icon">{chip.icon}</span>
-                <span className="chip-label">{chip.label}</span>
-              </span>
-            ))}
+            {greeting.heroChips.map((chip) => {
+              const isExternal = chip.link.startsWith("http");
+              const ChipContent = (
+                <span
+                  className="chip"
+                  style={{
+                    borderColor: theme.secondaryText,
+                    color: theme.text,
+                    backgroundColor: theme.headerColor,
+                  }}
+                >
+                  <span className="chip-icon">{chip.icon}</span>
+                  <span className="chip-label">{chip.label}</span>
+                </span>
+              );
+
+              return (
+                <React.Fragment key={chip.label}>
+                  {isExternal ? (
+                    <a
+                      href={chip.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="chip-link"
+                    >
+                      {ChipContent}
+                    </a>
+                  ) : (
+                    <Link to={chip.link} className="chip-link">
+                      {ChipContent}
+                    </Link>
+                  )}
+                </React.Fragment>
+              );
+            })}
           </div>
 
           <p className="hero-subtitle" style={{ color: theme.secondaryText }}>
@@ -58,8 +79,8 @@ const Greeting: React.FC<GreetingProps> = ({ theme }) => {
               href={greeting.portfolio_repository}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-ghost"
-              style={{ color: theme.secondaryText }}
+              className="btn-secondary"
+              style={{ color: theme.text, backgroundColor: theme.headerColor, borderColor: theme.secondaryText }}
             >
               <span role="img" aria-label="star">
                 ⭐
@@ -67,16 +88,16 @@ const Greeting: React.FC<GreetingProps> = ({ theme }) => {
               Star on GitHub
             </a>
 
-            <a
-              href="#travel-teaser"
-              className="btn-ghost"
-              style={{ color: theme.secondaryText }}
+            <Link
+              to="/travel"
+              className="btn-secondary"
+              style={{ color: theme.text, backgroundColor: theme.headerColor, borderColor: theme.secondaryText }}
             >
               <span role="img" aria-label="airplane">
                 ✈️
               </span>{" "}
-              Travel
-            </a>
+              Travel Blog
+            </Link>
           </div>
 
           <SocialMedia theme={theme} />

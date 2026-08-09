@@ -30,9 +30,9 @@ const greeting = {
   portfolio_repository: "https://github.com/amritbh/myPortfolio",
   githubProfile: "https://github.com/amritbh",
   heroChips: [
-    { icon: "☁️", label: "Cloud Architect @ HP" },
-    { icon: "🏔️", label: "Nepal Trekker" },
-    { icon: "✍️", label: "Technical Blogger" },
+    { icon: "☁️", label: "Cloud Architect @ HP", link: "https://www.linkedin.com/in/bamrit/" },
+    { icon: "🏔️", label: "Adventurer", link: "/travel" },
+    { icon: "✍️", label: "Technical Blogger", link: "/blogs" },
   ],
   heroStats: [
     { value: "5+", label: "Himalayan Treks" },
