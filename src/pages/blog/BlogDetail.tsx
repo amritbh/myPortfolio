@@ -24,6 +24,206 @@ interface BlogDetailProps {
   onToggle?: (mode: string) => void;
 }
 
+const EngagementBar = ({ theme, user, likes, isLiked, isLiking, handleLike, comments, scrollToComments, linkCopied, handleShareLink }: any) => (
+  <div
+    className="medium-engagement-bar"
+    style={{ backgroundColor: theme.body }}
+  >
+    {/* Like */}
+    <div className="medium-engagement-item">
+      <button
+        type="button"
+        className={`medium-engagement-btn ${isLiked ? "liked" : ""}`}
+        onClick={handleLike}
+        disabled={isLiking}
+        title={user ? "Like this story" : "Log in to like"}
+        style={{
+          borderColor: isLiked ? "#e74c3c" : theme.compImgHighlight,
+          color: isLiked ? "#e74c3c" : theme.secondaryText,
+        }}
+      >
+        {isLiked ? (
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="#e74c3c"
+          >
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+          </svg>
+        ) : (
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+          </svg>
+        )}
+      </button>
+      <span
+        className="medium-engagement-count"
+        style={{ color: theme.secondaryText }}
+      >
+        {likes.length}
+      </span>
+    </div>
+
+    {/* Comments */}
+    <div className="medium-engagement-item">
+      <button
+        type="button"
+        className="medium-engagement-btn"
+        onClick={scrollToComments}
+        title="Jump to responses"
+        style={{
+          borderColor: theme.compImgHighlight,
+          color: theme.secondaryText,
+        }}
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+        >
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+      </button>
+      <span
+        className="medium-engagement-count"
+        style={{ color: theme.secondaryText }}
+      >
+        {comments.length}
+      </span>
+    </div>
+
+    {/* Share */}
+    <div className="medium-engagement-item">
+      <button
+        type="button"
+        className="medium-engagement-btn"
+        onClick={handleShareLink}
+        title="Copy link"
+        style={{
+          borderColor: theme.compImgHighlight,
+          color: linkCopied ? "#1a8917" : theme.secondaryText,
+        }}
+      >
+        {linkCopied ? (
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#1a8917"
+            strokeWidth="2"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        ) : (
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <circle cx="18" cy="5" r="3" />
+            <circle cx="6" cy="12" r="3" />
+            <circle cx="18" cy="19" r="3" />
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+          </svg>
+        )}
+      </button>
+      {linkCopied && (
+        <span
+          className="medium-engagement-count"
+          style={{ color: "#1a8917", fontSize: "0.7rem" }}
+        >
+          Copied!
+        </span>
+      )}
+    </div>
+  </div>
+);
+
+const ResponseItem = ({ c, theme, user, handleDeleteComment }: any) => (
+  <div
+    key={c.id}
+    className="medium-response-item"
+    style={{ borderBottomColor: theme.compImgHighlight }}
+  >
+    <div className="medium-response-item-header">
+      <div className="medium-response-item-author">
+        <div
+          className="medium-response-initial"
+          style={{
+            backgroundColor: "#1a8917",
+            color: "#fff",
+            overflow: "hidden",
+          }}
+        >
+          {c.picture ? (
+            <img
+              src={c.picture}
+              alt={c.name || c.username}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+          ) : (
+            (c.name || c.username || "U")[0].toUpperCase()
+          )}
+        </div>
+        <div>
+          <span
+            className="medium-response-username"
+            style={{ color: theme.text }}
+          >
+            {c.name?.split("@")[0] || c.username?.split("@")[0] || "User"}
+          </span>
+          <span
+            className="medium-response-date"
+            style={{ color: theme.secondaryText }}
+          >
+            {new Date(c.timestamp).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })}
+          </span>
+        </div>
+      </div>
+      {user &&
+        (user.username === c.username || user.role === "admin") && (
+          <button
+            type="button"
+            onClick={() => handleDeleteComment(c.id)}
+            className="medium-response-delete-btn"
+            title="Delete"
+          >
+            ✕
+          </button>
+        )}
+    </div>
+    <p
+      className="medium-response-text"
+      style={{ color: theme.text }}
+    >
+      {c.text}
+    </p>
+  </div>
+);
+
 const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange, onToggle }) => {
   const { slug } = useParams<{ slug: string }>();
 
@@ -162,7 +362,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
         <Header
           theme={theme}
           themeMode={themeMode || ""}
-          onThemeChange={onThemeChange || (() => {})}
+          onThemeChange={onThemeChange || (() => { })}
         />
         <div className="medium-article-loading">
           <div
@@ -187,7 +387,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
         <Header
           theme={theme}
           themeMode={themeMode || ""}
-          onThemeChange={onThemeChange || (() => {})}
+          onThemeChange={onThemeChange || (() => { })}
         />
         <div className="medium-article-error">
           <h2 style={{ color: theme.text }}>Post not found</h2>
@@ -222,7 +422,43 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
   };
   const displayTags = tags || ["Engineering"];
   const displayReadTime = readTime || "5 min read";
-  const htmlContent = marked(content || "") as string;
+  let rawContent = content || "";
+  
+  // Convert navigation links into stylized cards BEFORE marked parses them
+  const prevRegex = /\*\*Read Previous:\*\* \[([^\]]+)\]\(([^)]+)\)/i;
+  const nextRegex = /\*\*Read Next:\*\* \[([^\]]+)\]\(([^)]+)\)/i;
+  
+  let navCardsHtml = "";
+  if (prevRegex.test(rawContent) || nextRegex.test(rawContent)) {
+    navCardsHtml += '<div class="blog-nav-cards-container">';
+    
+    if (prevRegex.test(rawContent)) {
+      rawContent = rawContent.replace(prevRegex, (match, title, link) => {
+        navCardsHtml += `<a href="${link}" class="blog-nav-card prev-card"><span class="nav-label">Read Previous</span><span class="nav-title">${title}</span></a>`;
+        return ""; // Remove from main content
+      });
+    }
+    
+    if (nextRegex.test(rawContent)) {
+      rawContent = rawContent.replace(nextRegex, (match, title, link) => {
+        navCardsHtml += `<a href="${link}" class="blog-nav-card next-card"><span class="nav-label">Read Next</span><span class="nav-title">${title}</span></a>`;
+        return ""; // Remove from main content
+      });
+    }
+    
+    navCardsHtml += '</div>';
+    
+    // Append the nav cards to the end of the raw content
+    rawContent += `\n\n${navCardsHtml}`;
+  }
+
+  let htmlContent = marked(rawContent) as string;
+
+  // Add a stylistic divider before the Conclusion section
+  htmlContent = htmlContent.replace(
+    /<h3[^>]*>Conclusion<\/h3>/i,
+    '<hr class="medium-article-divider conclusion-divider" /><h3 class="conclusion-heading">Conclusion</h3>'
+  );
   const isLiked = user && likes.includes(user.username);
 
   const getUserInitial = (u: any) => {
@@ -230,206 +466,6 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
     if (u?.username) return u.username[0].toUpperCase();
     return "U";
   };
-
-  const renderEngagementBar = () => (
-    <div
-      className="medium-engagement-bar"
-      style={{ backgroundColor: theme.body }}
-    >
-      {/* Like */}
-      <div className="medium-engagement-item">
-        <button
-          type="button"
-          className={`medium-engagement-btn ${isLiked ? "liked" : ""}`}
-          onClick={handleLike}
-          disabled={isLiking}
-          title={user ? "Like this story" : "Log in to like"}
-          style={{
-            borderColor: isLiked ? "#e74c3c" : theme.compImgHighlight,
-            color: isLiked ? "#e74c3c" : theme.secondaryText,
-          }}
-        >
-          {isLiked ? (
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="#e74c3c"
-            >
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-          ) : (
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-          )}
-        </button>
-        <span
-          className="medium-engagement-count"
-          style={{ color: theme.secondaryText }}
-        >
-          {likes.length}
-        </span>
-      </div>
-
-      {/* Comments */}
-      <div className="medium-engagement-item">
-        <button
-          type="button"
-          className="medium-engagement-btn"
-          onClick={scrollToComments}
-          title="Jump to responses"
-          style={{
-            borderColor: theme.compImgHighlight,
-            color: theme.secondaryText,
-          }}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          >
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
-        </button>
-        <span
-          className="medium-engagement-count"
-          style={{ color: theme.secondaryText }}
-        >
-          {comments.length}
-        </span>
-      </div>
-
-      {/* Share */}
-      <div className="medium-engagement-item">
-        <button
-          type="button"
-          className="medium-engagement-btn"
-          onClick={handleShareLink}
-          title="Copy link"
-          style={{
-            borderColor: theme.compImgHighlight,
-            color: linkCopied ? "#1a8917" : theme.secondaryText,
-          }}
-        >
-          {linkCopied ? (
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#1a8917"
-              strokeWidth="2"
-            >
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          ) : (
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <circle cx="18" cy="5" r="3" />
-              <circle cx="6" cy="12" r="3" />
-              <circle cx="18" cy="19" r="3" />
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-            </svg>
-          )}
-        </button>
-        {linkCopied && (
-          <span
-            className="medium-engagement-count"
-            style={{ color: "#1a8917", fontSize: "0.7rem" }}
-          >
-            Copied!
-          </span>
-        )}
-      </div>
-    </div>
-  );
-
-  const renderResponseItem = (c: any) => (
-    <div
-      key={c.id}
-      className="medium-response-item"
-      style={{ borderBottomColor: theme.compImgHighlight }}
-    >
-      <div className="medium-response-item-header">
-        <div className="medium-response-item-author">
-          <div
-            className="medium-response-initial"
-            style={{
-              backgroundColor: "#1a8917",
-              color: "#fff",
-              overflow: "hidden",
-            }}
-          >
-            {c.picture ? (
-              <img
-                src={c.picture}
-                alt={c.name || c.username}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            ) : (
-              (c.name || c.username || "U")[0].toUpperCase()
-            )}
-          </div>
-          <div>
-            <span
-              className="medium-response-username"
-              style={{ color: theme.text }}
-            >
-              {c.name?.split("@")[0] || c.username?.split("@")[0] || "User"}
-            </span>
-            <span
-              className="medium-response-date"
-              style={{ color: theme.secondaryText }}
-            >
-              {new Date(c.timestamp).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              })}
-            </span>
-          </div>
-        </div>
-        {user &&
-          (user.username === c.username || user.role === "admin") && (
-            <button
-              type="button"
-              onClick={() => handleDeleteComment(c.id)}
-              className="medium-response-delete-btn"
-              title="Delete"
-            >
-              ✕
-            </button>
-          )}
-      </div>
-      <p
-        className="medium-response-text"
-        style={{ color: theme.text }}
-      >
-        {c.text}
-      </p>
-    </div>
-  );
 
   return (
     <div
@@ -445,12 +481,23 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
       <Header
         theme={theme}
         themeMode={themeMode || ""}
-        onThemeChange={onThemeChange || (() => {})}
+        onThemeChange={onThemeChange || (() => { })}
       />
 
       <div className="medium-article-layout">
         {/* Floating Engagement Bar (or bottom bar on mobile) */}
-        {renderEngagementBar()}
+        <EngagementBar 
+          theme={theme}
+          user={user}
+          likes={likes}
+          isLiked={isLiked}
+          isLiking={isLiking}
+          handleLike={handleLike}
+          comments={comments}
+          scrollToComments={scrollToComments}
+          linkCopied={linkCopied}
+          handleShareLink={handleShareLink}
+        />
 
         {/* Article */}
         <article className="medium-article" ref={articleRef}>
@@ -595,7 +642,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
               Responses ({comments.length})
             </h2>
 
-            {user ? (
+            {user && (
               <form
                 onSubmit={handleAddComment}
                 className="medium-response-form"
@@ -656,14 +703,10 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                   </div>
                 </div>
               </form>
-            ) : (
-              <div
-                className="medium-response-login-box"
-                style={{
-                  backgroundColor: theme.compImgHighlight,
-                  border: `1px solid ${theme.compImgHighlight}`,
-                }}
-              >
+            )}
+
+            {!user && comments.length > 0 && (
+              <div className="medium-response-login-box">
                 <div className="login-box-text">
                   <h4 style={{ color: theme.text }}>Join the Conversation</h4>
                   <p style={{ color: theme.secondaryText }}>
@@ -680,21 +723,36 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
             {/* Comment List */}
             <div className="medium-response-list">
               {comments.length === 0 ? (
-                <div
-                  className="medium-no-responses-empty"
-                  style={{ backgroundColor: theme.compImgHighlight }}
-                >
+                <div className="medium-no-responses-empty">
                   <div className="empty-bubble">
                     <span role="img" aria-label="comment">
                       💬
                     </span>
                   </div>
-                  <p style={{ color: theme.secondaryText }}>
-                    No responses yet. Be the first to share your thoughts!
+                  <h4 style={{ color: theme.text, margin: "4px 0 8px 0", fontSize: "1.3rem", fontFamily: "'Google Sans', sans-serif" }}>
+                    No responses yet
+                  </h4>
+                  <p style={{ color: theme.secondaryText, marginBottom: user ? "0" : "24px" }}>
+                    {user 
+                      ? "Be the first to share your thoughts!" 
+                      : "Sign in to join the conversation and be the first to share your thoughts."}
                   </p>
+                  {!user && (
+                    <a href="/login" className="login-box-button" style={{ marginLeft: 0 }}>
+                      Sign In to Respond
+                    </a>
+                  )}
                 </div>
               ) : (
-                comments.map((c) => renderResponseItem(c))
+                comments.map((c) => (
+                  <ResponseItem
+                    key={c.id}
+                    c={c}
+                    theme={theme}
+                    user={user}
+                    handleDeleteComment={handleDeleteComment}
+                  />
+                ))
               )}
             </div>
           </div>

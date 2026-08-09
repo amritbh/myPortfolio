@@ -5,6 +5,10 @@ import BlogDetail from "./BlogDetail";
 import { BrowserRouter, Route } from "react-router-dom";
 import * as apiClient from "../../utils/apiClient";
 
+beforeAll(() => {
+  window.HTMLElement.prototype.scrollIntoView = vi.fn();
+});
+
 const mockTheme = {
   body: "#ffffff",
   text: "#000000",
@@ -285,5 +289,76 @@ describe("BlogDetail Component", () => {
     });
 
     global.navigator.share = originalShare;
+  });
+
+  it("renders empty state with sign in prompt when no comments and not logged in", async () => {
+    vi.spyOn(apiClient, "fetchBlogBySlug").mockResolvedValueOnce({
+      slug: "test-blog",
+      title: "Test Blog",
+      content: "This is a test blog content.",
+      likes: [],
+      comments: [],
+    });
+    vi.spyOn(apiClient, "fetchBlogs").mockResolvedValueOnce([]);
+    vi.spyOn(apiClient, "getStoredUser").mockReturnValue(null);
+
+    renderWithRouter(<BlogDetail theme={mockTheme} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("No responses yet")).toBeInTheDocument();
+      expect(screen.getByText("Sign in to join the conversation and be the first to share your thoughts.")).toBeInTheDocument();
+      expect(screen.getByText("Sign In to Respond")).toBeInTheDocument();
+    });
+  });
+
+  it("renders error state when blog is not found", async () => {
+    vi.spyOn(apiClient, "fetchBlogBySlug").mockResolvedValueOnce(null);
+    vi.spyOn(apiClient, "fetchBlogs").mockResolvedValueOnce([]);
+
+    renderWithRouter(<BlogDetail theme={mockTheme} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Post not found")).toBeInTheDocument();
+      expect(screen.getByText("This story may have been removed or the link is incorrect.")).toBeInTheDocument();
+    });
+  });
+
+  it("formats navigation cards and conclusion correctly", async () => {
+    vi.spyOn(apiClient, "fetchBlogBySlug").mockResolvedValueOnce({
+      slug: "test-blog",
+      title: "Test Blog",
+      content: "<h3>Conclusion</h3>\n\n**Read Previous:** [Prev](/blogs/prev)\n**Read Next:** [Next](/blogs/next)",
+      likes: [],
+      comments: [
+        { id: "1", text: "Nice", timestamp: new Date().toISOString() } // No name or username to test getUserInitial fallback
+      ],
+      updatedAt: new Date().toISOString() // Test updatedAt field
+    });
+    vi.spyOn(apiClient, "fetchBlogs").mockResolvedValueOnce([]);
+    vi.spyOn(apiClient, "getStoredUser").mockReturnValue(null);
+
+    const { container } = renderWithRouter(<BlogDetail theme={mockTheme} />);
+
+    await screen.findByText("Test Blog");
+
+    await waitFor(() => {
+      // Check conclusion divider
+      expect(container.innerHTML).toContain('conclusion-divider');
+      expect(container.innerHTML).toContain('conclusion-heading');
+        
+      // Check nav cards
+      expect(container.innerHTML).toContain('blog-nav-cards-container');
+      expect(container.innerHTML).toContain('prev-card');
+      expect(container.innerHTML).toContain('next-card');
+      expect(screen.getByText("Prev")).toBeInTheDocument();
+      expect(screen.getByText("Next")).toBeInTheDocument();
+      
+      // Check updatedAt
+      expect(screen.getByText(/Last updated:/)).toBeInTheDocument();
+    });
+
+    // Cover scrollToComments
+    const jumpBtn = screen.getByTitle("Jump to responses");
+    fireEvent.click(jumpBtn);
   });
 });
