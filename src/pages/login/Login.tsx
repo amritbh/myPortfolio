@@ -37,6 +37,16 @@ const Login: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const executeRedirect = (userRole?: string) => {
+    const redirectPath = localStorage.getItem("redirect_after_login");
+    if (redirectPath) {
+      localStorage.removeItem("redirect_after_login");
+      history.push(redirectPath);
+    } else {
+      history.push(userRole === "admin" ? "/admin" : "/home");
+    }
+  };
+
   const handleCognitoHash = (hashFragment: string) => {
     const hashParams = new URLSearchParams(hashFragment);
     const idToken = hashParams.get("id_token");
@@ -61,13 +71,7 @@ const Login: React.FC = () => {
       }
       setSession(idToken, user);
       
-      const redirectPath = localStorage.getItem("redirect_after_login");
-      if (redirectPath) {
-        localStorage.removeItem("redirect_after_login");
-        history.push(redirectPath);
-      } else {
-        history.push(user.role === "admin" ? "/admin" : "/home");
-      }
+      executeRedirect(user.role);
       return true;
     } catch (e) {
       console.error("Failed to parse Cognito JWT", e);
@@ -112,13 +116,7 @@ const Login: React.FC = () => {
     const token = getStoredToken();
     const user = getStoredUser();
     if (token && user) {
-      const redirectPath = localStorage.getItem("redirect_after_login");
-      if (redirectPath) {
-        localStorage.removeItem("redirect_after_login");
-        history.push(redirectPath);
-      } else {
-        history.push(user.role === "admin" ? "/admin" : "/home");
-      }
+      executeRedirect(user.role);
     }
   };
 
@@ -245,13 +243,7 @@ const Login: React.FC = () => {
         return;
       }
       if (response.user) {
-        const redirectPath = localStorage.getItem("redirect_after_login");
-        if (redirectPath) {
-          localStorage.removeItem("redirect_after_login");
-          history.push(redirectPath);
-        } else {
-          history.push(response.user.role === "admin" ? "/admin" : "/home");
-        }
+        executeRedirect(response.user.role);
       }
     } else {
       setAuthError(response.error || "Authentication failed.");

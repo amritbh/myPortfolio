@@ -391,4 +391,29 @@ describe("BlogDetail Component", () => {
 
     expect(localStorage.getItem("redirect_after_login")).toContain("#comments");
   });
+  it("auto-scrolls to hash element when loading finishes", async () => {
+    vi.spyOn(apiClient, "getStoredUser").mockReturnValue(null);
+    vi.spyOn(apiClient, "fetchBlogBySlug").mockResolvedValueOnce({
+      slug: "test-blog",
+      title: "Test Blog",
+      content: "This is a test blog content.",
+      likes: [],
+      comments: [],
+    });
+    vi.spyOn(apiClient, "fetchBlogs").mockResolvedValueOnce([]);
+
+    window.location.hash = "#comments";
+    
+    // Mock scrollIntoView
+    window.HTMLElement.prototype.scrollIntoView = vi.fn();
+
+    renderWithRouter(<BlogDetail theme={mockTheme} />);
+
+    // Wait for the blog to finish loading and the timeout to fire
+    await waitFor(() => {
+      expect(window.HTMLElement.prototype.scrollIntoView).toHaveBeenCalledWith({ behavior: "smooth" });
+    }, { timeout: 1500 });
+    
+    window.location.hash = ""; // Clean up
+  });
 });

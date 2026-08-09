@@ -264,4 +264,21 @@ describe("Header Component", () => {
 
     expect(screen.queryByText(/Logout/i)).not.toBeInTheDocument();
   });
+
+  it("sets redirect_after_login in localStorage when clicking Login from a valid path", () => {
+    vi.spyOn(apiClient, "getStoredUser").mockReturnValue(null);
+    
+    delete window.location;
+    window.location = { pathname: "/blogs/test-blog", hash: "#comments" };
+    
+    renderWithRouter(<Header theme={mockTheme} />);
+    const loginLink = screen.getByText("Login");
+    
+    // Clear localStorage before test
+    localStorage.clear();
+    
+    fireEvent.click(loginLink);
+    
+    expect(localStorage.getItem("redirect_after_login")).toBe("/blogs/test-blog#comments");
+  });
 });
