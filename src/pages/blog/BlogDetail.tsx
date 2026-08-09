@@ -162,7 +162,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
         <Header
           theme={theme}
           themeMode={themeMode || ""}
-          onThemeChange={onThemeChange || (() => {})}
+          onThemeChange={onThemeChange || (() => { })}
         />
         <div className="medium-article-loading">
           <div
@@ -187,7 +187,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
         <Header
           theme={theme}
           themeMode={themeMode || ""}
-          onThemeChange={onThemeChange || (() => {})}
+          onThemeChange={onThemeChange || (() => { })}
         />
         <div className="medium-article-error">
           <h2 style={{ color: theme.text }}>Post not found</h2>
@@ -222,7 +222,13 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
   };
   const displayTags = tags || ["Engineering"];
   const displayReadTime = readTime || "5 min read";
-  const htmlContent = marked(content || "") as string;
+  let htmlContent = marked(content || "") as string;
+
+  // Add a stylistic divider before the Conclusion section
+  htmlContent = htmlContent.replace(
+    /<h3>Conclusion<\/h3>/i,
+    '<hr class="medium-article-divider conclusion-divider" /><h3 class="conclusion-heading">Conclusion</h3>'
+  );
   const isLiked = user && likes.includes(user.username);
 
   const getUserInitial = (u: any) => {
@@ -445,7 +451,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
       <Header
         theme={theme}
         themeMode={themeMode || ""}
-        onThemeChange={onThemeChange || (() => {})}
+        onThemeChange={onThemeChange || (() => { })}
       />
 
       <div className="medium-article-layout">

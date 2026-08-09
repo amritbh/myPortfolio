@@ -265,8 +265,26 @@
   line-height: 0.8;
   margin-right: 0.1em;
   margin-top: 0.1em;
-  color: #1a8917; /* Medium-style green accent */
+  color: #1a8917;
+  /* Medium-style green accent */
   font-family: "Georgia", serif;
+}
+
+/* Conclusion Styling */
+.conclusion-divider {
+  border-top: 1px solid rgba(128, 128, 128, 0.4);
+  width: 120px;
+  margin: 4em auto 2.5em auto;
+}
+
+.markdown-body h3.conclusion-heading {
+  text-align: center;
+  font-family: "Georgia", serif;
+  font-size: 1.8rem;
+  font-style: italic;
+  margin-bottom: 1.2em;
+  margin-top: 0;
+  color: inherit;
 }
 
 .markdown-body a {
@@ -427,6 +445,7 @@
     align-items: flex-start;
     gap: 20px;
   }
+
   .login-box-button {
     margin-left: 0;
   }
