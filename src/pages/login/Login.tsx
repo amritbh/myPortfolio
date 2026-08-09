@@ -56,18 +56,17 @@ const Login: React.FC = () => {
         type: "cognito",
         role: "user",
       };
+      if (payload.email === "amrit.bhattarai990@gmail.com") {
+        user.role = "admin";
+      }
       setSession(idToken, user);
       
       const redirectPath = localStorage.getItem("redirect_after_login");
       if (redirectPath) {
         localStorage.removeItem("redirect_after_login");
         history.push(redirectPath);
-      } else if (payload.email === "amrit.bhattarai990@gmail.com") {
-        user.role = "admin";
-        setSession(idToken, user);
-        history.push("/admin");
       } else {
-        history.push("/home");
+        history.push(user.role === "admin" ? "/admin" : "/home");
       }
       return true;
     } catch (e) {
