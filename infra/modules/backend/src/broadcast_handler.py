@@ -39,6 +39,25 @@ def broadcast_to_subscribers(subject, body_text, table):
             
     print(f"Successfully broadcasted to {success_count} subscribers.")
 
+def process_dynamodb_record(record, table):
+    if record.get('eventName') != 'INSERT':
+        return
+        
+    new_image = record.get('dynamodb', {}).get('NewImage', {})
+    blog_title = new_image.get('title', {}).get('S')
+    blog_slug = new_image.get('slug', {}).get('S')
+    
+    if not blog_title or not blog_slug:
+        print("Missing title or slug in DynamoDB INSERT, skipping.")
+        return
+        
+    print(f"Broadcasting new blog from DynamoDB stream: {blog_title} ({blog_slug})")
+    blog_url = f"https://amrit.cloud/blogs/{blog_slug}"
+    subject = f"New Blog Published: {blog_title}"
+    body_text = f"Hi there!\n\nI just published a new blog post: \"{blog_title}\".\n\nYou can read it here: {blog_url}\n\nThanks for subscribing!\nAmrit"
+    
+    broadcast_to_subscribers(subject, body_text, table)
+
 def lambda_handler(event, context):
     if not subscribers_table_name:
         print("Error: SUBSCRIBERS_TABLE_NAME not set in environment.")
@@ -56,21 +75,7 @@ def lambda_handler(event, context):
     for record in event.get('Records', []):
         try:
             if record.get('eventSource') == 'aws:dynamodb':
-                if record.get('eventName') == 'INSERT':
-                    new_image = record.get('dynamodb', {}).get('NewImage', {})
-                    blog_title = new_image.get('title', {}).get('S')
-                    blog_slug = new_image.get('slug', {}).get('S')
-                    
-                    if not blog_title or not blog_slug:
-                        print("Missing title or slug in DynamoDB INSERT, skipping.")
-                        continue
-                        
-                    print(f"Broadcasting new blog from DynamoDB stream: {blog_title} ({blog_slug})")
-                    blog_url = f"https://amrit.cloud/blogs/{blog_slug}"
-                    subject = f"New Blog Published: {blog_title}"
-                    body_text = f"Hi there!\n\nI just published a new blog post: \"{blog_title}\".\n\nYou can read it here: {blog_url}\n\nThanks for subscribing!\nAmrit"
-                    
-                    broadcast_to_subscribers(subject, body_text, table)
+                process_dynamodb_record(record, table)
             else:
                 print(f"Unknown event source: {record.get('eventSource')}")
                 
