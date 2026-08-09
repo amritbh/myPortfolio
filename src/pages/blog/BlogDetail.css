@@ -202,10 +202,10 @@
 
 /* ===== Body Typography (Medium-style) ===== */
 .medium-article-body.markdown-body {
-  font-family: "Georgia", "Times New Roman", serif;
+  font-family: "Google Sans", "Inter", "Roboto", "Helvetica Neue", sans-serif;
   font-size: 1.15rem;
-  line-height: 1.75;
-  letter-spacing: 0.01em;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
 }
 
 .markdown-body h1,
@@ -237,7 +237,6 @@
   margin-top: 2.2em;
   margin-bottom: 0.5em;
   line-height: 1.3;
-  font-family: "Georgia", serif;
 }
 
 .markdown-body h3 {
@@ -248,7 +247,20 @@
 }
 
 .markdown-body p {
-  margin-bottom: 1.8em;
+  margin-bottom: 1.6em;
+  opacity: 0.95;
+}
+
+/* Drop Cap for the first paragraph */
+.markdown-body > p:first-of-type::first-letter {
+  font-size: 3.8rem;
+  font-weight: 800;
+  float: left;
+  line-height: 0.8;
+  margin-right: 0.1em;
+  margin-top: 0.1em;
+  color: #1a8917; /* Medium-style green accent */
+  font-family: "Georgia", serif;
 }
 
 .markdown-body a {
