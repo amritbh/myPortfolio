@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Greeting from './Greeting';
+import { vi } from 'vitest';
 
 const mockTheme = {
   body: '#FFFFFF',
@@ -14,9 +15,10 @@ const mockTheme = {
   jacketColor: '#1a8917',
   headerColor: '#1a1a1a70',
   splashBg: '#FFFFFF',
+  expTxtColor: '#000000',
 };
 
-jest.mock('../../portfolio', () => ({
+vi.mock('../../portfolio', () => ({
   greeting: {
     title: 'Amrit Bhattarai',
     subTitle: 'A sample subtitle',
