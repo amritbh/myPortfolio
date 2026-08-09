@@ -716,7 +716,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                       💬
                     </span>
                   </div>
-                  <h4 style={{ color: theme.text, margin: "12px 0 8px 0", fontSize: "1.3rem", fontFamily: "'Google Sans', sans-serif" }}>
+                  <h4 style={{ color: theme.text, margin: "4px 0 8px 0", fontSize: "1.3rem", fontFamily: "'Google Sans', sans-serif" }}>
                     No responses yet
                   </h4>
                   <p style={{ color: theme.secondaryText, marginBottom: user ? "0" : "24px" }}>
