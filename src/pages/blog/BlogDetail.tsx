@@ -222,7 +222,37 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
   };
   const displayTags = tags || ["Engineering"];
   const displayReadTime = readTime || "5 min read";
-  let htmlContent = marked(content || "") as string;
+  let rawContent = content || "";
+  
+  // Convert navigation links into stylized cards BEFORE marked parses them
+  const prevRegex = /\*\*Read Previous:\*\* \[([^\]]+)\]\(([^)]+)\)/i;
+  const nextRegex = /\*\*Read Next:\*\* \[([^\]]+)\]\(([^)]+)\)/i;
+  
+  let navCardsHtml = "";
+  if (prevRegex.test(rawContent) || nextRegex.test(rawContent)) {
+    navCardsHtml += '<div class="blog-nav-cards-container">';
+    
+    if (prevRegex.test(rawContent)) {
+      rawContent = rawContent.replace(prevRegex, (match, title, link) => {
+        navCardsHtml += `<a href="${link}" class="blog-nav-card prev-card"><span class="nav-label">Read Previous</span><span class="nav-title">${title}</span></a>`;
+        return ""; // Remove from main content
+      });
+    }
+    
+    if (nextRegex.test(rawContent)) {
+      rawContent = rawContent.replace(nextRegex, (match, title, link) => {
+        navCardsHtml += `<a href="${link}" class="blog-nav-card next-card"><span class="nav-label">Read Next</span><span class="nav-title">${title}</span></a>`;
+        return ""; // Remove from main content
+      });
+    }
+    
+    navCardsHtml += '</div>';
+    
+    // Append the nav cards to the end of the raw content
+    rawContent += `\n\n${navCardsHtml}`;
+  }
+
+  let htmlContent = marked(rawContent) as string;
 
   // Add a stylistic divider before the Conclusion section
   htmlContent = htmlContent.replace(
