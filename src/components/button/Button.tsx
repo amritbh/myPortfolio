@@ -1,7 +1,7 @@
 import React from "react";
 import "./Button.css";
 
-const changeButtonStyle = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, color: string, bgColor: string) => {
+const changeButtonStyle = (event: React.SyntheticEvent<HTMLAnchorElement>, color: string, bgColor: string) => {
   const el = event.target as HTMLAnchorElement;
   el.style.color = color;
   el.style.backgroundColor = bgColor;

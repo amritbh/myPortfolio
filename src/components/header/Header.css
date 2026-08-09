@@ -144,8 +144,10 @@
 
   .account-dropdown-menu {
     position: absolute;
-    right: 0;
+    right: auto;
+    left: 0;
     top: 100%;
+    transform-origin: top left;
     background: var(--dropdown-bg, rgba(255, 255, 255, 0.85));
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -180,7 +182,7 @@
     }
   }
 
-  .account-dropdown-item {
+  .header .account-dropdown-item {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -198,7 +200,7 @@
     width: 100%;
   }
 
-  .account-dropdown-item:hover {
+  .header .account-dropdown-item:hover {
     background: var(--dropdown-hover, rgba(0, 0, 0, 0.05));
     transform: translateX(4px);
   }
@@ -224,7 +226,7 @@
     margin-top: 10px;
   }
 
-  .account-dropdown-item {
+  .header .account-dropdown-item {
     display: flex;
     align-items: center;
     gap: 12px;

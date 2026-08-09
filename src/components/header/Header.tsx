@@ -340,6 +340,11 @@ const Header: React.FC<HeaderProps> = ({
                       onMouseEnter(event, theme.highlight)
                     }
                     onMouseOut={(event: any) => onMouseOut(event)}
+                    onClick={() => {
+                      if (!['/', '/home', '/login'].includes(window.location.pathname)) {
+                        localStorage.setItem('redirect_after_login', window.location.pathname + window.location.hash);
+                      }
+                    }}
                   >
                     Login
                   </NavLink>
