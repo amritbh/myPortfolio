@@ -196,8 +196,8 @@ export const materialTealTheme: Theme = {
   splashBg: "#05505E",
 };
 
-// Dark theme — rich GitHub-dark inspired palette (not flat black)
 export const darkTheme: Theme = {
+  name: "dark",
   body: "#0D1117",
   text: "#E6EDF3",
   expTxtColor: "#C9D1D9",

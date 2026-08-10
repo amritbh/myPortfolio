@@ -46,10 +46,12 @@ This project maintains a series of technical blog posts describing its own archi
 ## 6. Publishing the Blog
 
 - When explicitly asked to publish a blog, you can bypass the Admin UI by writing a Python script to directly insert the blog JSON into the DynamoDB `amrit-portfolio-prod-blogs` table in `us-east-1` using `boto3`.
-- **CRITICAL WARNING**: The frontend React app will completely crash and fail to render _any_ blogs if the sorting logic encounters invalid data. You MUST ensure:
+- **CRITICAL WARNING**: The frontend React app can fail to render blogs if the sorting logic encounters invalid data. You MUST ensure:
   1. The date field is exactly named `publishDate` (do NOT use `date`).
   2. The `title` field is prepended with its sequential number (e.g., "27. Your Title").
-- The item schema must exactly match the required DynamoDB structure: `slug`, `title` (prepended with sequential number), `summary`, `publishDate` (UTC ISO format ending in Z), `coverImage`, `readTime`, `tags` (list), `author` (dict with name and avatar), `likes` (optional empty list `[]`), `views` (optional empty list `[]`), and `content` (raw markdown from the draft file).
+  3. The `summary` field is included.
+  4. The `coverImage` URL strictly uses the CloudFront domain `https://amrit.cloud/...` and NEVER the raw S3 bucket URL (`s3.amazonaws.com`), which will return a 403 Forbidden.
+- The item schema must exactly match the required DynamoDB structure.
 - Example script structure:
 
   ```python
@@ -74,6 +76,9 @@ This project maintains a series of technical blog posts describing its own archi
           'name': 'Amrit',
           'avatar': 'https://avatars.githubusercontent.com/u/79965355?v=4'
       },
+      'likes': [],
+      'views': [],
+      'comments': [],
       'content': content
   }
   table.put_item(Item=item)

@@ -251,6 +251,40 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
+  useEffect(() => {
+    if (!loading && window.location.hash) {
+      setTimeout(() => {
+        const id = window.location.hash.substring(1);
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    if (!loading && articleRef.current) {
+      const pres = articleRef.current.querySelectorAll("pre");
+      pres.forEach((pre) => {
+        // Skip if already added
+        if (pre.querySelector(".copy-code-button")) return;
+
+        const button = document.createElement("button");
+        button.className = "copy-code-button";
+        button.innerText = "Copy";
+        button.onclick = () => {
+          const code = pre.querySelector("code")?.textContent || "";
+          navigator.clipboard.writeText(code).then(() => {
+            button.innerText = "Copied!";
+            setTimeout(() => {
+              button.innerText = "Copy";
+            }, 2000);
+          });
+        };
+        pre.appendChild(button);
+      });
+    }
+  }, [loading, blog]);
+
   const loadBlog = async () => {
     setLoading(true);
     const [fetchedBlog, allBlogs] = await Promise.all([
@@ -349,7 +383,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
   };
 
   const scrollToComments = () => {
-    const el = document.getElementById("blog-responses");
+    const el = document.getElementById("comments");
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -631,7 +665,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
 
           {/* Responses Section */}
           <div
-            id="blog-responses"
+            id="comments"
             className="medium-responses"
             style={{ borderTopColor: theme.compImgHighlight }}
           >
@@ -714,9 +748,13 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                     with this story.
                   </p>
                 </div>
-                <a href="/login" className="login-box-button">
+                <Link 
+                  to="/login" 
+                  className="login-box-button"
+                  onClick={() => localStorage.setItem("redirect_after_login", window.location.pathname + "#comments")}
+                >
                   Sign In
-                </a>
+                </Link>
               </div>
             )}
 
@@ -738,9 +776,14 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
                       : "Sign in to join the conversation and be the first to share your thoughts."}
                   </p>
                   {!user && (
-                    <a href="/login" className="login-box-button" style={{ marginLeft: 0 }}>
+                    <Link 
+                      to="/login" 
+                      className="login-box-button" 
+                      style={{ marginLeft: 0 }}
+                      onClick={() => localStorage.setItem("redirect_after_login", window.location.pathname + "#comments")}
+                    >
                       Sign In to Respond
-                    </a>
+                    </Link>
                   )}
                 </div>
               ) : (

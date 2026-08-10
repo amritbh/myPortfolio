@@ -1,4 +1,5 @@
 export interface Theme {
+  name?: string;
   body: string;
   text: string;
   expTxtColor: string;

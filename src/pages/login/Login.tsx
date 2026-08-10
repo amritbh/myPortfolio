@@ -37,6 +37,16 @@ const Login: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const executeRedirect = (userRole?: string) => {
+    const redirectPath = localStorage.getItem("redirect_after_login");
+    if (redirectPath) {
+      localStorage.removeItem("redirect_after_login");
+      history.push(redirectPath);
+    } else {
+      history.push(userRole === "admin" ? "/admin" : "/home");
+    }
+  };
+
   const handleCognitoHash = (hashFragment: string) => {
     const hashParams = new URLSearchParams(hashFragment);
     const idToken = hashParams.get("id_token");
@@ -56,14 +66,12 @@ const Login: React.FC = () => {
         type: "cognito",
         role: "user",
       };
-      setSession(idToken, user);
       if (payload.email === "amrit.bhattarai990@gmail.com") {
         user.role = "admin";
-        setSession(idToken, user);
-        history.push("/admin");
-      } else {
-        history.push("/home");
       }
+      setSession(idToken, user);
+      
+      executeRedirect(user.role);
       return true;
     } catch (e) {
       console.error("Failed to parse Cognito JWT", e);
@@ -72,10 +80,17 @@ const Login: React.FC = () => {
     }
   };
 
+  const hasProcessedHash = React.useRef(false);
+
   const handleUrlParams = async () => {
+    if (hasProcessedHash.current) return;
+
     // Handle Cognito Hash
-    const hashFragment = window.location.hash.substring(1);
-    if (hashFragment) {
+    if (window.location.hash.includes("id_token")) {
+      hasProcessedHash.current = true;
+      const hashFragment = window.location.hash.substring(1);
+      // Clear hash to prevent double execution in React Strict Mode
+      window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
       if (handleCognitoHash(hashFragment)) return;
     }
 
@@ -101,7 +116,7 @@ const Login: React.FC = () => {
     const token = getStoredToken();
     const user = getStoredUser();
     if (token && user) {
-      history.push(user.role === "admin" ? "/admin" : "/home");
+      executeRedirect(user.role);
     }
   };
 
@@ -228,7 +243,7 @@ const Login: React.FC = () => {
         return;
       }
       if (response.user) {
-        history.push(response.user.role === "admin" ? "/admin" : "/home");
+        executeRedirect(response.user.role);
       }
     } else {
       setAuthError(response.error || "Authentication failed.");

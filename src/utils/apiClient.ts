@@ -186,13 +186,23 @@ export const fetchBlogs = async () => {
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
       if (Array.isArray(data)) {
-        return data.sort((a, b) => {
-          const numA = parseInt(a.title?.match(/^(\d+)\./)?.[1]);
-          const numB = parseInt(b.title?.match(/^(\d+)\./)?.[1]);
+        return data.sort((a: any, b: any) => {
+          const numA = parseInt(a.title?.match(/^(\d+)\./)?.[1] || "");
+          const numB = parseInt(b.title?.match(/^(\d+)\./)?.[1] || "");
+
           if (!isNaN(numA) && !isNaN(numB)) {
             return numB - numA;
           }
-          return new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime();
+
+          const timeA = a.publishDate ? new Date(a.publishDate).getTime() : 0;
+          const timeB = b.publishDate ? new Date(b.publishDate).getTime() : 0;
+
+          // If both have valid times
+          if (!isNaN(timeA) && !isNaN(timeB)) {
+            return timeB - timeA;
+          }
+
+          return 0; // Final fallback, prevents NaN from breaking the sort algorithm
         });
       }
       return data;
@@ -443,11 +453,11 @@ export const fetchMediumBlogs = async () => {
         } else {
           textContent = item.description.split("<").map(part => part.includes(">") ? part.split(">")[1] : part).join(" ");
         }
-        
+
         const summary = textContent
-            .replace(/\s+/g, " ")
-            .trim()
-            .substring(0, 150) + "...";
+          .replace(/\s+/g, " ")
+          .trim()
+          .substring(0, 150) + "...";
 
         return {
           slug: item.guid,
@@ -706,14 +716,14 @@ export const updateAccountProfile = async (name, address, phoneNumber) => {
 
 export const subscribeToNewsletter = async (email) => {
   if (!API_URL) return { success: true, message: "Mock subscription successful." };
-  
+
   try {
     const response = await fetch(`${API_URL}/subscribe`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
-    
+
     const data = await response.json();
     if (response.ok) return { success: true, ...data };
     return { success: false, error: data.error || "Failed to subscribe" };

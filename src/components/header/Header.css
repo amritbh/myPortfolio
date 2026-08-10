@@ -5,6 +5,8 @@
   max-width: 90%;
   padding: 20px 10px;
   margin: 0px auto;
+  position: relative;
+  z-index: 99999;
 }
 
 .header ul {
@@ -56,7 +58,6 @@
 
 .header .menu-icon {
   cursor: pointer;
-  display: inline-block;
   float: right;
   padding: 28px 20px;
   position: relative;
@@ -142,15 +143,17 @@
 
   .account-dropdown-menu {
     position: absolute;
-    right: 0;
+    right: auto;
+    left: 0;
     top: 100%;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    transform-origin: top left;
+    background: var(--dropdown-bg, rgba(255, 255, 255, 0.85));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 10px 40px var(--dropdown-shadow, rgba(0, 0, 0, 0.1));
+    border: 1px solid var(--dropdown-border, rgba(255, 255, 255, 0.3));
     border-radius: 12px;
-    min-width: 180px;
+    min-width: 220px;
     padding: 6px;
     z-index: 100;
     display: flex;
@@ -178,7 +181,7 @@
     }
   }
 
-  .account-dropdown-item {
+  .header .account-dropdown-item {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -196,9 +199,9 @@
     width: 100%;
   }
 
-  .account-dropdown-item:hover {
-    background: rgba(0, 0, 0, 0.05);
-    transform: translateX(2px);
+  .header .account-dropdown-item:hover {
+    background: var(--dropdown-hover, rgba(0, 0, 0, 0.05));
+    transform: translateX(4px);
   }
 
   .account-dropdown-divider {
@@ -222,7 +225,7 @@
     margin-top: 10px;
   }
 
-  .account-dropdown-item {
+  .header .account-dropdown-item {
     display: flex;
     align-items: center;
     gap: 12px;
