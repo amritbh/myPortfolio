@@ -416,4 +416,39 @@ describe("BlogDetail Component", () => {
     
     window.location.hash = ""; // Clean up
   });
+
+  it("renders copy button for code blocks and copies to clipboard", async () => {
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: vi.fn().mockImplementation(() => Promise.resolve()),
+      },
+    });
+
+    const testBlog = {
+      slug: "test-blog",
+      title: "Test Blog",
+      content: "<pre><code>console.log('hello');</code></pre>",
+    };
+
+    vi.spyOn(apiClient, "fetchBlogBySlug").mockResolvedValueOnce(testBlog);
+    vi.spyOn(apiClient, "fetchBlogs").mockResolvedValueOnce([testBlog]);
+
+    renderWithRouter(<BlogDetail theme={mockTheme} />);
+
+    // Wait until the pre element exists in the DOM
+    await waitFor(() => {
+      const pre = document.querySelector("pre");
+      expect(pre).toBeInTheDocument();
+    });
+
+    // Now the copy button should be inside the pre
+    let copyButton: HTMLButtonElement | null = null;
+    await waitFor(() => {
+      copyButton = document.querySelector(".copy-code-button") as HTMLButtonElement;
+      expect(copyButton).toBeInTheDocument();
+    });
+
+    fireEvent.click(copyButton!);
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith("console.log('hello');");
+  });
 });

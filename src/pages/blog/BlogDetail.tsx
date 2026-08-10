@@ -272,7 +272,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ theme, themeMode, onThemeChange
         button.className = "copy-code-button";
         button.innerText = "Copy";
         button.onclick = () => {
-          const code = pre.querySelector("code")?.innerText || "";
+          const code = pre.querySelector("code")?.textContent || "";
           navigator.clipboard.writeText(code).then(() => {
             button.innerText = "Copied!";
             setTimeout(() => {
