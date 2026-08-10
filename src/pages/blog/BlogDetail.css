@@ -330,6 +330,32 @@
   overflow-x: auto;
   margin: 2em 0;
   line-height: 1.6;
+  position: relative;
+}
+
+.copy-code-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  opacity: 0;
+}
+
+.markdown-body pre:hover .copy-code-button {
+  opacity: 1;
+}
+
+.copy-code-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
 }
 
 .markdown-body pre code {
