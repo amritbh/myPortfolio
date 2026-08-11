@@ -1,15 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Travel.css";
 import { travelData } from "../../portfolio";
+import type { CountryEntry, DestinationEntry } from "../../portfolio";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import { Fade } from "react-reveal";
 import type { Theme, ThemeMode } from "../../types";
 
+// ── Type label map ───────────────────────────────────────────────────────────
+// Add a new entry here only when adding a brand new destination type.
+const TYPE_LABELS: Record<string, string> = {
+  all: "All",
+  trek: "🏔 Treks",
+  hike: "🥾 Day Hikes",
+  city: "🏙 Cities",
+  "road-trip": "🛣 Road Trips",
+  nature: "🌿 Nature",
+  moto: "🏍 Moto",
+};
+
 const DIFFICULTY_COLOR: Record<string, string> = {
   Easy: "#2ea043",
   Moderate: "#d29922",
   Strenuous: "#da3633",
+};
+
+/** Converts elevation string like "4,130m" into a 0–100% value relative to 6000m */
+const getElevationPct = (elevation: string): string => {
+  const meters = parseInt(elevation.replace(/[^0-9]/g, ""), 10);
+  return `${Math.min((meters / 6000) * 100, 100).toFixed(1)}%`;
 };
 
 interface TravelPageProps {
@@ -23,198 +42,419 @@ const TravelPage: React.FC<TravelPageProps> = ({
   themeMode,
   onThemeChange,
 }) => {
+  const [activeCountryId, setActiveCountryId] = useState<string>(
+    travelData.countries[0].id
+  );
+  const [activeTypeFilter, setActiveTypeFilter] = useState<string>("all");
+
+  const activeCountry =
+    travelData.countries.find((c) => c.id === activeCountryId) ??
+    travelData.countries[0];
+
+  const handleCountryChange = (id: string) => {
+    setActiveCountryId(id);
+    setActiveTypeFilter("all"); // reset filter on country switch
+  };
+
+  // ── Hero ─────────────────────────────────────────────────────────────────
   const renderHero = () => (
     <section className="travel-hero" aria-label="Travel hero">
+      <div className="travel-hero-overlay" />
       <div className="travel-hero-content">
         <Fade bottom duration={800}>
-          <h1 className="travel-hero-title" style={{ color: theme.text }}>
-            Adventures and Journeys
+          <p className="travel-hero-eyebrow">Passport meets Pixel</p>
+          <h1 className="travel-hero-title">
+            Born in the Himalayas.
+            <br />
+            Wandering the World.
           </h1>
         </Fade>
         <Fade bottom duration={1000} delay={100}>
-          <p
-            className="travel-hero-subtitle"
-            style={{ color: theme.secondaryText }}
-          >
-            Nepal born. Mountain shaped. Documenting every trail, road, and
-            horizon.
+          <p className="travel-hero-subtitle">
+            Nepal-born, Oregon-based. I trek when I can, travel when I must,
+            and document every trail, road, and horizon along the way.
           </p>
         </Fade>
         <Fade bottom duration={1000} delay={200}>
-          <div className="travel-hero-chips">
-            <span
-              className="travel-chip"
-              style={{
-                backgroundColor: theme.compImgHighlight,
-                color: theme.text,
-              }}
-            >
-              <span role="img" aria-label="mountain">
-                🏔️
-              </span>{" "}
-              7+ Himalayan Treks
-            </span>
-            <span
-              className="travel-chip"
-              style={{
-                backgroundColor: theme.compImgHighlight,
-                color: theme.text,
-              }}
-            >
-              <span role="img" aria-label="usa flag">
-                🇺🇸
-              </span>{" "}
-              Exploring America
-            </span>
-            <span
-              className="travel-chip"
-              style={{
-                backgroundColor: theme.compImgHighlight,
-                color: theme.text,
-              }}
-            >
-              <span role="img" aria-label="motorcycle">
-                🏍️
-              </span>{" "}
-              Motorcycling
-            </span>
+          <div className="travel-hero-stats" aria-label="Travel statistics">
+            {travelData.heroStats.map((stat) => (
+              <div className="travel-hero-stat" key={stat.label}>
+                <span className="travel-hero-stat-value">{stat.value}</span>
+                <span className="travel-hero-stat-label">{stat.label}</span>
+              </div>
+            ))}
           </div>
         </Fade>
-        <a
-          href="#nepal"
-          className="travel-scroll-arrow"
-          aria-label="Scroll to Nepal treks"
-        >
-          ↓
-        </a>
+        <Fade bottom duration={800} delay={300}>
+          <a
+            href="#destinations"
+            className="travel-scroll-arrow"
+            aria-label="Scroll to destinations"
+          >
+            ↓
+          </a>
+        </Fade>
       </div>
     </section>
   );
 
-  const renderNepalTreks = () => (
+  // ── Story section ─────────────────────────────────────────────────────────
+  const renderStorySection = () => (
     <section
-      id="nepal"
-      className="travel-section"
-      aria-label="Himalayan treks"
+      className="travel-story-section"
       style={{ backgroundColor: theme.body }}
+      aria-label="My travel story"
     >
-      <div className="travel-section-inner">
-        <Fade bottom duration={800}>
-          <h2 className="travel-section-title" style={{ color: theme.text }}>
-            <span role="img" aria-label="mountain">
-              ⛰️
-            </span>{" "}
-            Himalayan Treks
-          </h2>
-          <p
-            className="travel-section-subtitle"
-            style={{ color: theme.secondaryText }}
-          >
-            From the iconic Annapurna Base Camp to the remote trails of
-            Mustang, these are the routes that shaped me.
-          </p>
+      <div className="travel-section-inner travel-story-inner">
+        <Fade left duration={800}>
+          <div className="travel-story-text">
+            <span className="travel-story-eyebrow">My Story</span>
+            <h2 className="travel-story-heading" style={{ color: theme.text }}>
+              From Himalayan Trails to American Roads
+            </h2>
+            <p
+              className="travel-story-body"
+              style={{ color: theme.secondaryText }}
+            >
+              I grew up surrounded by mountains in Nepal, where trekking is not a
+              hobby — it is just life. I have walked to Annapurna Base Camp, sat
+              beside the sacred waters of Gosaikunda, and ridden through passes
+              that do not appear on most maps. In 2023 I moved to Oregon, and I
+              started discovering America with the same curiosity. My mission is
+              simple: document every trail and city so that others can find what
+              I found — and so Nepal's incredible routes get the attention they
+              deserve.
+            </p>
+          </div>
         </Fade>
-
-        <div className="trek-grid">
-          {travelData.nepalTreks.map((trek, i) => (
-            <Fade bottom duration={600} delay={i * 80} key={trek.name}>
+        <Fade right duration={800} delay={100}>
+          <div className="travel-story-glance">
+            {travelData.countries.map((country) => (
               <div
-                className="trek-card"
+                key={country.id}
+                className="travel-glance-card"
                 style={{
                   backgroundColor: theme.headerColor,
-                  borderColor: theme.highlight,
+                  borderColor: country.accentColor + "44",
+                  borderLeftColor: country.accentColor,
                 }}
               >
-                <div className="trek-card-header">
-                  <span
-                    className="trek-emoji"
-                    role="img"
-                    aria-label={trek.name}
+                <span className="travel-glance-flag">{country.flag}</span>
+                <div>
+                  <p
+                    className="travel-glance-name"
+                    style={{ color: theme.text }}
                   >
-                    {trek.emoji}
-                  </span>
-                  <span
-                    className="trek-difficulty-badge"
-                    style={{
-                      backgroundColor:
-                        DIFFICULTY_COLOR[trek.difficulty] + "22",
-                      color: DIFFICULTY_COLOR[trek.difficulty],
-                      border: `1px solid ${
-                        DIFFICULTY_COLOR[trek.difficulty]
-                      }55`,
-                    }}
+                    {country.name}
+                  </p>
+                  <p
+                    className="travel-glance-count"
+                    style={{ color: theme.secondaryText }}
                   >
-                    {trek.difficulty}
-                  </span>
+                    {country.destinations.length} destinations
+                  </p>
                 </div>
-                <h3 className="trek-name" style={{ color: theme.text }}>
-                  {trek.name}
-                </h3>
-                <p
-                  className="trek-description"
-                  style={{ color: theme.secondaryText }}
-                >
-                  {trek.description}
-                </p>
-                <div className="trek-meta">
-                  <span
-                    className="trek-meta-item"
-                    style={{
-                      color: theme.secondaryText,
-                    }}
-                  >
-                    <span role="img" aria-label="elevation">
-                      📍
-                    </span>{" "}
-                    {trek.elevation}
-                  </span>
-                  <span
-                    className="trek-meta-item"
-                    style={{
-                      color: theme.secondaryText,
-                    }}
-                  >
-                    <span role="img" aria-label="duration">
-                      🗓️
-                    </span>{" "}
-                    {trek.duration}
-                  </span>
-                </div>
-                <span className="trek-coming-soon-badge">Coming Soon</span>
               </div>
-            </Fade>
-          ))}
-        </div>
+            ))}
+          </div>
+        </Fade>
       </div>
     </section>
   );
 
-  const renderCallout = () => (
+  // ── Country tabs ──────────────────────────────────────────────────────────
+  const renderCountryTabs = () => (
+    <div
+      className="travel-country-tabs"
+      role="tablist"
+      aria-label="Select country"
+      style={{ backgroundColor: theme.body, borderBottomColor: theme.highlight }}
+    >
+      <div className="travel-section-inner travel-tabs-inner">
+        {travelData.countries.map((country) => {
+          const isActive = country.id === activeCountryId;
+          return (
+            <button
+              key={country.id}
+              role="tab"
+              aria-selected={isActive}
+              id={`tab-${country.id}`}
+              aria-controls={`panel-${country.id}`}
+              className={`travel-country-tab ${isActive ? "active" : ""}`}
+              style={
+                isActive
+                  ? {
+                      color: country.accentColor,
+                      borderBottomColor: country.accentColor,
+                    }
+                  : { color: theme.secondaryText }
+              }
+              onClick={() => handleCountryChange(country.id)}
+            >
+              <span className="tab-flag">{country.flag}</span>
+              <span className="tab-name">{country.name}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  // ── Type filter chips ─────────────────────────────────────────────────────
+  const renderTypeFilterChips = (country: CountryEntry) => {
+    const types = [
+      "all",
+      ...Array.from(new Set(country.destinations.map((d) => d.type))),
+    ];
+    return (
+      <div
+        className="travel-type-chips"
+        role="group"
+        aria-label="Filter by type"
+        style={{ backgroundColor: theme.body }}
+      >
+        <div className="travel-section-inner travel-chips-inner">
+          {types.map((type) => {
+            const isActive = activeTypeFilter === type;
+            return (
+              <button
+                key={type}
+                className={`type-chip ${isActive ? "active" : ""}`}
+                style={
+                  isActive
+                    ? {
+                        backgroundColor: country.accentColor,
+                        color: "#fff",
+                        borderColor: country.accentColor,
+                      }
+                    : {
+                        color: theme.secondaryText,
+                        borderColor: theme.highlight,
+                      }
+                }
+                onClick={() => setActiveTypeFilter(type)}
+                aria-pressed={isActive}
+              >
+                {TYPE_LABELS[type] ?? type}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  // ── Destination card ──────────────────────────────────────────────────────
+  const renderDestinationCard = (
+    dest: DestinationEntry,
+    accentColor: string,
+    index: number
+  ) => {
+    const isTrek = dest.type === "trek";
+    const isHike = dest.type === "hike";
+    const hasTrail = isTrek || isHike;
+
+    return (
+      <Fade bottom duration={600} delay={index * 70} key={dest.id}>
+        <div
+          className={`destination-card dest-type-${dest.type}`}
+          style={
+            {
+              backgroundColor: theme.headerColor,
+              borderColor: theme.highlight,
+              "--travel-accent": accentColor,
+            } as React.CSSProperties
+          }
+          role="article"
+          aria-label={dest.name}
+        >
+          {/* Header row */}
+          <div className="dest-card-header">
+            <span className="dest-emoji" role="img" aria-label={dest.name}>
+              {dest.emoji}
+            </span>
+            <span
+              className="dest-region-badge"
+              style={{
+                color: accentColor,
+                backgroundColor: accentColor + "18",
+                borderColor: accentColor + "44",
+              }}
+            >
+              {dest.region}
+            </span>
+          </div>
+
+          <h3 className="dest-name" style={{ color: theme.text }}>
+            {dest.name}
+          </h3>
+
+          {/* Trek-specific: elevation gradient bar */}
+          {isTrek && dest.elevation && (
+            <div className="trek-elevation-wrap" aria-label="Elevation">
+              <div
+                className="trek-elevation-bar"
+                style={
+                  { "--elevation-pct": getElevationPct(dest.elevation) } as React.CSSProperties
+                }
+              />
+              <span
+                className="trek-elevation-label"
+                style={{ color: theme.secondaryText }}
+              >
+                {dest.elevation}
+              </span>
+            </div>
+          )}
+
+          {/* Trail badges row */}
+          {hasTrail && (dest.difficulty || dest.duration) && (
+            <div className="dest-trail-badges">
+              {dest.difficulty && (
+                <span
+                  className={`difficulty-badge diff-${dest.difficulty.toLowerCase()}`}
+                  style={{
+                    backgroundColor:
+                      DIFFICULTY_COLOR[dest.difficulty] + "22",
+                    color: DIFFICULTY_COLOR[dest.difficulty],
+                    borderColor: DIFFICULTY_COLOR[dest.difficulty] + "55",
+                  }}
+                >
+                  {dest.difficulty}
+                </span>
+              )}
+              {dest.duration && (
+                <span
+                  className="duration-badge"
+                  style={{ color: theme.secondaryText, borderColor: theme.highlight }}
+                >
+                  {isHike ? "⏱ " : "🗓 "}
+                  {dest.duration}
+                </span>
+              )}
+              {/* Hike: show plain elevation stat (no bar) */}
+              {isHike && dest.elevation && (
+                <span
+                  className="hike-elevation-stat"
+                  style={{ color: theme.secondaryText, borderColor: theme.highlight }}
+                >
+                  📍 {dest.elevation}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Description */}
+          <p
+            className="dest-description"
+            style={{ color: theme.secondaryText }}
+          >
+            {dest.description}
+          </p>
+
+          {/* Highlight quote */}
+          {hasTrail && dest.highlight && (
+            <p
+              className="dest-highlight"
+              style={{ color: accentColor, borderLeftColor: accentColor }}
+            >
+              &ldquo;{dest.highlight}&rdquo;
+            </p>
+          )}
+
+          {/* CTA */}
+          {dest.blogSlug ? (
+            <a
+              href={`/blogs/${dest.blogSlug}`}
+              className="read-story-btn"
+              style={{ color: accentColor, borderColor: accentColor }}
+            >
+              ✍ Read Story
+            </a>
+          ) : (
+            <span className="coming-soon-badge">Coming Soon</span>
+          )}
+        </div>
+      </Fade>
+    );
+  };
+
+  // ── Destination grid ──────────────────────────────────────────────────────
+  const renderDestinationGrid = (
+    country: CountryEntry,
+    typeFilter: string
+  ) => {
+    const filtered =
+      typeFilter === "all"
+        ? country.destinations
+        : country.destinations.filter((d) => d.type === typeFilter);
+
+    return (
+      <section
+        className="travel-section"
+        role="tabpanel"
+        id={`panel-${country.id}`}
+        aria-labelledby={`tab-${country.id}`}
+        style={{ backgroundColor: theme.body }}
+      >
+        <div className="travel-section-inner">
+          {filtered.length === 0 ? (
+            <p
+              className="travel-empty-state"
+              style={{ color: theme.secondaryText }}
+            >
+              No destinations of this type yet — check back soon!
+            </p>
+          ) : (
+            <div className="destination-grid">
+              {filtered.map((dest, i) =>
+                renderDestinationCard(dest, country.accentColor, i)
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  };
+
+  // ── Nepal mission statement ───────────────────────────────────────────────
+  const renderMissionStatement = () => (
     <section
-      className="nepal-callout-section"
+      className="travel-mission-section"
       style={{ backgroundColor: theme.body }}
+      aria-label="Nepal tourism mission"
     >
       <div className="travel-section-inner">
         <Fade bottom duration={800}>
           <div
-            className="nepal-callout"
+            className="travel-mission-card"
             style={{
               backgroundColor: theme.compImgHighlight,
-              borderColor: "#DC143C",
+              borderLeftColor: "#DC143C",
             }}
           >
-            <span
-              className="nepal-callout-icon"
-              role="img"
-              aria-label="Nepal flag"
-            >
-              🇳🇵
-            </span>
+            <div className="mission-icon-wrap">
+              <span role="img" aria-label="Nepal flag" className="mission-flag">
+                🇳🇵
+              </span>
+            </div>
             <div>
-              <p className="nepal-callout-text" style={{ color: theme.text }}>
-                I aim to share these trails to inspire and support Nepal
-                tourism. If you love the Himalayas, share these posts when
-                they go live.
+              <h3
+                className="mission-title"
+                style={{ color: theme.text }}
+              >
+                Why I Document Nepal
+              </h3>
+              <p
+                className="mission-body"
+                style={{ color: theme.secondaryText }}
+              >
+                Nepal's trails shaped everything I am. But most of them remain
+                undiscovered by the world. My mission is to change that — one
+                documented journey at a time. Every post I write about a
+                Himalayan trek is a love letter to my homeland and an invitation
+                for you to visit. If you love the mountains, share these stories
+                when they go live.
               </p>
             </div>
           </div>
@@ -223,127 +463,35 @@ const TravelPage: React.FC<TravelPageProps> = ({
     </section>
   );
 
+  // ── Moto banner ───────────────────────────────────────────────────────────
   const renderMotoSection = () => (
     <section
       id="moto"
-      className="travel-section moto-section"
-      aria-label="Motorcycling"
-      style={{
-        backgroundColor: theme.body,
-        borderTop: `1px solid ${theme.highlight}`,
-      }}
+      className="travel-moto-banner"
+      aria-label="Motorcycling adventures"
     >
-      <div className="travel-section-inner">
-        <Fade bottom duration={800}>
-          <h2 className="travel-section-title" style={{ color: theme.text }}>
-            <span role="img" aria-label="motorcycle">
-              🏍️
-            </span>{" "}
-            On Two Wheels
-          </h2>
-          <p
-            className="travel-section-subtitle"
-            style={{ color: theme.secondaryText }}
-          >
-            Nepal's mountain roads on a motorcycle. Raw, remote, and
-            unforgettable.
-          </p>
+      <div className="travel-section-inner travel-moto-inner">
+        <Fade left duration={800}>
+          <div>
+            <span className="moto-eyebrow">On Two Wheels</span>
+            <h2 className="moto-title">Nepal Mountain Roads</h2>
+            <p className="moto-desc">
+              Himalayan foothills and high-altitude passes — raw, remote, and
+              unforgettable. Series in progress.
+            </p>
+            <span className="coming-soon-badge moto-badge">Coming Soon</span>
+          </div>
         </Fade>
-        <Fade bottom duration={800} delay={100}>
-          <div
-            className="moto-featured-card"
-            style={{
-              backgroundColor: theme.compImgHighlight,
-              borderColor: theme.highlight,
-            }}
-          >
-            <span
-              className="moto-featured-icon"
-              role="img"
-              aria-label="motorcycle"
-            >
-              🏍️
-            </span>
-            <div>
-              <h3
-                className="moto-featured-title"
-                style={{ color: theme.text }}
-              >
-                Nepal Mountain Roads
-              </h3>
-              <p
-                className="moto-featured-desc"
-                style={{ color: theme.secondaryText }}
-              >
-                Documenting the raw beauty of riding through the Himalayan
-                foothills and high-altitude passes.
-              </p>
-            </div>
-            <span className="trek-coming-soon-badge">Coming Soon</span>
+        <Fade right duration={800} delay={100}>
+          <div className="moto-icon-wrap" aria-hidden="true">
+            🏍️
           </div>
         </Fade>
       </div>
     </section>
   );
 
-  const renderUsaTravel = () => (
-    <section
-      id="usa"
-      className="travel-section"
-      aria-label="USA travel"
-      style={{ backgroundColor: theme.body }}
-    >
-      <div className="travel-section-inner">
-        <Fade bottom duration={800}>
-          <h2 className="travel-section-title" style={{ color: theme.text }}>
-            <span role="img" aria-label="usa flag">
-              🇺🇸
-            </span>{" "}
-            Exploring America
-          </h2>
-          <p
-            className="travel-section-subtitle"
-            style={{ color: theme.secondaryText }}
-          >
-            Moved to Oregon in 2023. Discovering the Pacific Northwest and
-            beyond.
-          </p>
-        </Fade>
-        <div className="usa-grid">
-          {travelData.usaDestinations.map((dest, i) => (
-            <Fade bottom duration={600} delay={i * 80} key={dest.name}>
-              <div
-                className="usa-card"
-                style={{
-                  backgroundColor: theme.headerColor,
-                  borderColor: theme.highlight,
-                }}
-              >
-                <span
-                  className="usa-card-emoji"
-                  role="img"
-                  aria-label={dest.name}
-                >
-                  {dest.emoji}
-                </span>
-                <h3 className="usa-card-name" style={{ color: theme.text }}>
-                  {dest.name}
-                </h3>
-                <p
-                  className="usa-card-desc"
-                  style={{ color: theme.secondaryText }}
-                >
-                  {dest.description}
-                </p>
-                <span className="trek-coming-soon-badge">Coming Soon</span>
-              </div>
-            </Fade>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-
+  // ── Subscribe CTA ─────────────────────────────────────────────────────────
   const renderSubscribeCta = () => (
     <section
       className="travel-subscribe-cta"
@@ -355,7 +503,7 @@ const TravelPage: React.FC<TravelPageProps> = ({
             className="travel-cta-text"
             style={{ color: theme.secondaryText }}
           >
-            Get notified when new travel posts go live.{" "}
+            More destinations incoming. Don&apos;t miss a story.{" "}
             <a
               href="#footer-newsletter"
               className="travel-cta-link"
@@ -369,18 +517,17 @@ const TravelPage: React.FC<TravelPageProps> = ({
     </section>
   );
 
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="travel-page" style={{ backgroundColor: theme.body }}>
-      <Header
-        theme={theme}
-        themeMode={themeMode}
-        onThemeChange={onThemeChange}
-      />
+      <Header theme={theme} themeMode={themeMode} onThemeChange={onThemeChange} />
       {renderHero()}
-      {renderNepalTreks()}
-      {renderCallout()}
+      {renderStorySection()}
+      {renderCountryTabs()}
+      {renderTypeFilterChips(activeCountry)}
+      {renderDestinationGrid(activeCountry, activeTypeFilter)}
+      {renderMissionStatement()}
       {renderMotoSection()}
-      {renderUsaTravel()}
       {renderSubscribeCta()}
       <Footer theme={theme} />
     </div>

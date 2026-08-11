@@ -24,18 +24,29 @@ interface TravelTeaserProps {
 }
 
 const TravelTeaser: React.FC<TravelTeaserProps> = ({ theme }) => {
-  const allDestinations = [
-    ...travelData.destinations.nepal,
-    ...travelData.destinations.usa,
-    ...travelData.destinations.moto,
-  ];
+  // Derive teaser data from the new countries[] schema
+  const nepalCountry = travelData.countries.find((c) => c.id === "nepal");
+  const usaCountry = travelData.countries.find((c) => c.id === "usa");
+
+  // Flat destination chip list: names from all countries
+  const allDestinationNames = travelData.countries.flatMap((country) =>
+    country.destinations.map((d) => d.name)
+  );
+
   const svgOpacity = theme?.body === "#0D1117" ? 0.04 : 0.035;
 
   const textStyle = { color: theme?.text };
   const secondaryTextStyle = { color: theme?.secondaryText };
-  const chipStyle = { color: theme?.text, borderColor: theme?.highlight, backgroundColor: theme?.headerColor };
+  const chipStyle = {
+    color: theme?.text,
+    borderColor: theme?.highlight,
+    backgroundColor: theme?.headerColor,
+  };
   const cardStyle = { backgroundColor: theme?.headerColor, color: theme?.text };
-  const motoStyle = { backgroundColor: theme?.headerColor, borderColor: theme?.highlight };
+  const motoStyle = {
+    backgroundColor: theme?.headerColor,
+    borderColor: theme?.highlight,
+  };
   const badgeStyle = { backgroundColor: theme?.highlight, color: theme?.text };
 
   return (
@@ -44,93 +55,66 @@ const TravelTeaser: React.FC<TravelTeaserProps> = ({ theme }) => {
 
       <div className="travel-teaser-inner">
         <div className="travel-header">
-          <h2
-            className="section-title"
-            style={textStyle}
-          >
+          <h2 className="section-title" style={textStyle}>
             Beyond the Code
           </h2>
-          <p
-            className="section-subtitle"
-            style={secondaryTextStyle}
-          >
+          <p className="section-subtitle" style={secondaryTextStyle}>
             {travelData.tagline}
           </p>
         </div>
 
         <div className="destination-chips-row">
-          {allDestinations.map((dest) => (
-            <span
-              key={dest}
-              className="destination-chip"
-              style={chipStyle}
-            >
-              {dest}
+          {allDestinationNames.slice(0, 12).map((name) => (
+            <span key={name} className="destination-chip" style={chipStyle}>
+              {name}
             </span>
           ))}
         </div>
 
         <div className="travel-cards-row">
-          <Link
-            to={travelData.nepalCard.link}
-            className="travel-card nepal-card"
-            style={cardStyle}
-          >
-            <span className="travel-card-icon">
-              {travelData.nepalCard.icon}
-            </span>
-            <div className="travel-card-text">
-              <strong style={textStyle}>
-                {travelData.nepalCard.title}
-              </strong>
-              <span style={textStyle}>
-                {travelData.nepalCard.subtitle}
+          {/* Nepal card */}
+          {nepalCountry && (
+            <Link to="/travel" className="travel-card nepal-card" style={cardStyle}>
+              <span className="travel-card-icon">{nepalCountry.flag}</span>
+              <div className="travel-card-text">
+                <strong style={textStyle}>Himalayan Adventures</strong>
+                <span style={textStyle}>
+                  {nepalCountry.destinations.filter((d) => d.type === "trek").length}+ Trek Destinations
+                </span>
+              </div>
+              <span className="travel-card-arrow" style={{ color: "#DC143C" }}>
+                →
               </span>
-            </div>
-            <span className="travel-card-arrow" style={{ color: "#DC143C" }}>
-              →
-            </span>
-          </Link>
+            </Link>
+          )}
 
-          <Link
-            to={travelData.usaCard.link}
-            className="travel-card usa-card"
-            style={cardStyle}
-          >
-            <span className="travel-card-icon">
-              {travelData.usaCard.icon}
-            </span>
-            <div className="travel-card-text">
-              <strong style={{ color: theme ? theme.text : undefined }}>
-                {travelData.usaCard.title}
-              </strong>
-              <span style={{ color: theme ? theme.text : undefined }}>
-                {travelData.usaCard.subtitle}
+          {/* USA card */}
+          {usaCountry && (
+            <Link to="/travel" className="travel-card usa-card" style={cardStyle}>
+              <span className="travel-card-icon">{usaCountry.flag}</span>
+              <div className="travel-card-text">
+                <strong style={{ color: theme ? theme.text : undefined }}>
+                  Exploring America
+                </strong>
+                <span style={{ color: theme ? theme.text : undefined }}>
+                  Oregon and beyond, since 2023
+                </span>
+              </div>
+              <span className="travel-card-arrow" style={{ color: "#003893" }}>
+                →
               </span>
-            </div>
-            <span className="travel-card-arrow" style={{ color: "#003893" }}>
-              →
-            </span>
-          </Link>
+            </Link>
+          )}
         </div>
 
-        <div
-          className="moto-strip"
-          style={motoStyle}
-        >
+        <div className="moto-strip" style={motoStyle}>
           <span className="moto-icon" role="img" aria-label="motorcycle">
             🏍️
           </span>
-          <span
-            className="moto-label"
-            style={textStyle}
-          >
-            {travelData.motoStrip.label}
+          <span className="moto-label" style={textStyle}>
+            Also: Motorcycling through Nepal&apos;s mountain roads
           </span>
-          <span
-            className="coming-soon-badge"
-            style={badgeStyle}
-          >
+          <span className="coming-soon-badge" style={badgeStyle}>
             Coming Soon
           </span>
         </div>
