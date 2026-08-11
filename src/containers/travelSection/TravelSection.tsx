@@ -1,5 +1,5 @@
 import React from "react";
-import "./TravelTeaser.css";
+import "./TravelSection.css";
 import { travelData } from "../../portfolio";
 import { Link } from "react-router-dom";
 import type { Theme } from "../../types";
@@ -19,11 +19,11 @@ const MountainSvg: React.FC<{ opacity: number }> = ({ opacity }) => (
   </svg>
 );
 
-interface TravelTeaserProps {
+interface TravelSectionProps {
   theme?: Theme;
 }
 
-const TravelTeaser: React.FC<TravelTeaserProps> = ({ theme }) => {
+const TravelSection: React.FC<TravelSectionProps> = ({ theme }) => {
   // Derive teaser data from the new countries[] schema
   const nepalCountry = travelData.countries.find((c) => c.id === "nepal");
   const usaCountry = travelData.countries.find((c) => c.id === "usa");
@@ -123,4 +123,4 @@ const TravelTeaser: React.FC<TravelTeaserProps> = ({ theme }) => {
   );
 };
 
-export default TravelTeaser;
+export default TravelSection;
