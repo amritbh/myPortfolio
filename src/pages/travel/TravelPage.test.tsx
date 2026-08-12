@@ -1,8 +1,9 @@
 // @ts-nocheck
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import TravelPage from "./TravelPage";
+import { travelData } from "../../portfolio";
 
 // matchMedia mock required by Header > ThemeSwitcher
 beforeAll(() => {
@@ -29,90 +30,203 @@ const mockTheme = {
   compImgHighlight: "#f5f5f5",
   headerColor: "#ffffffaa",
   jacketColor: "#388BFD",
+  imageHighlight: "#a066fb",
+  dark: "#000000",
+  expTxtColor: "#444444",
+  splashBg: "#0a0f1e",
 };
 
-const renderWithRouter = (ui: any, { route = '/' } = {}) => {
-  return render(<BrowserRouter>{ui}</BrowserRouter>);
-}
+const renderWithRouter = (ui: any) =>
+  render(<BrowserRouter>{ui}</BrowserRouter>);
 
-describe("TravelPage Component", () => {
-  it("renders the main hero heading 'Adventures and Journeys'", () => {
-    renderWithRouter(<TravelPage theme={mockTheme as any} />);
-    expect(screen.getByText("Adventures and Journeys")).toBeInTheDocument();
-  });
-
-  it("renders the hero subtitle", () => {
+describe("TravelPage — Hero", () => {
+  it("renders the cinematic hero headline", () => {
     renderWithRouter(<TravelPage theme={mockTheme as any} />);
     expect(
-      screen.getByText(/Nepal born\. Mountain shaped\./i)
+      screen.getByText(/Born in the Himalayas/i)
     ).toBeInTheDocument();
   });
 
-  it("renders the Himalayan Treks section heading", () => {
+  it("renders all hero stats from travelData.heroStats", () => {
     renderWithRouter(<TravelPage theme={mockTheme as any} />);
-    // The heading text includes emoji + text so we use a regex
-    expect(
-      screen.getByRole("heading", { name: /Himalayan Treks/i })
-    ).toBeInTheDocument();
-  });
-
-  it("renders all 7 Nepal trek card names", () => {
-    renderWithRouter(<TravelPage theme={mockTheme as any} />);
-    const trekNames = [
-      "Annapurna Base Camp",
-      "Tilicho Lake",
-      "Gosaikunda",
-      "Upper Mustang",
-      "Pokhara",
-      "Badimalika",
-      "Aama Yangri",
-    ];
-    trekNames.forEach((name) => {
-      expect(screen.getByText(name)).toBeInTheDocument();
+    travelData.heroStats.forEach((stat) => {
+      expect(screen.getByText(stat.value)).toBeInTheDocument();
+      expect(screen.getByText(stat.label)).toBeInTheDocument();
     });
   });
 
-  it("renders 'Coming Soon' badges for trek cards", () => {
+  it("renders the scroll arrow link", () => {
     renderWithRouter(<TravelPage theme={mockTheme as any} />);
-    const badges = screen.getAllByText("Coming Soon");
-    expect(badges.length).toBeGreaterThanOrEqual(7);
+    expect(screen.getByLabelText(/Scroll to destinations/i)).toBeInTheDocument();
   });
+});
 
-  it("renders the Nepal tourism support callout", () => {
+describe("TravelPage — Story Section", () => {
+  it("renders the personal story heading", () => {
     renderWithRouter(<TravelPage theme={mockTheme as any} />);
     expect(
-      screen.getByText(/inspire and support Nepal tourism/i)
+      screen.getByText(/From Himalayan Trails to American Roads/i)
     ).toBeInTheDocument();
   });
 
-  it("renders the Motorcycling section", () => {
+  it("renders a glance card for each country", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    travelData.countries.forEach((country) => {
+      const matches = screen.getAllByText(country.name);
+      expect(matches.length).toBeGreaterThanOrEqual(1);
+    });
+  });
+});
+
+describe("TravelPage — Country Tabs", () => {
+  it("renders a tab for each country in travelData.countries", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    travelData.countries.forEach((country) => {
+      expect(
+        screen.getByRole("tab", { name: new RegExp(country.name, "i") })
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("defaults to the first country tab being active", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    const firstTab = screen.getByRole("tab", {
+      name: new RegExp(travelData.countries[0].name, "i"),
+    });
+    expect(firstTab).toHaveAttribute("aria-selected", "true");
+  });
+
+  it("switches active country when another tab is clicked", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    const usaTab = screen.getByRole("tab", { name: /United States/i });
+    fireEvent.click(usaTab);
+    expect(usaTab).toHaveAttribute("aria-selected", "true");
+  });
+});
+
+describe("TravelPage — Type Filter Chips", () => {
+  it("renders an 'All' chip for the active country", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    expect(screen.getByRole("button", { name: "All" })).toBeInTheDocument();
+  });
+
+  it("renders trek and hike chips for Nepal", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    // Nepal is default — should have trek + hike + city + moto chips
+    expect(
+      screen.getByRole("button", { name: /Treks/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Day Hikes/i })
+    ).toBeInTheDocument();
+  });
+
+  it("resets type filter to All when switching countries", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    // Switch to Treks filter
+    const trekChip = screen.getByRole("button", { name: /Treks/i });
+    fireEvent.click(trekChip);
+    expect(trekChip).toHaveAttribute("aria-pressed", "true");
+
+    // Switch country
+    const usaTab = screen.getByRole("tab", { name: /United States/i });
+    fireEvent.click(usaTab);
+
+    // All chip should now be active
+    const allChip = screen.getByRole("button", { name: "All" });
+    expect(allChip).toHaveAttribute("aria-pressed", "true");
+  });
+});
+
+describe("TravelPage — Nepal Destinations", () => {
+  it("renders all Nepal trek names", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    const nepalTreks = travelData.countries[0].destinations.filter(
+      (d) => d.type === "trek"
+    );
+    nepalTreks.forEach((trek) => {
+      expect(screen.getByText(trek.name)).toBeInTheDocument();
+    });
+  });
+
+  it("renders Nepal hike names", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    const nepalHikes = travelData.countries[0].destinations.filter(
+      (d) => d.type === "hike"
+    );
+    nepalHikes.forEach((hike) => {
+      expect(screen.getByText(hike.name)).toBeInTheDocument();
+    });
+  });
+
+  it("renders Coming Soon badges for all unpublished Nepal destinations", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    const nepalDests = travelData.countries[0].destinations.filter(
+      (d) => d.blogSlug === null
+    );
+    const badges = screen.getAllByText("Coming Soon");
+    // At least all Nepal unpublished + mission section badge
+    expect(badges.length).toBeGreaterThanOrEqual(nepalDests.length);
+  });
+});
+
+describe("TravelPage — USA Destinations", () => {
+  it("renders all USA destination names when USA tab is clicked", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    fireEvent.click(screen.getByRole("tab", { name: /United States/i }));
+
+    const usaDests = travelData.countries[1].destinations;
+    usaDests.forEach((dest) => {
+      expect(screen.getByText(dest.name)).toBeInTheDocument();
+    });
+  });
+});
+
+describe("TravelPage — Card type rendering", () => {
+  it("does not show duration badge for city-type destinations", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    // Pokhara is a city — it should not have a duration badge
+    // We verify no duration text appears next to the city card (visual check via aria)
+    const pokharaArticle = screen.getByRole("article", { name: /Pokhara/i });
+    expect(pokharaArticle).toBeInTheDocument();
+    // City cards should not contain a duration badge class child
+    expect(pokharaArticle.querySelector(".duration-badge")).toBeNull();
+  });
+
+  it("trek cards have an elevation label", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    // Annapurna Base Camp is a trek — it should have elevation label "4,130m"
+    expect(screen.getByText("4,130m")).toBeInTheDocument();
+  });
+});
+
+describe("TravelPage — Mission Statement", () => {
+  it("renders the Nepal mission statement", () => {
+    renderWithRouter(<TravelPage theme={mockTheme as any} />);
+    expect(
+      screen.getByText(/Why I Document Nepal/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/love letter to my homeland/i)
+    ).toBeInTheDocument();
+  });
+});
+
+describe("TravelPage — Moto Section", () => {
+  it("renders the moto banner", () => {
     renderWithRouter(<TravelPage theme={mockTheme as any} />);
     expect(screen.getByText(/On Two Wheels/i)).toBeInTheDocument();
-    expect(screen.getByText("Nepal Mountain Roads")).toBeInTheDocument();
+    // Nepal Mountain Roads appears in both destination grid + moto banner
+    const motoMatches = screen.getAllByText(/Nepal Mountain Roads/i);
+    expect(motoMatches.length).toBeGreaterThanOrEqual(1);
   });
+});
 
-  it("renders the USA Travel section with all 3 destinations", () => {
+describe("TravelPage — Subscribe CTA", () => {
+  it("renders the subscribe CTA with link", () => {
     renderWithRouter(<TravelPage theme={mockTheme as any} />);
-    // Use heading role for the section heading to avoid ambiguity with the hero chip
-    expect(
-      screen.getByRole("heading", { name: /Exploring America/i })
-    ).toBeInTheDocument();
-    expect(screen.getByText("Oregon")).toBeInTheDocument();
-    expect(screen.getByText("Pacific Coast")).toBeInTheDocument();
-    expect(screen.getByText("Crater Lake")).toBeInTheDocument();
-  });
-
-  it("renders the subscribe CTA link to footer", () => {
-    renderWithRouter(<TravelPage theme={mockTheme as any} />);
-    const ctaLink = screen.getByText(/Subscribe below/i);
-    expect(ctaLink).toBeInTheDocument();
-    expect(ctaLink.getAttribute("href")).toBe("#footer-newsletter");
-  });
-
-  it("renders correctly without theme prop (fallback branches)", () => {
-    // Header requires a theme object so we pass a minimal one; we only
-    // test that TravelPage's own conditional-theme branches don't crash
-    renderWithRouter(<TravelPage theme={mockTheme as any} />);
-    expect(screen.getByText("Adventures and Journeys")).toBeInTheDocument();
+    const link = screen.getByText(/Subscribe below/i);
+    expect(link).toBeInTheDocument();
+    expect(link.getAttribute("href")).toBe("#footer-newsletter");
   });
 });

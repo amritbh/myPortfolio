@@ -1022,130 +1022,327 @@ const contactPageData = {
   },
 };
 
+// ── Travel Page Data ─────────────────────────────────────────────────────────
+// Scalable, country-agnostic architecture.
+// To add a new country: add one entry to countries[] below. No UI changes needed.
+// To add a new destination type: add type string + CSS class .dest-type-{name}.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type DestinationDifficulty = "Easy" | "Moderate" | "Strenuous";
+export type DestinationType =
+  | "trek"
+  | "hike"
+  | "city"
+  | "road-trip"
+  | "nature"
+  | "moto";
+
+export interface DestinationEntry {
+  id: string;
+  name: string;
+  type: DestinationType;
+  region: string;
+  emoji: string;
+  description: string;
+  blogSlug: string | null;
+  elevation?: string;
+  duration?: string;
+  difficulty?: DestinationDifficulty;
+  highlight?: string;
+}
+
+export interface CountryEntry {
+  id: string;
+  name: string;
+  flag: string;
+  tagline: string;
+  accentColor: string;
+  coverTheme: string;
+  destinations: DestinationEntry[];
+}
+
 export const travelData = {
   tagline:
     "From the trails of the Himalayas to the roads of Oregon, I document every journey.",
-  destinations: {
-    nepal: [
-      "ABC",
-      "Tilicho Lake",
-      "Gosaikunda",
-      "Mustang",
-      "Pokhara",
-      "Badimalika",
-      "Aama Yangri",
-    ],
-    usa: ["Oregon", "Pacific Coast", "Crater Lake"],
-    moto: ["Nepal Mountain Roads"],
-  },
-  nepalCard: {
-    icon: "\ud83c\udfd4\ufe0f",
-    title: "Himalayan Adventures",
-    subtitle: "7+ Trek Destinations",
-    link: "/travel",
-  },
-  usaCard: {
-    icon: "\ud83c\uddfa\ud83c\uddf8",
-    title: "Exploring America",
-    subtitle: "Oregon and beyond, since 2023",
-    link: "/travel",
-  },
-  motoStrip: {
-    icon: "\ud83c\udfd4\ufe0f",
-    label: "Also: Motorcycling through Nepal's mountain roads",
-    link: "/travel",
-  },
-  nepalTreks: [
-    {
-      name: "Annapurna Base Camp",
-      shortName: "ABC",
-      emoji: "\u26f0\ufe0f",
-      description:
-        "The iconic trek through rhododendron forests and glacial moraines to the foot of Annapurna I.",
-      elevation: "4,130m",
-      duration: "12 days",
-      difficulty: "Moderate",
-    },
-    {
-      name: "Tilicho Lake",
-      shortName: "Tilicho Lake",
-      emoji: "\ud83e\uddca",
-      description:
-        "One of the highest lakes in the world, nestled in a remote valley off the Annapurna Circuit.",
-      elevation: "4,919m",
-      duration: "14 days",
-      difficulty: "Strenuous",
-    },
-    {
-      name: "Gosaikunda",
-      shortName: "Gosaikunda",
-      emoji: "\ud83d\udc19",
-      description:
-        "A sacred alpine lake in the Langtang region, revered by both Hindus and Buddhists.",
-      elevation: "4,380m",
-      duration: "7 days",
-      difficulty: "Moderate",
-    },
-    {
-      name: "Upper Mustang",
-      shortName: "Mustang",
-      emoji: "\ud83c\udfdc\ufe0f",
-      description:
-        "A restricted, ancient kingdom tucked in the rain shadow of the Himalayas, with surreal desert landscapes.",
-      elevation: "3,800m",
-      duration: "10 days",
-      difficulty: "Moderate",
-    },
-    {
-      name: "Pokhara",
-      shortName: "Pokhara",
-      emoji: "\ud83d\udea3",
-      description:
-        "The gateway to the Annapurnas, with pristine Phewa Lake and unobstructed views of Machhapuchhre.",
-      elevation: "827m",
-      duration: "3 days",
-      difficulty: "Easy",
-    },
-    {
-      name: "Badimalika",
-      shortName: "Badimalika",
-      emoji: "\ud83d\udeb6",
-      description:
-        "A sacred peak in the remote far-western hills, rarely visited and spiritually significant.",
-      elevation: "4,542m",
-      duration: "8 days",
-      difficulty: "Strenuous",
-    },
-    {
-      name: "Aama Yangri",
-      shortName: "Aama Yangri",
-      emoji: "\ud83c\udf04",
-      description:
-        "A stunning sunrise hike near Kathmandu with 360-degree views of the Langtang range.",
-      elevation: "2,520m",
-      duration: "2 days",
-      difficulty: "Easy",
-    },
+  heroStats: [
+    { value: "7+", label: "Multi-Day Treks" },
+    { value: "10+", label: "Day Hikes" },
+    { value: "2", label: "Countries" },
   ],
-  usaDestinations: [
+  countries: [
+    // ── Nepal ──────────────────────────────────────────────────────────────
     {
-      name: "Oregon",
-      emoji: "\ud83c\udf32",
-      description:
-        "Lush forests, dramatic coastlines, and volcanic peaks. Home since 2023.",
-    },
+      id: "nepal",
+      name: "Nepal",
+      flag: "🇳🇵",
+      tagline: "Born here. Shaped by these mountains.",
+      accentColor: "#DC143C",
+      coverTheme: "himalayan",
+      destinations: [
+        // Multi-day treks
+        {
+          id: "annapurna-base-camp",
+          name: "Annapurna Base Camp",
+          type: "trek",
+          region: "Annapurna",
+          emoji: "⛰️",
+          description:
+            "The iconic trek through rhododendron forests and glacial moraines to the foot of Annapurna I.",
+          elevation: "4,130m",
+          duration: "12 days",
+          difficulty: "Moderate",
+          highlight: "Standing at the base of Annapurna I at sunrise.",
+          blogSlug: null,
+        },
+        {
+          id: "tilicho-lake",
+          name: "Tilicho Lake",
+          type: "trek",
+          region: "Annapurna",
+          emoji: "🏔️",
+          description:
+            "One of the highest lakes in the world, nestled in a remote valley off the Annapurna Circuit.",
+          elevation: "4,919m",
+          duration: "14 days",
+          difficulty: "Strenuous",
+          highlight: "The otherworldly silence at 4,919m with the lake frozen below.",
+          blogSlug: null,
+        },
+        {
+          id: "gosaikunda",
+          name: "Gosaikunda",
+          type: "trek",
+          region: "Langtang",
+          emoji: "🔱",
+          description:
+            "A sacred alpine lake in the Langtang region, revered by both Hindus and Buddhists.",
+          elevation: "4,380m",
+          duration: "7 days",
+          difficulty: "Moderate",
+          highlight: "Arriving at the holy lake at dusk with pilgrims beside you.",
+          blogSlug: null,
+        },
+        {
+          id: "upper-mustang",
+          name: "Upper Mustang",
+          type: "trek",
+          region: "Mustang",
+          emoji: "🏜️",
+          description:
+            "A restricted ancient kingdom in the rain shadow of the Himalayas, with surreal desert landscapes.",
+          elevation: "3,800m",
+          duration: "10 days",
+          difficulty: "Moderate",
+          highlight: "The red-walled city of Lo Manthang emerging from the desert plateau.",
+          blogSlug: null,
+        },
+        {
+          id: "badimalika",
+          name: "Badimalika",
+          type: "trek",
+          region: "Far West",
+          emoji: "🚶",
+          description:
+            "A sacred peak in the remote far-western hills, rarely visited and spiritually significant.",
+          elevation: "4,542m",
+          duration: "8 days",
+          difficulty: "Strenuous",
+          highlight: "Reaching a summit that few outsiders have ever stood on.",
+          blogSlug: null,
+        },
+        // Day hikes
+        {
+          id: "aama-yangri",
+          name: "Aama Yangri",
+          type: "hike",
+          region: "Langtang",
+          emoji: "🌄",
+          description:
+            "A stunning sunrise hike near Kathmandu with 360-degree views of the Langtang range.",
+          elevation: "2,520m",
+          duration: "1-2 days",
+          difficulty: "Easy",
+          highlight: "Watching dawn break over a sea of clouds above Kathmandu.",
+          blogSlug: null,
+        },
+        {
+          id: "sarangkot-hike",
+          name: "Sarangkot Sunrise Hike",
+          type: "hike",
+          region: "Annapurna",
+          emoji: "🌅",
+          description:
+            "Classic Pokhara day hike to the Sarangkot viewpoint for a sunrise panorama of the Annapurna range.",
+          elevation: "1,592m",
+          duration: "Half day",
+          difficulty: "Easy",
+          highlight: "Machhapuchhre glowing pink before the sun clears the ridge.",
+          blogSlug: null,
+        },
+        // City
+        {
+          id: "pokhara",
+          name: "Pokhara",
+          type: "city",
+          region: "Annapurna",
+          emoji: "⛵",
+          description:
+            "The gateway to the Annapurnas, with pristine Phewa Lake and unobstructed views of Machhapuchhre.",
+          blogSlug: null,
+        },
+        // Moto
+        {
+          id: "nepal-mountain-roads",
+          name: "Nepal Mountain Roads",
+          type: "moto",
+          region: "Far West",
+          emoji: "🏍️",
+          description:
+            "Documenting the raw beauty of riding through the Himalayan foothills and high-altitude passes.",
+          blogSlug: null,
+        },
+      ],
+    } as CountryEntry,
+
+    // ── USA ────────────────────────────────────────────────────────────────
     {
-      name: "Pacific Coast",
-      emoji: "\ud83c\udf0a",
-      description:
-        "The Pacific Coast Highway from Oregon to California. One of the most scenic drives in the world.",
-    },
-    {
-      name: "Crater Lake",
-      emoji: "\ud83d\udc19",
-      description:
-        "The deepest lake in the USA, formed in the caldera of a collapsed volcano.",
-    },
+      id: "usa",
+      name: "United States",
+      flag: "🇺🇸",
+      tagline: "Discovering America, one state at a time.",
+      accentColor: "#1E6FA8",
+      coverTheme: "pacific",
+      destinations: [
+        // Day hikes
+        {
+          id: "crater-lake-rim",
+          name: "Crater Lake Rim Walk",
+          type: "hike",
+          region: "Oregon",
+          emoji: "🌋",
+          description:
+            "A rim hike around the deepest lake in the USA, formed in the caldera of a collapsed volcano.",
+          elevation: "2,487m",
+          duration: "Half day",
+          difficulty: "Easy",
+          highlight: "The impossible blue of the water, unlike anything I have seen.",
+          blogSlug: null,
+        },
+        {
+          id: "california-dunes",
+          name: "California Dunes",
+          type: "hike",
+          region: "Pacific Coast",
+          emoji: "🏜️",
+          description:
+            "Coastal sand dunes near Pismo Beach — surreal to hike from the ocean into a mini desert.",
+          elevation: "90m",
+          duration: "Half day",
+          difficulty: "Easy",
+          highlight: "Standing on a dune ridge with the Pacific on one side and dunes on the other.",
+          blogSlug: null,
+        },
+        // Cities and places
+        {
+          id: "corvallis-oregon",
+          name: "Corvallis, Oregon",
+          type: "city",
+          region: "Pacific Northwest",
+          emoji: "🌲",
+          description:
+            "Home base since 2025. Lush forests, university town, and gateway to the Oregon Coast.",
+          blogSlug: null,
+        },
+        {
+          id: "oregon-coast",
+          name: "Oregon Coast Drive",
+          type: "road-trip",
+          region: "Pacific Coast",
+          emoji: "🌊",
+          description:
+            "US-101 along the Oregon coast is one of the most dramatic drives in the country.",
+          blogSlug: null,
+        },
+        {
+          id: "texas",
+          name: "Texas",
+          type: "city",
+          region: "South",
+          emoji: "🤠",
+          description:
+            "Big skies, bigger portions, and the friendliest strangers. Everything really is larger here.",
+          blogSlug: null,
+        },
+        {
+          id: "bentonville-arkansas",
+          name: "Bentonville, Arkansas",
+          type: "city",
+          region: "Midwest",
+          emoji: "🚵",
+          description:
+            "The mountain biking capital of America. Surprised me with its incredible trail network.",
+          blogSlug: null,
+        },
+        {
+          id: "iowa",
+          name: "Iowa",
+          type: "city",
+          region: "Midwest",
+          emoji: "🌽",
+          description:
+            "Flat, green, and underrated. A slice of classic American heartland.",
+          blogSlug: null,
+        },
+        {
+          id: "virginia-dc",
+          name: "Virginia / DC Metro",
+          type: "city",
+          region: "East Coast",
+          emoji: "🏛️",
+          description:
+            "History everywhere you look. The Mall, cherry blossoms, and Blue Ridge Mountains nearby.",
+          blogSlug: null,
+        },
+        {
+          id: "las-vegas",
+          name: "Las Vegas, Nevada",
+          type: "city",
+          region: "Southwest",
+          emoji: "🎰",
+          description:
+            "The Strip in all its surreal neon glory. Also a great base for Red Rock Canyon and Valley of Fire.",
+          blogSlug: null,
+        },
+        {
+          id: "arizona",
+          name: "Arizona",
+          type: "nature",
+          region: "Southwest",
+          emoji: "🌵",
+          description:
+            "Canyon country at its finest. Sedona red rocks, Saguaro cacti, and desert sunsets.",
+          blogSlug: null,
+        },
+      ],
+    } as CountryEntry,
+
+    // ── ADD NEW COUNTRY HERE ───────────────────────────────────────────────
+    // {
+    //   id: "japan",
+    //   name: "Japan",
+    //   flag: "🇯🇵",
+    //   tagline: "Temples, ramen, and bullet trains.",
+    //   accentColor: "#BC002D",
+    //   coverTheme: "japan",
+    //   destinations: [
+    //     { id: "fuji", name: "Mt. Fuji", type: "hike", region: "Chubu", emoji: "🗻",
+    //       description: "Iconic volcanic summit hike at dawn.", elevation: "3,776m",
+    //       duration: "1 day", difficulty: "Moderate",
+    //       highlight: "Watching sunrise above the clouds from the summit.", blogSlug: null },
+    //     { id: "kyoto", name: "Kyoto", type: "city", region: "Kansai", emoji: "⛩️",
+    //       description: "Ancient temples, bamboo forests, and matcha everything.", blogSlug: null },
+    //   ],
+    // } as CountryEntry,
   ],
 };
 

@@ -1,42 +1,58 @@
-/* ══════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════
    Travel Page — Travel.css
-   Sprint 4: Travel Page + Footer Enhancement
-   ══════════════════════════════════════════════════════════ */
+   Scalable, Country-Agnostic Redesign
+   Design: "Passport meets Pixel" — Dark cinematic travel editorial
+   ══════════════════════════════════════════════════════════════════════ */
 
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap");
 
-/* ── Base ─────────────────────────────────────────────────── */
+/* ── Design Tokens ──────────────────────────────────────────────────── */
 .travel-page {
+  --travel-accent: #dc143c; /* overridden per-country via inline style */
+  --travel-bg-deep: #0a0f1e;
+  --travel-amber: #f5a623;
+  --travel-snow: #f8f9fa;
+  --travel-mist: #8b9bb4;
+  --travel-jade: #2e8b57;
+
   min-height: 100vh;
   font-family: "Outfit", "Google Sans Regular", sans-serif;
 }
 
-/* ── Hero ─────────────────────────────────────────────────── */
+/* ── Shared section layout ──────────────────────────────────────────── */
+.travel-section {
+  padding: 4rem 2rem;
+}
+
+.travel-section-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════════════════════════════════ */
 .travel-hero {
   position: relative;
-  min-height: 60vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(
-    135deg,
-    #0d1117 0%,
-    #1a0a0a 40%,
-    #2d0505 70%,
-    #0d1117 100%
-  );
+  background-image: url("../../assests/images/himalayan_hero.png");
+  background-size: cover;
+  background-position: center 30%;
   padding: 100px 2rem 3rem;
 }
 
-.travel-hero::before {
-  content: "";
+.travel-hero-overlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    ellipse 70% 60% at 50% 40%,
-    rgba(220, 20, 60, 0.12) 0%,
-    transparent 70%
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 15, 30, 0.55) 0%,
+    rgba(10, 15, 30, 0.7) 50%,
+    rgba(10, 15, 30, 0.9) 100%
   );
   pointer-events: none;
 }
@@ -45,301 +61,581 @@
   position: relative;
   z-index: 1;
   text-align: center;
-  max-width: 760px;
+  max-width: 820px;
+}
+
+.travel-hero-eyebrow {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--travel-amber);
+  margin: 0 0 1rem;
 }
 
 .travel-hero-title {
-  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-size: clamp(2.4rem, 6vw, 4.4rem);
   font-weight: 800;
-  background: linear-gradient(135deg, #ffffff 0%, #dc143c 60%, #ff6b6b 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin: 0 0 1rem;
-  line-height: 1.15;
+  color: var(--travel-snow);
+  line-height: 1.1;
+  margin: 0 0 1.2rem;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6);
 }
 
 .travel-hero-subtitle {
-  font-size: 1.15rem;
-  line-height: 1.7;
+  font-size: 1.1rem;
+  line-height: 1.75;
+  color: rgba(248, 249, 250, 0.82);
   max-width: 560px;
-  margin: 0 auto 1.5rem;
-  opacity: 0.85;
+  margin: 0 auto 2.5rem;
 }
 
-.travel-hero-chips {
+/* Stats strip */
+.travel-hero-stats {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 2.5rem;
   justify-content: center;
-  margin-bottom: 2rem;
-}
-
-.travel-chip {
-  padding: 0.4rem 1rem;
-  border-radius: 999px;
-  font-size: 0.88rem;
-  font-weight: 600;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+  padding: 1rem 2rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(6px);
   border: 1px solid rgba(255, 255, 255, 0.12);
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
+.travel-hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.travel-hero-stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--travel-amber);
+  line-height: 1;
+}
+
+.travel-hero-stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(248, 249, 250, 0.65);
+}
+
+/* Scroll arrow */
 .travel-scroll-arrow {
   display: inline-block;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   color: rgba(255, 255, 255, 0.5);
   text-decoration: none;
-  animation: bounce 2s ease-in-out infinite;
+  animation: travelBounce 2s ease-in-out infinite;
   transition: color 0.2s;
 }
 
 .travel-scroll-arrow:hover {
-  color: #dc143c;
+  color: var(--travel-amber);
 }
 
-@keyframes bounce {
+@keyframes travelBounce {
   0%,
   100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(6px);
+    transform: translateY(8px);
   }
 }
 
-/* ── Section shared ───────────────────────────────────────── */
-.travel-section {
-  padding: 4rem 2rem;
+/* ══════════════════════════════════════════════════════════════════════
+   STORY SECTION
+   ══════════════════════════════════════════════════════════════════════ */
+.travel-story-section {
+  padding: 5rem 2rem;
+  border-bottom: 1px solid;
+  border-color: rgba(128, 128, 128, 0.12);
 }
 
-.travel-section-inner {
-  max-width: 1100px;
-  margin: 0 auto;
+.travel-story-inner {
+  display: flex;
+  gap: 4rem;
+  align-items: flex-start;
 }
 
-.travel-section-title {
+.travel-story-text {
+  flex: 1.4;
+}
+
+.travel-story-eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--travel-accent);
+  margin-bottom: 0.75rem;
+}
+
+.travel-story-heading {
   font-size: clamp(1.6rem, 3.5vw, 2.2rem);
   font-weight: 800;
-  margin: 0 0 0.5rem;
+  margin: 0 0 1.2rem;
+  line-height: 1.2;
 }
 
-.travel-section-subtitle {
+.travel-story-body {
   font-size: 1rem;
-  line-height: 1.7;
-  max-width: 620px;
-  margin: 0 0 2.5rem;
+  line-height: 1.85;
+  max-width: 540px;
+  opacity: 0.9;
+}
+
+/* Glance cards */
+.travel-story-glance {
+  flex: 0.7;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.travel-glance-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid;
+  border-left: 4px solid;
+  transition: transform 0.2s ease;
+}
+
+.travel-glance-card:hover {
+  transform: translateX(4px);
+}
+
+.travel-glance-flag {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.travel-glance-name {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.travel-glance-count {
+  font-size: 0.82rem;
+  margin: 0;
+  opacity: 0.7;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   COUNTRY TABS
+   ══════════════════════════════════════════════════════════════════════ */
+.travel-country-tabs {
+  position: sticky;
+  top: 64px;
+  z-index: 10;
+  border-bottom: 2px solid;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.travel-tabs-inner {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.travel-tabs-inner::-webkit-scrollbar {
+  display: none;
+}
+
+.travel-country-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: inherit;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.travel-country-tab:hover:not(.active) {
   opacity: 0.8;
 }
 
-/* ── Trek Grid ────────────────────────────────────────────── */
-.trek-grid {
+.tab-flag {
+  font-size: 1.3rem;
+}
+
+.tab-name {
+  font-size: 0.95rem;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   TYPE FILTER CHIPS
+   ══════════════════════════════════════════════════════════════════════ */
+.travel-type-chips {
+  padding: 0.85rem 2rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+}
+
+.travel-chips-inner {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.travel-chips-inner::-webkit-scrollbar {
+  display: none;
+}
+
+.type-chip {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: inherit;
+  background: none;
+  border: 1px solid;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.type-chip:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   DESTINATION GRID
+   ══════════════════════════════════════════════════════════════════════ */
+.destination-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
 }
 
-@media (max-width: 900px) {
-  .trek-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 560px) {
-  .trek-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ── Trek Card ────────────────────────────────────────────── */
-.trek-card {
+/* ── Destination Card base ──────────────────────────────────────────── */
+.destination-card {
   border: 1px solid;
-  border-radius: 14px;
-  padding: 1.25rem;
-  position: relative;
+  border-radius: 16px;
+  padding: 1.4rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  gap: 0.65rem;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.trek-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(220, 20, 60, 0.12);
+.destination-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 36px
+    color-mix(in srgb, var(--travel-accent) 18%, transparent);
 }
 
-.trek-card-header {
+/* Card header row */
+.dest-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.trek-emoji {
-  font-size: 1.8rem;
+.dest-emoji {
+  font-size: 2rem;
+  line-height: 1;
 }
 
-.trek-difficulty-badge {
+.dest-region-badge {
   font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid;
+  letter-spacing: 0.04em;
+}
+
+.dest-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* ── Elevation bar (treks only) ─────────────────────────────────────── */
+.trek-elevation-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.trek-elevation-bar {
+  height: 6px;
+  border-radius: 999px;
+  flex: 1;
+  background: linear-gradient(to right, #2ea043 0%, #d29922 50%, #da3633 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.trek-elevation-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: var(--elevation-pct, 50%);
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.trek-elevation-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0.75;
+}
+
+/* ── Trail badges row ───────────────────────────────────────────────── */
+.dest-trail-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.difficulty-badge {
+  font-size: 0.7rem;
   font-weight: 700;
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
+  border: 1px solid;
   letter-spacing: 0.03em;
 }
 
-.trek-name {
-  font-size: 1.05rem;
-  font-weight: 700;
-  margin: 0;
+.duration-badge,
+.hike-elevation-stat {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid;
+  opacity: 0.85;
 }
 
-.trek-description {
+/* ── Description ────────────────────────────────────────────────────── */
+.dest-description {
   font-size: 0.88rem;
-  line-height: 1.6;
+  line-height: 1.65;
   margin: 0;
   flex: 1;
+  opacity: 0.85;
 }
 
-.trek-meta {
-  display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
+/* ── Highlight quote ────────────────────────────────────────────────── */
+.dest-highlight {
+  font-size: 0.83rem;
+  font-style: italic;
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 0.75rem;
+  border-left: 3px solid;
+  opacity: 0.9;
 }
 
-.trek-meta-item {
-  font-size: 0.8rem;
-  opacity: 0.8;
-}
-
-.trek-coming-soon-badge {
+/* ── Coming soon / Read story ───────────────────────────────────────── */
+.coming-soon-badge {
   display: inline-block;
   font-size: 0.72rem;
   font-weight: 700;
-  padding: 0.25rem 0.7rem;
+  padding: 0.25rem 0.75rem;
   border-radius: 999px;
-  background: rgba(220, 20, 60, 0.12);
+  background: rgba(220, 20, 60, 0.1);
   color: #b91c1c;
   border: 1px solid rgba(220, 20, 60, 0.3);
   align-self: flex-start;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
-/* ── Nepal Callout ────────────────────────────────────────── */
-.nepal-callout-section {
-  padding: 0 2rem 3rem;
+.read-story-btn {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid;
+  text-decoration: none;
+  align-self: flex-start;
+  transition: background 0.2s ease, color 0.2s ease;
+  letter-spacing: 0.02em;
 }
 
-.nepal-callout {
+.read-story-btn:hover {
+  background: var(--travel-accent);
+  color: #fff;
+  border-color: var(--travel-accent);
+}
+
+/* ── Type-specific card tweaks ──────────────────────────────────────── */
+.dest-type-hike {
+  /* slightly lighter opacity on card to distinguish from full treks */
+  opacity: 0.97;
+}
+
+.dest-type-city .dest-emoji,
+.dest-type-nature .dest-emoji,
+.dest-type-road-trip .dest-emoji,
+.dest-type-moto .dest-emoji {
+  font-size: 2.4rem;
+}
+
+/* ── Empty state ────────────────────────────────────────────────────── */
+.travel-empty-state {
+  text-align: center;
+  padding: 3rem 0;
+  font-size: 1rem;
+  opacity: 0.6;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   MISSION STATEMENT
+   ══════════════════════════════════════════════════════════════════════ */
+.travel-mission-section {
+  padding: 0 2rem 4rem;
+}
+
+.travel-mission-card {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.5rem;
-  border-radius: 14px;
-  border-left: 4px solid #dc143c;
-  max-width: 1100px;
+  gap: 1.5rem;
+  padding: 2rem 2.5rem;
+  border-radius: 16px;
+  border-left: 5px solid;
+  max-width: 1120px;
   margin: 0 auto;
+  align-items: flex-start;
 }
 
-.nepal-callout-icon {
-  font-size: 1.8rem;
+.mission-icon-wrap {
   flex-shrink: 0;
 }
 
-.nepal-callout-text {
-  font-size: 0.97rem;
-  line-height: 1.7;
+.mission-flag {
+  font-size: 2.4rem;
+  display: block;
+}
+
+.mission-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0 0 0.6rem;
+}
+
+.mission-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
   margin: 0;
+  max-width: 680px;
+  opacity: 0.88;
 }
 
-/* ── Moto Section ─────────────────────────────────────────── */
-.moto-section {
+/* ══════════════════════════════════════════════════════════════════════
+   MOTO BANNER
+   ══════════════════════════════════════════════════════════════════════ */
+.travel-moto-banner {
+  background: linear-gradient(135deg, #0a0f1e 0%, #1a0a0a 60%, #0d1117 100%);
   padding: 4rem 2rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.moto-featured-card {
+.travel-moto-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 60% 80% at 80% 50%,
+    rgba(220, 20, 60, 0.08) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.travel-moto-inner {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  border: 1px solid;
-  border-radius: 14px;
-  padding: 1.5rem 2rem;
-  max-width: 640px;
-  transition: transform 0.2s ease;
+  justify-content: space-between;
+  gap: 3rem;
+  position: relative;
+  z-index: 1;
 }
 
-.moto-featured-card:hover {
-  transform: translateY(-3px);
-}
-
-.moto-featured-icon {
-  font-size: 2.4rem;
-  flex-shrink: 0;
-}
-
-.moto-featured-title {
-  font-size: 1.1rem;
+.moto-eyebrow {
+  display: block;
+  font-size: 0.78rem;
   font-weight: 700;
-  margin: 0 0 0.4rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--travel-amber);
+  margin-bottom: 0.6rem;
 }
 
-.moto-featured-desc {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  margin: 0;
+.moto-title {
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 800;
+  color: var(--travel-snow);
+  margin: 0 0 0.8rem;
 }
 
-/* ── USA Grid ─────────────────────────────────────────────── */
-.usa-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
-}
-
-@media (max-width: 768px) {
-  .usa-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .usa-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ── USA Card ─────────────────────────────────────────────── */
-.usa-card {
-  border: 1px solid;
-  border-radius: 14px;
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  transition: transform 0.2s ease;
-}
-
-.usa-card:hover {
-  transform: translateY(-3px);
-}
-
-.usa-card-emoji {
-  font-size: 1.8rem;
-}
-
-.usa-card-name {
+.moto-desc {
   font-size: 1rem;
-  font-weight: 700;
-  margin: 0;
+  line-height: 1.7;
+  color: rgba(248, 249, 250, 0.72);
+  max-width: 520px;
+  margin: 0 0 1.2rem;
 }
 
-.usa-card-desc {
-  font-size: 0.88rem;
-  line-height: 1.6;
-  margin: 0;
-  flex: 1;
+.moto-badge {
+  background: rgba(220, 20, 60, 0.14);
+  color: #ff8080;
+  border-color: rgba(220, 20, 60, 0.4);
 }
 
-/* ── Subscribe CTA ────────────────────────────────────────── */
+.moto-icon-wrap {
+  font-size: 5rem;
+  opacity: 0.25;
+  user-select: none;
+  flex-shrink: 0;
+  display: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SUBSCRIBE CTA
+   ══════════════════════════════════════════════════════════════════════ */
 .travel-subscribe-cta {
   padding: 2.5rem 2rem;
-  text-align: center;
+  border-top: 1px solid rgba(128, 128, 128, 0.12);
 }
 
 .travel-cta-text {
@@ -358,19 +654,85 @@
   text-decoration: underline;
 }
 
-/* ── Responsive header padding ────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* 3-col → 2-col */
+@media (max-width: 1000px) {
+  .destination-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Large tablets */
+@media (max-width: 900px) {
+  .travel-story-inner {
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .travel-story-glance {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .travel-glance-card {
+    flex: 1 1 200px;
+  }
+
+  .moto-icon-wrap {
+    display: block;
+  }
+}
+
+/* Tablets */
 @media (max-width: 768px) {
   .travel-hero {
     padding-top: 80px;
-    min-height: 50vh;
+    min-height: 90vh;
   }
 
   .travel-section {
     padding: 3rem 1.25rem;
   }
 
-  .moto-featured-card {
+  .travel-mission-card {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .travel-moto-inner {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .moto-icon-wrap {
+    display: none;
+  }
+
+  .travel-hero-stats {
+    gap: 1.5rem;
+    padding: 0.85rem 1.25rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 560px) {
+  .destination-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .travel-country-tab {
+    padding: 0.85rem 1rem;
+  }
+
+  .tab-name {
+    font-size: 0.85rem;
+  }
+
+  .travel-hero-stat-value {
+    font-size: 1.5rem;
   }
 }
