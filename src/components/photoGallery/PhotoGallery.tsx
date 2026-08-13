@@ -99,6 +99,12 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images, columns = 3 }) => {
           aria-modal="true"
           aria-label="Photo lightbox"
           onClick={close}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              close();
+            }
+          }}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -122,6 +128,8 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images, columns = 3 }) => {
           <div
             className="lightbox-content"
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            role="presentation"
             data-testid="lightbox-content"
           >
             <img
