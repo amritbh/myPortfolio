@@ -4,6 +4,7 @@ import { travelData } from "../../portfolio";
 import type { CountryEntry, DestinationEntry } from "../../portfolio";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
+import TravelMap from "../../components/travelMap/TravelMap";
 import { Fade } from "react-reveal";
 import type { Theme, ThemeMode } from "../../types";
 
@@ -257,6 +258,7 @@ const TravelPage: React.FC<TravelPageProps> = ({
     return (
       <Fade bottom duration={600} delay={index * 70} key={dest.id}>
         <div
+          id={`dest-${dest.id}`}
           className={`destination-card dest-type-${dest.type}`}
           style={
             {
@@ -523,6 +525,15 @@ const TravelPage: React.FC<TravelPageProps> = ({
       <Header theme={theme} themeMode={themeMode} onThemeChange={onThemeChange} />
       {renderHero()}
       {renderStorySection()}
+      <TravelMap 
+        countries={travelData.countries} 
+        theme={theme} 
+        onPinClick={(destId) => {
+          document.getElementById(`dest-${destId}`)?.scrollIntoView({
+            behavior: "smooth", block: "center"
+          });
+        }} 
+      />
       {renderCountryTabs()}
       {renderTypeFilterChips(activeCountry)}
       {renderDestinationGrid(activeCountry, activeTypeFilter)}

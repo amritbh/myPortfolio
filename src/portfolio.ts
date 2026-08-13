@@ -1045,6 +1045,7 @@ export interface DestinationEntry {
   emoji: string;
   description: string;
   blogSlug: string | null;
+  coordinates?: [number, number]; // [lat, lng]
   elevation?: string;
   duration?: string;
   difficulty?: DestinationDifficulty;
@@ -1086,6 +1087,7 @@ export const travelData = {
           type: "trek",
           region: "Annapurna",
           emoji: "⛰️",
+          coordinates: [28.5300, 83.8780],
           description:
             "The iconic trek through rhododendron forests and glacial moraines to the foot of Annapurna I.",
           elevation: "4,130m",
@@ -1100,6 +1102,7 @@ export const travelData = {
           type: "trek",
           region: "Annapurna",
           emoji: "🏔️",
+          coordinates: [28.6833, 83.9833],
           description:
             "One of the highest lakes in the world, nestled in a remote valley off the Annapurna Circuit.",
           elevation: "4,919m",
@@ -1114,6 +1117,7 @@ export const travelData = {
           type: "trek",
           region: "Langtang",
           emoji: "🔱",
+          coordinates: [28.0833, 85.4167],
           description:
             "A sacred alpine lake in the Langtang region, revered by both Hindus and Buddhists.",
           elevation: "4,380m",
@@ -1128,6 +1132,7 @@ export const travelData = {
           type: "trek",
           region: "Mustang",
           emoji: "🏜️",
+          coordinates: [29.1833, 83.9667],
           description:
             "A restricted ancient kingdom in the rain shadow of the Himalayas, with surreal desert landscapes.",
           elevation: "3,800m",
@@ -1142,6 +1147,7 @@ export const travelData = {
           type: "trek",
           region: "Far West",
           emoji: "🚶",
+          coordinates: [29.4167, 81.6500],
           description:
             "A sacred peak in the remote far-western hills, rarely visited and spiritually significant.",
           elevation: "4,542m",
@@ -1157,6 +1163,7 @@ export const travelData = {
           type: "hike",
           region: "Langtang",
           emoji: "🌄",
+          coordinates: [28.0667, 85.5500],
           description:
             "A stunning sunrise hike near Kathmandu with 360-degree views of the Langtang range.",
           elevation: "2,520m",
@@ -1171,6 +1178,7 @@ export const travelData = {
           type: "hike",
           region: "Annapurna",
           emoji: "🌅",
+          coordinates: [28.2439, 83.9486],
           description:
             "Classic Pokhara day hike to the Sarangkot viewpoint for a sunrise panorama of the Annapurna range.",
           elevation: "1,592m",
@@ -1186,6 +1194,7 @@ export const travelData = {
           type: "city",
           region: "Annapurna",
           emoji: "⛵",
+          coordinates: [28.2096, 83.9856],
           description:
             "The gateway to the Annapurnas, with pristine Phewa Lake and unobstructed views of Machhapuchhre.",
           blogSlug: null,
@@ -1197,6 +1206,7 @@ export const travelData = {
           type: "moto",
           region: "Far West",
           emoji: "🏍️",
+          coordinates: [29.3000, 81.0000],
           description:
             "Documenting the raw beauty of riding through the Himalayan foothills and high-altitude passes.",
           blogSlug: null,
@@ -1220,6 +1230,7 @@ export const travelData = {
           type: "hike",
           region: "Oregon",
           emoji: "🌋",
+          coordinates: [42.9446, -122.1090],
           description:
             "A rim hike around the deepest lake in the USA, formed in the caldera of a collapsed volcano.",
           elevation: "2,487m",
@@ -1234,6 +1245,7 @@ export const travelData = {
           type: "hike",
           region: "Pacific Coast",
           emoji: "🏜️",
+          coordinates: [35.1011, -120.6145],
           description:
             "Coastal sand dunes near Pismo Beach — surreal to hike from the ocean into a mini desert.",
           elevation: "90m",
@@ -1249,6 +1261,7 @@ export const travelData = {
           type: "city",
           region: "Pacific Northwest",
           emoji: "🌲",
+          coordinates: [44.5646, -123.2620],
           description:
             "Home base since 2025. Lush forests, university town, and gateway to the Oregon Coast.",
           blogSlug: null,
@@ -1259,6 +1272,7 @@ export const travelData = {
           type: "road-trip",
           region: "Pacific Coast",
           emoji: "🌊",
+          coordinates: [44.6368, -124.0535],
           description:
             "US-101 along the Oregon coast is one of the most dramatic drives in the country.",
           blogSlug: null,
@@ -1269,6 +1283,7 @@ export const travelData = {
           type: "city",
           region: "South",
           emoji: "🤠",
+          coordinates: [30.2672, -97.7431],
           description:
             "Big skies, bigger portions, and the friendliest strangers. Everything really is larger here.",
           blogSlug: null,
@@ -1279,6 +1294,7 @@ export const travelData = {
           type: "city",
           region: "Midwest",
           emoji: "🚵",
+          coordinates: [36.3729, -94.2088],
           description:
             "The mountain biking capital of America. Surprised me with its incredible trail network.",
           blogSlug: null,
@@ -1289,6 +1305,7 @@ export const travelData = {
           type: "city",
           region: "Midwest",
           emoji: "🌽",
+          coordinates: [41.5868, -93.6250],
           description:
             "Flat, green, and underrated. A slice of classic American heartland.",
           blogSlug: null,
@@ -1299,6 +1316,7 @@ export const travelData = {
           type: "city",
           region: "East Coast",
           emoji: "🏛️",
+          coordinates: [38.9072, -77.0369],
           description:
             "History everywhere you look. The Mall, cherry blossoms, and Blue Ridge Mountains nearby.",
           blogSlug: null,
@@ -1309,6 +1327,7 @@ export const travelData = {
           type: "city",
           region: "Southwest",
           emoji: "🎰",
+          coordinates: [36.1699, -115.1398],
           description:
             "The Strip in all its surreal neon glory. Also a great base for Red Rock Canyon and Valley of Fire.",
           blogSlug: null,
@@ -1319,6 +1338,7 @@ export const travelData = {
           type: "nature",
           region: "Southwest",
           emoji: "🌵",
+          coordinates: [34.8697, -111.7610],
           description:
             "Canyon country at its finest. Sedona red rocks, Saguaro cacti, and desert sunsets.",
           blogSlug: null,
