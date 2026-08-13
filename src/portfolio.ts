@@ -1037,6 +1037,13 @@ export type DestinationType =
   | "nature"
   | "moto";
 
+export interface GalleryImage {
+  src: string;       // CloudFront URL to full-size image
+  thumb: string;     // CloudFront URL to thumbnail (< 400px wide)
+  alt: string;
+  caption?: string;
+}
+
 export interface DestinationEntry {
   id: string;
   name: string;
@@ -1050,6 +1057,7 @@ export interface DestinationEntry {
   duration?: string;
   difficulty?: DestinationDifficulty;
   highlight?: string;
+  galleryImages?: GalleryImage[];  // optional photo gallery
 }
 
 export interface CountryEntry {
@@ -1095,6 +1103,26 @@ export const travelData = {
           difficulty: "Moderate",
           highlight: "Standing at the base of Annapurna I at sunrise.",
           blogSlug: null,
+          galleryImages: [
+            {
+              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/01-trail.jpg",
+              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/01-trail-thumb.jpg",
+              alt: "Trail through rhododendron forest toward Annapurna Base Camp",
+              caption: "The rhododendron forests blaze red in spring.",
+            },
+            {
+              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/02-base-camp.jpg",
+              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/02-base-camp-thumb.jpg",
+              alt: "Annapurna Base Camp at 4130m with snow-covered peaks",
+              caption: "Annapurna I (8,091m) towers above the base camp at dawn.",
+            },
+            {
+              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/03-machhapuchhre.jpg",
+              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/03-machhapuchhre-thumb.jpg",
+              alt: "Machhapuchhre (Fishtail) peak reflection at sunrise",
+              caption: "Machhapuchhre, the sacred unclimbed peak.",
+            },
+          ],
         },
         {
           id: "tilicho-lake",

@@ -5,6 +5,7 @@ import type { CountryEntry, DestinationEntry } from "../../portfolio";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import TravelMap from "../../components/travelMap/TravelMap";
+import PhotoGallery from "../../components/photoGallery/PhotoGallery";
 import { Fade } from "react-reveal";
 import type { Theme, ThemeMode } from "../../types";
 
@@ -364,7 +365,11 @@ const TravelPage: React.FC<TravelPageProps> = ({
             </p>
           )}
 
-          {/* CTA */}
+          {/* Photo Gallery */}
+          {dest.galleryImages && dest.galleryImages.length > 0 && (
+            <PhotoGallery images={dest.galleryImages} columns={3} />
+          )}
+
           {dest.blogSlug ? (
             <a
               href={`/blogs/${dest.blogSlug}`}
