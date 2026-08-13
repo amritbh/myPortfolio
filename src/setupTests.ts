@@ -7,3 +7,12 @@ import { vi } from "vitest";
 vi.mock("marked", () => ({
   marked: vi.fn((text: string) => `<p>${text}</p>`),
 }));
+
+const MockIntersectionObserver = vi.fn(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
+vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
+window.IntersectionObserver = MockIntersectionObserver as any;
