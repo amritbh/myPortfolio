@@ -3,14 +3,42 @@ import "./PhotoGallery.css";
 import { GalleryImage } from "../../portfolio";
 
 interface PhotoGalleryProps {
-  images: GalleryImage[];
+  destinationId: string;
   columns?: number;
 }
 
-const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images, columns = 3 }) => {
+const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, columns = 3 }) => {
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   // touchstart X position for swipe detection
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+    fetch(`https://amrit.cloud/media/travel/${destinationId}/gallery/manifest.json`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Manifest not found");
+        return res.json();
+      })
+      .then((data) => {
+        if (isMounted) {
+          setImages(data);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load gallery manifest for", destinationId, err);
+        if (isMounted) {
+          setImages([]);
+          setLoading(false);
+        }
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [destinationId]);
 
   const isOpen = activeIndex !== null;
   const total = images.length;
@@ -63,6 +91,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images, columns = 3 }) => {
     setTouchStartX(null);
   };
 
+  if (loading) return null; // or a skeleton loader
   if (!images || images.length === 0) return null;
 
   const activeImage = activeIndex !== null ? images[activeIndex] : null;

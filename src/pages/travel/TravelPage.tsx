@@ -366,8 +366,8 @@ const TravelPage: React.FC<TravelPageProps> = ({
           )}
 
           {/* Photo Gallery */}
-          {dest.galleryImages && dest.galleryImages.length > 0 && (
-            <PhotoGallery images={dest.galleryImages} columns={3} />
+          {dest.hasGallery && (
+            <PhotoGallery destinationId={dest.id} columns={3} />
           )}
 
           {dest.blogSlug ? (

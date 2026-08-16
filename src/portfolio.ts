@@ -1057,7 +1057,7 @@ export interface DestinationEntry {
   duration?: string;
   difficulty?: DestinationDifficulty;
   highlight?: string;
-  galleryImages?: GalleryImage[];  // optional photo gallery
+  hasGallery?: boolean;  // Will fetch from S3 manifest if true
 }
 
 export interface CountryEntry {
@@ -1103,118 +1103,7 @@ export const travelData = {
           difficulty: "Moderate",
           highlight: "Standing at the base of Annapurna I at sunrise.",
           blogSlug: null,
-          galleryImages: [
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/01-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/01-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 1",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/02-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/02-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 2",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/03-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/03-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 3",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/04-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/04-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 4",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/05-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/05-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 5",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/06-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/06-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 6",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/07-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/07-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 7",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/08-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/08-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 8",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/09-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/09-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 9",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/10-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/10-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 10",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/11-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/11-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 11",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/12-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/12-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 12",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/13-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/13-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 13",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/14-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/14-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 14",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/15-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/15-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 15",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/16-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/16-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 16",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/17-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/17-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 17",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/18-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/18-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 18",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/19-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/19-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 19",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/20-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/20-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 20",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/21-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/21-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 21",
-            },
-            {
-              src: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/22-abc-trek.webp",
-              thumb: "https://amrit.cloud/media/travel/annapurna-base-camp/gallery/thumbs/22-abc-trek-thumb.webp",
-              alt: "Annapurna Base Camp Trek photo 22",
-            },
-          ],
+          hasGallery: true,
         },
         {
           id: "tilicho-lake",
