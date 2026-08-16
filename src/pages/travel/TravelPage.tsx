@@ -378,9 +378,9 @@ const TravelPage: React.FC<TravelPageProps> = ({
             >
               ✍ Read Story
             </a>
-          ) : (
+          ) : !dest.hasGallery ? (
             <span className="coming-soon-badge">Coming Soon</span>
-          )}
+          ) : null}
         </div>
       </Fade>
     );

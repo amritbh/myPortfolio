@@ -5,9 +5,10 @@ import { GalleryImage } from "../../portfolio";
 interface PhotoGalleryProps {
   destinationId: string;
   columns?: number;
+  maxVisible?: number;
 }
 
-const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, columns = 3 }) => {
+const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, columns = 3, maxVisible = 6 }) => {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -96,29 +97,42 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, columns = 3 
 
   const activeImage = activeIndex !== null ? images[activeIndex] : null;
 
+  const visibleImages = images.slice(0, maxVisible);
+  const remainingCount = images.length - maxVisible;
+
   return (
     <div
       className="photo-gallery"
       style={{ "--gallery-cols": columns } as React.CSSProperties}
     >
-      <div className="photo-gallery-grid" data-testid="photo-gallery-grid">
-        {images.map((img, idx) => (
-          <button
-            key={img.src}
-            type="button"
-            className="gallery-thumb-btn"
-            onClick={() => setActiveIndex(idx)}
-            aria-label={`Open photo: ${img.alt}`}
-            data-testid={`gallery-thumb-${idx}`}
-          >
-            <img
-              src={img.thumb}
-              alt={img.alt}
-              className="gallery-thumb"
-              loading="lazy"
-            />
-          </button>
-        ))}
+      <div className="photo-gallery-grid">
+        {visibleImages.map((img, index) => {
+          const isLastVisible = index === maxVisible - 1 && remainingCount > 0;
+          return (
+            <button
+              key={index}
+              type="button"
+              className="gallery-thumb-btn"
+              onClick={() => setActiveIndex(index)}
+              aria-label={`View image ${index + 1}`}
+              data-testid={`gallery-thumb-${index}`}
+            >
+              <div className="gallery-thumb-wrapper">
+                <img
+                  src={img.thumb}
+                  alt={img.alt || `Gallery image ${index + 1}`}
+                  className="gallery-thumb"
+                  loading="lazy"
+                />
+                {isLastVisible && (
+                  <div className="gallery-more-overlay">
+                    <span>+{remainingCount}</span>
+                  </div>
+                )}
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       {isOpen && activeImage && (
