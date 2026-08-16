@@ -113,7 +113,10 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, columns = 3,
               key={index}
               type="button"
               className="gallery-thumb-btn"
-              onClick={() => setActiveIndex(index)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveIndex(index);
+              }}
               aria-label={`View image ${index + 1}`}
               data-testid={`gallery-thumb-${index}`}
             >
@@ -171,12 +174,23 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, columns = 3,
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            <img
-              src={activeImage.src}
-              alt={activeImage.alt}
-              className="lightbox-image"
-              data-testid="lightbox-image"
-            />
+            {activeImage.type === "video" ? (
+              <video
+                src={activeImage.src}
+                controls
+                autoPlay
+                className="lightbox-image"
+                data-testid="lightbox-video"
+                style={{ maxHeight: "80vh", maxWidth: "90vw" }}
+              />
+            ) : (
+              <img
+                src={activeImage.src}
+                alt={activeImage.alt}
+                className="lightbox-image"
+                data-testid="lightbox-image"
+              />
+            )}
             {activeImage.caption && (
               <p className="lightbox-caption" data-testid="lightbox-caption">
                 {activeImage.caption}

@@ -1042,6 +1042,7 @@ export interface GalleryImage {
   thumb: string;     // CloudFront URL to thumbnail (< 400px wide)
   alt: string;
   caption?: string;
+  type?: "image" | "video";
 }
 
 export interface DestinationEntry {
@@ -1102,7 +1103,7 @@ export const travelData = {
           duration: "12 days",
           difficulty: "Moderate",
           highlight: "Standing at the base of Annapurna I at sunrise.",
-          blogSlug: null,
+          blogSlug: "annapurna-base-camp",
           hasGallery: true,
         },
         {
