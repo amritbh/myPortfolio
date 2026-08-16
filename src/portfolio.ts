@@ -1037,6 +1037,13 @@ export type DestinationType =
   | "nature"
   | "moto";
 
+export interface GalleryImage {
+  src: string;       // CloudFront URL to full-size image
+  thumb: string;     // CloudFront URL to thumbnail (< 400px wide)
+  alt: string;
+  caption?: string;
+}
+
 export interface DestinationEntry {
   id: string;
   name: string;
@@ -1050,6 +1057,7 @@ export interface DestinationEntry {
   duration?: string;
   difficulty?: DestinationDifficulty;
   highlight?: string;
+  hasGallery?: boolean;  // Will fetch from S3 manifest if true
 }
 
 export interface CountryEntry {
@@ -1095,6 +1103,7 @@ export const travelData = {
           difficulty: "Moderate",
           highlight: "Standing at the base of Annapurna I at sunrise.",
           blogSlug: null,
+          hasGallery: true,
         },
         {
           id: "tilicho-lake",
