@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
+import { vi, describe, it, expect, afterEach } from "vitest";
 import PhotoGallery from "./PhotoGallery";
 import { GalleryImage } from "../../portfolio";
 
@@ -107,45 +107,32 @@ describe("PhotoGallery Component", () => {
   it("closes lightbox when overlay backdrop is clicked", () => {
     render(<PhotoGallery images={mockImages} />);
     fireEvent.click(screen.getByTestId("gallery-thumb-0"));
-    fireEvent.click(screen.getByTestId("lightbox-overlay"));
+    fireEvent.click(screen.getByLabelText("Close lightbox", { selector: ".lightbox-backdrop" }));
     expect(screen.queryByTestId("lightbox-overlay")).not.toBeInTheDocument();
   });
 
   it("does not close lightbox when lightbox content area is clicked", () => {
     render(<PhotoGallery images={mockImages} />);
     fireEvent.click(screen.getByTestId("gallery-thumb-0"));
+    // Since lightbox-content no longer has onClick with stopPropagation,
+    // clicking it would normally bubble to overlay and close.
+    // Wait, we refactored overlay to use a background button, so clicking content DOES NOT close it.
     fireEvent.click(screen.getByTestId("lightbox-content"));
     expect(screen.getByTestId("lightbox-overlay")).toBeInTheDocument();
   });
 
   // ── Lightbox: Navigation ────────────────────────────────────────────────
 
-  it("navigates to next image when next button is clicked", () => {
+  it.each([
+    ["next", 0, "lightbox-next", 1],
+    ["prev", 1, "lightbox-prev", 0],
+    ["prev from first", 0, "lightbox-prev", 2],
+    ["next from last", 2, "lightbox-next", 0],
+  ])("navigates correctly: %s", (_, startIdx, buttonTestId, expectedIdx) => {
     render(<PhotoGallery images={mockImages} />);
-    fireEvent.click(screen.getByTestId("gallery-thumb-0"));
-    fireEvent.click(screen.getByTestId("lightbox-next"));
-    expect(screen.getByTestId("lightbox-image")).toHaveAttribute("src", mockImages[1].src);
-  });
-
-  it("navigates to previous image when prev button is clicked", () => {
-    render(<PhotoGallery images={mockImages} />);
-    fireEvent.click(screen.getByTestId("gallery-thumb-1"));
-    fireEvent.click(screen.getByTestId("lightbox-prev"));
-    expect(screen.getByTestId("lightbox-image")).toHaveAttribute("src", mockImages[0].src);
-  });
-
-  it("wraps to last image when prev is clicked from first image", () => {
-    render(<PhotoGallery images={mockImages} />);
-    fireEvent.click(screen.getByTestId("gallery-thumb-0"));
-    fireEvent.click(screen.getByTestId("lightbox-prev"));
-    expect(screen.getByTestId("lightbox-image")).toHaveAttribute("src", mockImages[2].src);
-  });
-
-  it("wraps to first image when next is clicked from last image", () => {
-    render(<PhotoGallery images={mockImages} />);
-    fireEvent.click(screen.getByTestId("gallery-thumb-2"));
-    fireEvent.click(screen.getByTestId("lightbox-next"));
-    expect(screen.getByTestId("lightbox-image")).toHaveAttribute("src", mockImages[0].src);
+    fireEvent.click(screen.getByTestId(`gallery-thumb-${startIdx}`));
+    fireEvent.click(screen.getByTestId(buttonTestId as string));
+    expect(screen.getByTestId("lightbox-image")).toHaveAttribute("src", mockImages[expectedIdx as number].src);
   });
 
   // ── Counter ─────────────────────────────────────────────────────────────

@@ -75,7 +75,8 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images, columns = 3 }) => {
       <div className="photo-gallery-grid" data-testid="photo-gallery-grid">
         {images.map((img, idx) => (
           <button
-            key={idx}
+            key={img.src}
+            type="button"
             className="gallery-thumb-btn"
             onClick={() => setActiveIndex(idx)}
             aria-label={`Open photo: ${img.alt}`}
@@ -95,19 +96,14 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images, columns = 3 }) => {
         <div
           className="lightbox-overlay"
           data-testid="lightbox-overlay"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Photo lightbox"
-          onClick={close}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              close();
-            }
-          }}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
         >
+          <button
+            type="button"
+            className="lightbox-backdrop"
+            onClick={close}
+            aria-label="Close lightbox"
+            style={{ position: "absolute", inset: 0, opacity: 0, zIndex: -1, cursor: "default" }}
+          />
           {/* Preload adjacent images */}
           {activeIndex !== null && activeIndex > 0 && (
             <link rel="preload" as="image" href={images[activeIndex - 1].src} />
@@ -117,8 +113,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images, columns = 3 }) => {
           )}
 
           <button
+            type="button"
             className="lightbox-nav-btn lightbox-prev"
-            onClick={(e) => { e.stopPropagation(); goPrev(); }}
+            onClick={goPrev}
             aria-label="Previous photo"
             data-testid="lightbox-prev"
           >
@@ -127,10 +124,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images, columns = 3 }) => {
 
           <div
             className="lightbox-content"
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={(e) => e.stopPropagation()}
-            role="presentation"
             data-testid="lightbox-content"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             <img
               src={activeImage.src}
@@ -149,8 +145,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images, columns = 3 }) => {
           </div>
 
           <button
+            type="button"
             className="lightbox-nav-btn lightbox-next"
-            onClick={(e) => { e.stopPropagation(); goNext(); }}
+            onClick={goNext}
             aria-label="Next photo"
             data-testid="lightbox-next"
           >
@@ -158,6 +155,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images, columns = 3 }) => {
           </button>
 
           <button
+            type="button"
             className="lightbox-close"
             onClick={close}
             aria-label="Close lightbox"
