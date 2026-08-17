@@ -17,7 +17,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
-    fetch(`https://amrit.cloud/media/travel/${destinationId}/gallery/manifest.json`)
+    fetch(`https://amrit.cloud/media/travel/${destinationId}/gallery/manifest.json`, { cache: 'no-store' })
       .then((res) => {
         if (!res.ok) throw new Error("Manifest not found");
         return res.json();
