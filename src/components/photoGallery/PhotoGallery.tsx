@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import "./PhotoGallery.css";
 import { GalleryImage } from "../../portfolio";
 
@@ -8,16 +8,10 @@ interface PhotoGalleryProps {
   maxVisible?: number;
 }
 
-const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, columns = 3, maxVisible = 6 }) => {
+const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  
-  // Slideshow on hover state
-  const [hoveredThumbIndex, setHoveredThumbIndex] = useState<number | null>(null);
-  const [slideshowIndex, setSlideshowIndex] = useState<number>(0);
-  // touchstart X position for swipe detection
-  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -45,211 +39,73 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, columns = 3,
     };
   }, [destinationId]);
 
-  const isOpen = activeIndex !== null;
-  const total = images.length;
-
-  // Slideshow effect on hover
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-    if (hoveredThumbIndex !== null && images.length > 0) {
-      interval = setInterval(() => {
-        setSlideshowIndex((prev) => (prev + 1) % images.length);
-      }, 1000); // Change image every 1 second
-    }
-    return () => clearInterval(interval);
-  }, [hoveredThumbIndex, images.length]);
-
-  // Lock body scroll when lightbox is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
-
-  // Keyboard navigation
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (!isOpen) return;
-      if (e.key === "Escape") setActiveIndex(null);
-      if (e.key === "ArrowRight")
-        setActiveIndex((i) => (i !== null ? (i + 1) % total : 0));
-      if (e.key === "ArrowLeft")
-        setActiveIndex((i) => (i !== null ? (i - 1 + total) % total : 0));
-    },
-    [isOpen, total]
-  );
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleKeyDown]);
-
-  const goNext = () => setActiveIndex((i) => (i !== null ? (i + 1) % total : 0));
-  const goPrev = () => setActiveIndex((i) => (i !== null ? (i - 1 + total) % total : 0));
-  const close = () => setActiveIndex(null);
-
-  // Touch swipe handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStartX(e.changedTouches[0].clientX);
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX === null) return;
-    const delta = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(delta) > 50) {
-      delta < 0 ? goNext() : goPrev();
-    }
-    setTouchStartX(null);
-  };
-
-  if (loading) return null; // or a skeleton loader
+  if (loading) return null;
   if (!images || images.length === 0) return null;
 
-  const activeImage = activeIndex !== null ? images[activeIndex] : null;
+  const total = images.length;
+  const currentImage = images[currentIndex];
 
-  const visibleImages = images.slice(0, maxVisible);
-  const remainingCount = images.length - maxVisible;
+  const goNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev + 1) % total);
+  };
+
+  const goPrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev - 1 + total) % total);
+  };
 
   return (
-    <div
-      className="photo-gallery"
-      style={{ "--gallery-cols": columns } as React.CSSProperties}
-    >
-      <div className="photo-gallery-grid">
-        {visibleImages.map((img, index) => {
-          const isHovered = hoveredThumbIndex === index;
-          const currentImg = isHovered ? images[slideshowIndex] : img;
-          const isLastVisible = index === maxVisible - 1 && remainingCount > 0;
-          return (
-            <button
-              key={index}
-              type="button"
-              className="gallery-thumb-btn"
-              onMouseEnter={() => {
-                setHoveredThumbIndex(index);
-                setSlideshowIndex(index);
-              }}
-              onMouseLeave={() => {
-                setHoveredThumbIndex(null);
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setActiveIndex(isHovered ? slideshowIndex : index);
-              }}
-              aria-label={`View image ${isHovered ? slideshowIndex + 1 : index + 1}`}
-              data-testid={`gallery-thumb-${index}`}
-            >
-              <div className="gallery-thumb-wrapper">
-                <img
-                  src={currentImg.thumb}
-                  alt={currentImg.alt || `Gallery image ${isHovered ? slideshowIndex + 1 : index + 1}`}
-                  className="gallery-thumb"
-                  loading="lazy"
-                  style={{ transition: "opacity 0.3s ease-in-out" }}
-                />
-                {isLastVisible && (
-                  <div className="gallery-more-overlay">
-                    <span>+{remainingCount}</span>
-                  </div>
-                )}
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {isOpen && activeImage && (
-        <div
-          className="lightbox-overlay"
-          data-testid="lightbox-overlay"
-        >
-          <button
-            type="button"
-            className="lightbox-backdrop"
-            onClick={close}
-            aria-label="Close lightbox"
-            style={{ position: "absolute", inset: 0, opacity: 0, zIndex: -1, cursor: "default" }}
+    <div className="photo-gallery">
+      <div className="gallery-carousel-wrapper">
+        {currentImage.type === "video" ? (
+          <video
+            src={currentImage.src}
+            controls
+            autoPlay
+            muted
+            className="gallery-carousel-media"
+            data-testid="gallery-video"
+          >
+            <track kind="captions" />
+          </video>
+        ) : (
+          <img
+            src={currentImage.src}
+            alt={currentImage.alt || `Gallery image ${currentIndex + 1}`}
+            className="gallery-carousel-media"
+            loading="lazy"
+            data-testid="gallery-image"
           />
-          {/* Preload adjacent images */}
-          {activeIndex !== null && activeIndex > 0 && (
-            <link rel="preload" as="image" href={images[activeIndex - 1].src} />
-          )}
-          {activeIndex !== null && activeIndex < total - 1 && (
-            <link rel="preload" as="image" href={images[activeIndex + 1].src} />
-          )}
-
-          <button
-            type="button"
-            className="lightbox-nav-btn lightbox-prev"
-            onClick={goPrev}
-            aria-label="Previous photo"
-            data-testid="lightbox-prev"
-          >
-            ‹
-          </button>
-
-          <div
-            className="lightbox-content"
-            data-testid="lightbox-content"
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-          >
-            {activeImage.type === "video" ? (
-              <video
-                src={activeImage.src}
-                controls
-                autoPlay
-                muted
-                className="lightbox-image"
-                data-testid="lightbox-video"
-                style={{ maxHeight: "80vh", maxWidth: "90vw" }}
-              >
-                <track kind="captions" />
-              </video>
-            ) : (
-              <img
-                src={activeImage.src}
-                alt={activeImage.alt}
-                className="lightbox-image"
-                data-testid="lightbox-image"
-              />
-            )}
-            {activeImage.caption && (
-              <p className="lightbox-caption" data-testid="lightbox-caption">
-                {activeImage.caption}
-              </p>
-            )}
-            <p className="lightbox-counter" data-testid="lightbox-counter">
-              {(activeIndex ?? 0) + 1} / {total}
-            </p>
-          </div>
-
-          <button
-            type="button"
-            className="lightbox-nav-btn lightbox-next"
-            onClick={goNext}
-            aria-label="Next photo"
-            data-testid="lightbox-next"
-          >
-            ›
-          </button>
-
-          <button
-            type="button"
-            className="lightbox-close"
-            onClick={close}
-            aria-label="Close lightbox"
-            data-testid="lightbox-close"
-          >
-            ×
-          </button>
+        )}
+        
+        {total > 1 && (
+          <>
+            <button
+              type="button"
+              className="carousel-nav-btn carousel-prev"
+              onClick={goPrev}
+              aria-label="Previous photo"
+              data-testid="carousel-prev"
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              className="carousel-nav-btn carousel-next"
+              onClick={goNext}
+              aria-label="Next photo"
+              data-testid="carousel-next"
+            >
+              ›
+            </button>
+          </>
+        )}
+        
+        <div className="carousel-counter" data-testid="carousel-counter">
+          {currentIndex + 1} / {total}
         </div>
-      )}
+      </div>
     </div>
   );
 };
