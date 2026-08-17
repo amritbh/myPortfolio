@@ -22,6 +22,13 @@ const mockImages: GalleryImage[] = [
     thumb: "https://amrit.cloud/media/travel/test/gallery/thumbs/03-thumb.jpg",
     alt: "Test image 3",
   },
+  {
+    src: "https://amrit.cloud/media/travel/test/gallery/videos/04.mp4",
+    thumb: "https://amrit.cloud/media/travel/test/gallery/thumbs/04-thumb.jpg",
+    alt: "Test video 4",
+    caption: "Caption for video",
+    type: "video"
+  },
 ];
 
 const mockFetch = vi.fn(() =>
@@ -106,7 +113,19 @@ describe("PhotoGallery Component", () => {
     expect(screen.getByTestId("lightbox-overlay")).toBeInTheDocument();
     expect(screen.getByTestId("lightbox-image")).toHaveAttribute("src", mockImages[0].src);
     expect(screen.getByTestId("lightbox-caption")).toHaveTextContent("Caption for image one");
-    expect(screen.getByTestId("lightbox-counter")).toHaveTextContent("1 / 3");
+    expect(screen.getByTestId("lightbox-counter")).toHaveTextContent("1 / 4");
+  });
+
+  it("shows a video element when the clicked item is a video", async () => {
+    render(<PhotoGallery destinationId="test-dest" />);
+    const thumbs = await screen.findAllByTestId(/gallery-thumb-\d+/);
+    fireEvent.click(thumbs[3]); // video is at index 3
+
+    expect(screen.getByTestId("lightbox-overlay")).toBeInTheDocument();
+    const video = screen.getByTestId("lightbox-video");
+    expect(video.tagName).toBe("VIDEO");
+    expect(video).toHaveAttribute("src", mockImages[3].src);
+    expect(screen.getByTestId("lightbox-caption")).toHaveTextContent("Caption for video");
   });
 
   it("shows the correct image in the lightbox", async () => {
@@ -165,32 +184,32 @@ describe("PhotoGallery Component", () => {
   // ── Lightbox: Navigation ────────────────────────────────────────────────
 
   it.each([
-    ["next", 0, "lightbox-next", 1],
-    ["prev", 1, "lightbox-prev", 0],
-    ["prev from first", 0, "lightbox-prev", 2],
-    ["next from last", 2, "lightbox-next", 0],
-  ])("navigates correctly: %s", async (_, startIdx, buttonTestId, expectedIdx) => {
+    ["next", 0, "lightbox-next", 1, "lightbox-image"],
+    ["prev", 1, "lightbox-prev", 0, "lightbox-image"],
+    ["prev from first", 0, "lightbox-prev", 3, "lightbox-video"],
+    ["next from last", 3, "lightbox-next", 0, "lightbox-image"],
+  ])("navigates correctly: %s", async (_, startIdx, buttonTestId, expectedIdx, mediaTestId) => {
     render(<PhotoGallery destinationId="test-dest" />);
     const thumbs = await screen.findAllByTestId(/gallery-thumb-\d+/);
     fireEvent.click(thumbs[startIdx as number]);
     fireEvent.click(screen.getByTestId(buttonTestId as string));
-    expect(screen.getByTestId("lightbox-image")).toHaveAttribute("src", mockImages[expectedIdx as number].src);
+    expect(screen.getByTestId(mediaTestId as string)).toHaveAttribute("src", mockImages[expectedIdx as number].src);
   });
 
   // ── Counter ─────────────────────────────────────────────────────────────
 
-  it("shows correct counter text for first image (1 / 3)", async () => {
+  it("shows correct counter text for first image (1 / 4)", async () => {
     render(<PhotoGallery destinationId="test-dest" />);
     const thumbs = await screen.findAllByTestId(/gallery-thumb-\d+/);
     fireEvent.click(thumbs[0]);
-    expect(screen.getByTestId("lightbox-counter")).toHaveTextContent("1 / 3");
+    expect(screen.getByTestId("lightbox-counter")).toHaveTextContent("1 / 4");
   });
 
-  it("shows correct counter text for second image (2 / 3)", async () => {
+  it("shows correct counter text for second image (2 / 4)", async () => {
     render(<PhotoGallery destinationId="test-dest" />);
     const thumbs = await screen.findAllByTestId(/gallery-thumb-\d+/);
     fireEvent.click(thumbs[1]);
-    expect(screen.getByTestId("lightbox-counter")).toHaveTextContent("2 / 3");
+    expect(screen.getByTestId("lightbox-counter")).toHaveTextContent("2 / 4");
   });
 
   // ── Keyboard Navigation ─────────────────────────────────────────────────
