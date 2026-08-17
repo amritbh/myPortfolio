@@ -179,10 +179,13 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, columns = 3,
                 src={activeImage.src}
                 controls
                 autoPlay
+                muted
                 className="lightbox-image"
                 data-testid="lightbox-video"
                 style={{ maxHeight: "80vh", maxWidth: "90vw" }}
-              />
+              >
+                <track kind="captions" />
+              </video>
             ) : (
               <img
                 src={activeImage.src}
