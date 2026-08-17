@@ -273,8 +273,15 @@ const TravelPage: React.FC<TravelPageProps> = ({
           }
           role="article"
           aria-label={dest.name}
+          tabIndex={dest.blogSlug ? 0 : undefined}
           onClick={() => {
             if (dest.blogSlug) {
+              history.push(`/blogs/${dest.blogSlug}`);
+            }
+          }}
+          onKeyDown={(e) => {
+            if (dest.blogSlug && (e.key === "Enter" || e.key === " ")) {
+              e.preventDefault();
               history.push(`/blogs/${dest.blogSlug}`);
             }
           }}
