@@ -28,9 +28,10 @@ This project maintains a series of technical blog posts describing its own archi
 
 ## 3. Blog Content Plan
 
-- **Mandatory Updates:** Whenever a new blog topic is drafted, brainstormed, or shifted, you MUST update the `docs/blog-content-plan.md` file to reflect the new structure.
+- **Mandatory Updates:** Whenever a new blog topic is drafted, brainstormed, or shifted, you MUST update the `docs/blog-content-plan.local.md` file to reflect the new structure.
 - Maintain the table format in the content plan for topics, read time, tags, and the expected publishing schedule.
-- Ensure the `docs/blog-content-plan.md` file (and any root `blog-content-plan.md`) is kept strictly local and NEVER committed to the repository. They should be explicitly ignored in `.gitignore`.
+- Ensure the `docs/blog-content-plan.local.md` file is kept strictly local and NEVER committed to the repository. It should be explicitly ignored in `.gitignore`.
+- **Technical vs. Travel Story Separation:** There is a strict separation between technical architecture blogs (e.g., Phase 9) and actual travel/trek stories (e.g., Phase 10). Technical blogs discuss code and infrastructure, while travel stories document personal trip experiences. **CRITICAL:** Before drafting, naming, or overwriting any blog file (e.g., `blog34_content.local.md`), you MUST review `docs/blog-content-plan.local.md` to ensure you are writing the correct topic for that sequence number, so you do not mistakenly overwrite a travel story with a technical post (or vice versa).
 
 ## 4. Content Guidelines
 
