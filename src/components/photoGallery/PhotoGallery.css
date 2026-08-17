@@ -7,6 +7,9 @@
   overflow: hidden;
   aspect-ratio: 4 / 3; /* Taller display area */
   background-color: rgba(0, 0, 0, 0.1);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.4s ease;
+  z-index: 1;
 }
 
 .gallery-carousel-wrapper {
@@ -21,12 +24,14 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease-out;
 }
 
-/* Hover "pop out" effect */
-.photo-gallery:hover .gallery-carousel-media {
-  transform: scale(1.1); /* More pronounced pop out */
+/* Hover "pop out" effect on the entire container */
+.photo-gallery:hover {
+  transform: scale(1.15); /* Container pops out of the card boundaries */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  z-index: 50;
+  border-radius: 12px;
 }
 
 /* Nav arrows overlay */
