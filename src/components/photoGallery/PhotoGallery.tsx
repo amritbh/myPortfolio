@@ -12,6 +12,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -39,6 +40,16 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
     };
   }, [destinationId]);
 
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+    if (isHovered && images.length > 1) {
+      interval = setInterval(() => {
+        setCurrentIndex((prev) => (prev + 1) % images.length);
+      }, 1500); // cycle every 1.5s
+    }
+    return () => clearInterval(interval);
+  }, [isHovered, images.length]);
+
   if (loading) return null;
   if (!images || images.length === 0) return null;
 
@@ -57,7 +68,11 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
 
   return (
     <div className="photo-gallery">
-      <div className="gallery-carousel-wrapper">
+      <div 
+        className="gallery-carousel-wrapper"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         {currentImage.type === "video" ? (
           <video
             src={currentImage.src}
