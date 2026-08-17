@@ -12,6 +12,10 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, columns = 3,
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  
+  // Slideshow on hover state
+  const [hoveredThumbIndex, setHoveredThumbIndex] = useState<number | null>(null);
+  const [slideshowIndex, setSlideshowIndex] = useState<number>(0);
   // touchstart X position for swipe detection
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
@@ -43,6 +47,17 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, columns = 3,
 
   const isOpen = activeIndex !== null;
   const total = images.length;
+
+  // Slideshow effect on hover
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+    if (hoveredThumbIndex !== null && images.length > 0) {
+      interval = setInterval(() => {
+        setSlideshowIndex((prev) => (prev + 1) % images.length);
+      }, 1000); // Change image every 1 second
+    }
+    return () => clearInterval(interval);
+  }, [hoveredThumbIndex, images.length]);
 
   // Lock body scroll when lightbox is open
   useEffect(() => {
@@ -107,25 +122,35 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, columns = 3,
     >
       <div className="photo-gallery-grid">
         {visibleImages.map((img, index) => {
+          const isHovered = hoveredThumbIndex === index;
+          const currentImg = isHovered ? images[slideshowIndex] : img;
           const isLastVisible = index === maxVisible - 1 && remainingCount > 0;
           return (
             <button
               key={index}
               type="button"
               className="gallery-thumb-btn"
+              onMouseEnter={() => {
+                setHoveredThumbIndex(index);
+                setSlideshowIndex(index);
+              }}
+              onMouseLeave={() => {
+                setHoveredThumbIndex(null);
+              }}
               onClick={(e) => {
                 e.stopPropagation();
-                setActiveIndex(index);
+                setActiveIndex(isHovered ? slideshowIndex : index);
               }}
-              aria-label={`View image ${index + 1}`}
+              aria-label={`View image ${isHovered ? slideshowIndex + 1 : index + 1}`}
               data-testid={`gallery-thumb-${index}`}
             >
               <div className="gallery-thumb-wrapper">
                 <img
-                  src={img.thumb}
-                  alt={img.alt || `Gallery image ${index + 1}`}
+                  src={currentImg.thumb}
+                  alt={currentImg.alt || `Gallery image ${isHovered ? slideshowIndex + 1 : index + 1}`}
                   className="gallery-thumb"
                   loading="lazy"
+                  style={{ transition: "opacity 0.3s ease-in-out" }}
                 />
                 {isLastVisible && (
                   <div className="gallery-more-overlay">
