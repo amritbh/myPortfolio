@@ -238,6 +238,17 @@ const getElevationPct = (elevation: string): string => {
 };
 ```
 
+### PhotoGallery Architecture (Phase 3)
+
+The `PhotoGallery` component renders an inline 4:3 carousel that fetches its content from a dynamic S3 `manifest.json` file based on the `destinationId`.
+
+**Key Features:**
+
+- **Cache-Busting Fetch:** Always appends `?t=${Date.now()}` to the `manifest.json` fetch request to bypass aggressive browser and CDN caching.
+- **Hover "Pop-Out":** The entire `.photo-gallery` container scales up to break out of the `.destination-card` boundaries when hovered, creating a premium depth effect.
+- **Auto-Slideshow:** Automatically advances the image every 1.5s when hovered.
+- **Video Handling:** The auto-slideshow automatically pauses if the currently displayed media is a `video`, allowing the user to watch it fully.
+
 ---
 
 ## CSS Architecture (Travel.css)
@@ -395,7 +406,7 @@ When a post is drafted:
 | ----- | -------------------------------------------- | ---------- | --------------------- |
 | 1     | `TravelPage` redesign & `countries[]` schema | ✅ Merged  | React, CSS            |
 | 2     | Interactive Travel Map                       | ⏳ Planned | Mapbox GL, GeoJSON    |
-| 3     | S3 Photo Galleries + Lightbox                | ⏳ Planned | S3, CloudFront WebP   |
+| 3     | S3 Photo Galleries (Inline Carousel)         | ✅ Done    | React, CSS, S3, Fetch |
 | 4     | Destination Detail Pages (`/travel/:c/:d`)   | ⏳ Planned | React Router, JSON-LD |
 | 5     | D3.js Elevation Profiles                     | ⏳ Planned | D3.js, SVG            |
 
@@ -404,5 +415,4 @@ When a post is drafted:
 The `DestinationEntry` interface will be extended with:
 
 - `coordinates?: [number, number]` (Phase 2)
-- `galleryImages?: GalleryImage[]` (Phase 3)
 - `elevationProfile?: ElevationPoint[]` (Phase 5)
