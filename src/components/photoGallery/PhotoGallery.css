@@ -5,7 +5,7 @@
   position: relative;
   border-radius: 8px;
   overflow: hidden;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 3; /* Taller display area */
   background-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -26,7 +26,7 @@
 
 /* Hover "pop out" effect */
 .photo-gallery:hover .gallery-carousel-media {
-  transform: scale(1.05);
+  transform: scale(1.1); /* More pronounced pop out */
 }
 
 /* Nav arrows overlay */
@@ -38,12 +38,12 @@
   color: #222;
   border: none;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 48px; /* Larger buttons */
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.25s ease, background 0.2s ease, transform 0.2s ease;
