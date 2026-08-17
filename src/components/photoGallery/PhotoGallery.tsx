@@ -40,24 +40,26 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
     };
   }, [destinationId]);
 
+  const currentImage = images.length > 0 ? images[currentIndex] : null;
+
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
-    if (isHovered && images.length > 1) {
+    // Pause interval if it's a video so user can actually watch it!
+    if (isHovered && images.length > 1 && currentImage?.type !== "video") {
       interval = setInterval(() => {
         setCurrentIndex((prev) => (prev + 1) % images.length);
       }, 1500); // cycle every 1.5s
     }
     return () => clearInterval(interval);
-  }, [isHovered, images.length]);
+  }, [isHovered, images.length, currentImage?.type]);
 
   if (loading) return null;
-  if (!images || images.length === 0) return null;
+  if (!images || images.length === 0 || !currentImage) return null;
 
   const total = images.length;
-  const currentImage = images[currentIndex];
 
-  const goNext = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const goNext = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setCurrentIndex((prev) => (prev + 1) % total);
   };
 
@@ -81,6 +83,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
             muted
             className="gallery-carousel-media"
             data-testid="gallery-video"
+            onEnded={() => {
+              if (isHovered) goNext();
+            }}
           >
             <track kind="captions" />
           </video>
