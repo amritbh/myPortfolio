@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";

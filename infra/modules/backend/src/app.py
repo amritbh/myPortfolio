@@ -48,6 +48,7 @@ TOKEN_EXPIRATION_SECONDS = 8 * 60 * 60 # 8 hours
 BEARER_PREFIX = 'Bearer '
 AUTH_ACCOUNT_ROUTE = '/auth/account'
 ISO_DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+SUCCESS_MESSAGE = 'Message sent successfully!'
 
 # hCaptcha secret key — set in Lambda env vars, use hCaptcha test secret for dev:
 # 0x0000000000000000000000000000000000000000 (always passes in dev/CI)
@@ -739,7 +740,7 @@ def contact_portfolio(event):
             return {
                 'statusCode': 200,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'message': 'Message sent successfully!'})
+                'body': json.dumps({'message': SUCCESS_MESSAGE})
             }
 
         # --- Layer 2: Spam heuristics ---
@@ -749,7 +750,7 @@ def contact_portfolio(event):
             return {
                 'statusCode': 200,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'message': 'Message sent successfully!'})
+                'body': json.dumps({'message': SUCCESS_MESSAGE})
             }
 
         subject = f"Portfolio Contact: {message_title}"
@@ -760,7 +761,7 @@ def contact_portfolio(event):
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'message': 'Message sent successfully!'})
+            'body': json.dumps({'message': SUCCESS_MESSAGE})
         }
     except Exception as e:
         print(f"Error sending contact email: {e}")
