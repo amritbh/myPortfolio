@@ -129,6 +129,7 @@ resource "aws_lambda_function" "api_lambda" {
       COGNITO_CLIENT_ID      = aws_cognito_user_pool_client.client.id
       MEDIA_BUCKET_NAME      = aws_s3_bucket.media_bucket.id
       CLOUDFRONT_MEDIA_URL   = "https://amrit.cloud"
+      HCAPTCHA_SECRET_KEY    = var.hcaptcha_secret_key
     }
   }
 }
