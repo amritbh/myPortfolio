@@ -807,7 +807,7 @@ def test_exception_handling(setup_dynamodb):
 def test_contact_portfolio_success(mock_send_email, setup_dynamodb):
     import app
     # Ensure dev mode (test secret) so hCaptcha passes with any token
-    app.HCAPTCHA_SECRET_KEY = '0x0000000000000000000000000000000000000000'
+    app.HCAPTCHA_SECRET_KEY = '0x0000000000000000000000000000000000000000'  # nosec B105  # NOSONAR
     event = {
         'rawPath': '/portfolio',
         'requestContext': {'http': {'method': 'POST'}},
@@ -836,7 +836,7 @@ def test_contact_portfolio_blocked_no_captcha_token(mock_send_email, setup_dynam
     """Missing captcha token should be silently dropped (returns 200 without emailing)."""
     import app
     # Use real secret so token is actually verified (empty token fails)
-    app.HCAPTCHA_SECRET_KEY = '0xTESTSECRET'
+    app.HCAPTCHA_SECRET_KEY = '0xTESTSECRET'  # nosec B105  # NOSONAR
     with patch('app.verify_hcaptcha', return_value=False):
         event = {
             'rawPath': '/portfolio',
@@ -860,7 +860,7 @@ def test_contact_portfolio_blocked_no_captcha_token(mock_send_email, setup_dynam
 def test_contact_portfolio_spam_gibberish_message(mock_send_email, setup_dynamodb):
     """Message with no spaces (gibberish) should be silently dropped."""
     import app
-    app.HCAPTCHA_SECRET_KEY = '0x0000000000000000000000000000000000000000'
+    app.HCAPTCHA_SECRET_KEY = '0x0000000000000000000000000000000000000000'  # nosec B105  # NOSONAR
     event = {
         'rawPath': '/portfolio',
         'requestContext': {'http': {'method': 'POST'}},
@@ -882,7 +882,7 @@ def test_contact_portfolio_spam_gibberish_message(mock_send_email, setup_dynamod
 def test_contact_portfolio_spam_dotted_email(mock_send_email, setup_dynamodb):
     """Email with 4+ dots in local part should be silently dropped."""
     import app
-    app.HCAPTCHA_SECRET_KEY = '0x0000000000000000000000000000000000000000'
+    app.HCAPTCHA_SECRET_KEY = '0x0000000000000000000000000000000000000000'  # nosec B105  # NOSONAR
     event = {
         'rawPath': '/portfolio',
         'requestContext': {'http': {'method': 'POST'}},
@@ -904,7 +904,7 @@ def test_contact_portfolio_spam_dotted_email(mock_send_email, setup_dynamodb):
 def test_contact_portfolio_spam_no_vowel_name(mock_send_email, setup_dynamodb):
     """Name with no vowels (random consonants) should be silently dropped."""
     import app
-    app.HCAPTCHA_SECRET_KEY = '0x0000000000000000000000000000000000000000'
+    app.HCAPTCHA_SECRET_KEY = '0x0000000000000000000000000000000000000000'  # nosec B105  # NOSONAR
     event = {
         'rawPath': '/portfolio',
         'requestContext': {'http': {'method': 'POST'}},
