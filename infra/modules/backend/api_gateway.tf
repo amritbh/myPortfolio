@@ -154,6 +154,13 @@ resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.http_api.id
   name        = "$default"
   auto_deploy = true
+
+  # Rate-limit all routes to defend against bot floods.
+  # Real users will never hit these limits; bots will be throttled.
+  default_route_settings {
+    throttling_burst_limit = 10
+    throttling_rate_limit  = 5
+  }
 }
 
 resource "aws_lambda_permission" "api_gw" {

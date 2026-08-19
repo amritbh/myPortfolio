@@ -806,6 +806,8 @@ def test_exception_handling(setup_dynamodb):
 @patch('app.send_email')
 def test_contact_portfolio_success(mock_send_email, setup_dynamodb):
     import app
+    # Ensure dev mode (test secret) so hCaptcha passes with any token
+    app.HCAPTCHA_SECRET_KEY = '0x0000000000000000000000000000000000000000'
     event = {
         'rawPath': '/portfolio',
         'requestContext': {'http': {'method': 'POST'}},
@@ -814,18 +816,110 @@ def test_contact_portfolio_success(mock_send_email, setup_dynamodb):
             'email': 'test@example.com',
             'phone': '1234567890',
             'messageTitle': 'Inquiry',
-            'message': 'Hello there!'
+            'message': 'Hello there, this is a real message!',
+            'captchaToken': 'dev-test-token'
         })
     }
     response = app.lambda_handler(event, None)
     assert response['statusCode'] == 200
     assert 'Message sent successfully!' in json.loads(response['body'])['message']
-    
+
     mock_send_email.assert_called_once_with(
-        'amrit@amrit.cloud', 
-        'Portfolio Contact: Inquiry', 
-        'Name: Test User\nEmail: test@example.com\nPhone: 1234567890\n\nMessage:\nHello there!'
+        'amrit@amrit.cloud',
+        'Portfolio Contact: Inquiry',
+        'Name: Test User\nEmail: test@example.com\nPhone: 1234567890\n\nMessage:\nHello there, this is a real message!'
     )
+
+
+@patch('app.send_email')
+def test_contact_portfolio_blocked_no_captcha_token(mock_send_email, setup_dynamodb):
+    """Missing captcha token should be silently dropped (returns 200 without emailing)."""
+    import app
+    # Use real secret so token is actually verified (empty token fails)
+    app.HCAPTCHA_SECRET_KEY = '0xTESTSECRET'
+    with patch('app.verify_hcaptcha', return_value=False):
+        event = {
+            'rawPath': '/portfolio',
+            'requestContext': {'http': {'method': 'POST'}},
+            'body': json.dumps({
+                'username': 'Bot',
+                'email': 'bot@example.com',
+                'phone': '',
+                'messageTitle': 'Spam',
+                'message': 'Buy cheap pills now at http://spam.com',
+                'captchaToken': ''
+            })
+        }
+        response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    assert 'Message sent successfully!' in json.loads(response['body'])['message']
+    mock_send_email.assert_not_called()
+
+
+@patch('app.send_email')
+def test_contact_portfolio_spam_gibberish_message(mock_send_email, setup_dynamodb):
+    """Message with no spaces (gibberish) should be silently dropped."""
+    import app
+    app.HCAPTCHA_SECRET_KEY = '0x0000000000000000000000000000000000000000'
+    event = {
+        'rawPath': '/portfolio',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({
+            'username': 'Real Name',
+            'email': 'real@example.com',
+            'phone': '',
+            'messageTitle': 'Hello',
+            'message': 'UXvJIbewYRGFSiwdEcmwVKK',
+            'captchaToken': 'dev-test-token'
+        })
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    mock_send_email.assert_not_called()
+
+
+@patch('app.send_email')
+def test_contact_portfolio_spam_dotted_email(mock_send_email, setup_dynamodb):
+    """Email with 4+ dots in local part should be silently dropped."""
+    import app
+    app.HCAPTCHA_SECRET_KEY = '0x0000000000000000000000000000000000000000'
+    event = {
+        'rawPath': '/portfolio',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({
+            'username': 'Real Name',
+            'email': 'l.in.ds.e.y.g@gmail.com',
+            'phone': '',
+            'messageTitle': 'Hi',
+            'message': 'This is a totally real message about something',
+            'captchaToken': 'dev-test-token'
+        })
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    mock_send_email.assert_not_called()
+
+
+@patch('app.send_email')
+def test_contact_portfolio_spam_no_vowel_name(mock_send_email, setup_dynamodb):
+    """Name with no vowels (random consonants) should be silently dropped."""
+    import app
+    app.HCAPTCHA_SECRET_KEY = '0x0000000000000000000000000000000000000000'
+    event = {
+        'rawPath': '/portfolio',
+        'requestContext': {'http': {'method': 'POST'}},
+        'body': json.dumps({
+            'username': 'Blmpynq Lwdxf',
+            'email': 'spam@example.com',
+            'phone': '',
+            'messageTitle': 'Subject',
+            'message': 'This message has spaces and real words in it',
+            'captchaToken': 'dev-test-token'
+        })
+    }
+    response = app.lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    mock_send_email.assert_not_called()
 
 @patch('app.s3_client.generate_presigned_url')
 def test_get_media_upload_url_admin_success(mock_presign, setup_dynamodb):
