@@ -86,3 +86,38 @@ This project maintains a series of technical blog posts describing its own archi
   ```
 
 - Run the script using the `run_command` tool to publish, then clean up and delete the temporary script. Finally, mark the blog as `(Published)` in the `docs/blog-content-plan.local.md` file.
+
+## 7. Out-of-Plan (Ad-Hoc) Blog Posts
+
+Sometimes a blog post arises from a real production incident, a security fix, or a sprint that was not originally planned in the content plan (e.g., Blog 35 "Stopping Contact Form Spam" came from a live spam attack, not from any scheduled phase).
+
+Follow this exact protocol when asked to write and publish a blog that does not map to an existing planned entry:
+
+**Step 1: Determine the next sequential number.**
+Check `docs/blog-content-plan.local.md` to find the highest published blog number. The new blog gets the next available number, regardless of which planned phase it belongs to. Do NOT skip numbers or leave gaps.
+
+**Step 2: Write and publish the blog using that number.**
+Use the standard publishing workflow in Section 6. The `title` field in DynamoDB must be prepended with this number (e.g., `"35. Stopping Contact Form Spam..."`). The local draft file should be named `docs/blog{N}_content.local.md`.
+
+**Step 3: NEVER replace an existing planned entry in the content plan.**
+The planned entries in `docs/blog-content-plan.local.md` represent future work. An ad-hoc blog must NEVER overwrite a planned entry. Instead:
+
+- Add the new blog to a new or existing thematic phase section (e.g., "Phase 11 — Security Engineering") at the bottom of the content plan.
+- Reference it with its real published number (e.g., `### Blog 35: "..."`).
+
+**Step 4: Renumber all conflicting planned future entries.**
+If the ad-hoc blog's number conflicts with a planned future blog (e.g., you published as 35 but Blog 35 was already a planned travel post), you MUST shift all affected future planned blog numbers up by 1 to restore a conflict-free sequence:
+
+- Change old Blog 35 → Blog 36, old Blog 36 → Blog 37, and so on for every entry that follows.
+- Update the Phase headers (e.g., "Phase 10 — Travel Stories (Blogs 37–42)" becomes "Blogs 38–43").
+- Update the publishing schedule table in the content plan to match.
+
+**Step 5: Update the sprint tracker.**
+Add a task entry (e.g., `9.14`) under the relevant sprint in `docs/sprint-tracker.local.md` to record the blog publication.
+
+**Example (what happened with Blog 35):**
+
+- A spam attack hit the contact form in production. An ad-hoc security blog was written and published as Blog 35.
+- The planned Blog 35 "Building Destination Detail Pages" was shifted to Blog 36.
+- Blogs 36–42 in the travel series all shifted up by 1 (becoming 37–43).
+- The spam blog was logged under a new "Phase 11 — Security Engineering" section in the content plan with its correct published number (35), not a new fabricated number (43).
