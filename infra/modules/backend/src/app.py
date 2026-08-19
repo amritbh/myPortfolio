@@ -6,6 +6,7 @@ import base64
 import hashlib
 import hmac
 import urllib.request
+import urllib.parse
 import pyotp
 from botocore.config import Config
 
@@ -47,6 +48,61 @@ TOKEN_EXPIRATION_SECONDS = 8 * 60 * 60 # 8 hours
 BEARER_PREFIX = 'Bearer '
 AUTH_ACCOUNT_ROUTE = '/auth/account'
 ISO_DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+SUCCESS_MESSAGE = 'Message sent successfully!'
+
+# hCaptcha secret key — set in Lambda env vars, use hCaptcha test secret for dev:
+# 0x0000000000000000000000000000000000000000 (always passes in dev/CI)
+HCAPTCHA_SECRET_KEY = os.environ.get('HCAPTCHA_SECRET_KEY', '0x0000000000000000000000000000000000000000')  # nosec B105  # NOSONAR
+
+
+def verify_hcaptcha(token: str) -> bool:
+    """Verify hCaptcha token against the siteverify API.
+    Returns True if valid, False otherwise.
+    Falls back to True when using the hCaptcha test secret key (dev/CI).
+    """
+    # hCaptcha test secret always passes — skip real verification in dev
+    if HCAPTCHA_SECRET_KEY == '0x0000000000000000000000000000000000000000':  # nosec B105  # NOSONAR
+        return bool(token)  # Accept any non-empty token in dev mode
+    try:
+        data = urllib.parse.urlencode({
+            'secret': HCAPTCHA_SECRET_KEY,
+            'response': token
+        }).encode('utf-8')
+        req = urllib.request.Request(
+            'https://api.hcaptcha.com/siteverify',
+            data=data,
+            method='POST'
+        )  # nosec B310
+        with urllib.request.urlopen(req, timeout=5) as resp:  # nosec B310
+            result = json.loads(resp.read().decode('utf-8'))
+        return result.get('success', False)
+    except Exception as e:
+        print(f'hCaptcha verification error: {e}')
+        return False
+
+
+def is_likely_spam(username: str, email: str, message: str) -> bool:
+    """Heuristic spam detection for contact form submissions."""
+    # 1. Gibberish message: too short or no spaces (bots send random strings)
+    msg = message.strip()
+    if len(msg) < 10 or ' ' not in msg:
+        print(f'Spam detected (gibberish message): {msg!r}')
+        return True
+
+    # 2. Dotted-spam email: local part has 4+ dots (e.g. a.b.c.d.e@gmail.com)
+    local = email.split('@')[0] if '@' in email else email
+    if local.count('.') >= 4:
+        print(f'Spam detected (dotted-spam email): {email!r}')
+        return True
+
+    # 3. Name has no vowels — looks like random consonant string
+    vowels = set('aeiouAEIOU')
+    name_letters = [c for c in username if c.isalpha()]
+    if name_letters and not any(c in vowels for c in name_letters):
+        print(f'Spam detected (no-vowel name): {username!r}')
+        return True
+
+    return False
 
 
 def send_email(to_email, subject, body):
@@ -675,22 +731,43 @@ def contact_portfolio(event):
         phone = body.get('phone', 'N/A')
         message_title = body.get('messageTitle', 'No Subject')
         message = body.get('message', '')
-        
+        captcha_token = body.get('captchaToken', '')
+
+        # --- Layer 1: hCaptcha token verification ---
+        if not verify_hcaptcha(captcha_token):
+            print(f'Contact blocked: invalid/missing hCaptcha token from {email}')
+            # Return 200 silently — bots get no feedback that they were blocked
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'message': SUCCESS_MESSAGE})
+            }
+
+        # --- Layer 2: Spam heuristics ---
+        if is_likely_spam(username, email, message):
+            print(f'Contact blocked (spam heuristics): name={username!r} email={email!r}')
+            # Return 200 silently — bots get no feedback that they were blocked
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'message': SUCCESS_MESSAGE})
+            }
+
         subject = f"Portfolio Contact: {message_title}"
         email_body = f"Name: {username}\nEmail: {email}\nPhone: {phone}\n\nMessage:\n{message}"
-        
+
         send_email('amrit@amrit.cloud', subject, email_body)
-        
+
         return {
-            'statusCode': 200, 
-            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 
-            'body': json.dumps({'message': 'Message sent successfully!'})
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': SUCCESS_MESSAGE})
         }
     except Exception as e:
         print(f"Error sending contact email: {e}")
         return {
-            'statusCode': 500, 
-            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({'error': 'Internal server error'})
         }
 

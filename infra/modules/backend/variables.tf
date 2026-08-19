@@ -77,3 +77,9 @@ variable "github_client_secret" {
   default     = ""
 }
 
+variable "hcaptcha_secret_key" {
+  type        = string
+  description = "Secret key for hCaptcha server-side verification"
+  default     = "0x0000000000000000000000000000000000000000" # Test secret
+}
+

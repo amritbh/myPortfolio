@@ -19,6 +19,7 @@ jobs:
       TF_VAR_google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
       TF_VAR_admin_email: ${{ secrets.ADMIN_EMAIL }}
       TF_VAR_system_email: ${{ secrets.SYSTEM_EMAIL }}
+      TF_VAR_hcaptcha_secret_key: ${{ secrets.HCAPTCHA_SECRET_KEY }}
       TERRAGRUNT_NON_INTERACTIVE: true
 
     steps:

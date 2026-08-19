@@ -339,3 +339,27 @@
     font-size: 28px;
   }
 }
+
+/* ── Spam Protection ── */
+
+/* Honeypot: visually hidden but present in DOM so bots fill it */
+.contact-honeypot {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* hCaptcha widget wrapper */
+.contact-captcha-wrapper {
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.contact-captcha-error {
+  margin-top: 6px;
+}
