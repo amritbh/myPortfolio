@@ -204,45 +204,7 @@ const DestinationDetail: React.FC<DestinationDetailProps> = ({
             </Fade>
           )}
 
-          {/* Photo Gallery */}
-          {dest.hasGallery && (
-            <Fade bottom duration={700} delay={120}>
-              <section
-                className="dest-gallery-section"
-                aria-label="Photo gallery"
-                data-testid="dest-gallery-section"
-              >
-                <h2
-                  className="dest-section-heading"
-                  style={{ color: theme.text }}
-                >
-                  Gallery
-                </h2>
-                <Suspense fallback={null}>
-                  <PhotoGallery destinationId={dest.id} detailMode={true} />
-                </Suspense>
-              </section>
-            </Fade>
-          )}
-
-          {/* Link to blog post */}
-          {dest.blogSlug && (
-            <Fade bottom duration={700} delay={160}>
-              <div className="dest-blog-cta">
-                <Link
-                  to={`/blogs/${dest.blogSlug}`}
-                  className="dest-read-story-btn"
-                  style={{
-                    backgroundColor: country.accentColor,
-                    borderColor: country.accentColor,
-                  }}
-                  data-testid="dest-blog-link"
-                >
-                  ✍ Read the Full Story
-                </Link>
-              </div>
-            </Fade>
-          )}
+          {/* Link to blog post — moved below gallery at full width */}
         </main>
 
         {/* RIGHT: sidebar */}
@@ -376,6 +338,53 @@ const DestinationDetail: React.FC<DestinationDetailProps> = ({
           </Fade>
         </aside>
       </div>
+
+      {/* ── Full-width Media & CTA ─────────────────────────────────────── */}
+      {(dest.hasGallery || dest.blogSlug) && (
+        <div className="dest-detail-media-container" style={{ backgroundColor: theme.body }}>
+          <div className="dest-detail-media-inner">
+            {/* Photo Gallery */}
+            {dest.hasGallery && (
+              <Fade bottom duration={700} delay={120}>
+                <section
+                  className="dest-gallery-section"
+                  aria-label="Photo gallery"
+                  data-testid="dest-gallery-section"
+                >
+                  <h2
+                    className="dest-section-heading"
+                    style={{ color: theme.text }}
+                  >
+                    Gallery
+                  </h2>
+                  <Suspense fallback={null}>
+                    <PhotoGallery destinationId={dest.id} detailMode={true} />
+                  </Suspense>
+                </section>
+              </Fade>
+            )}
+
+            {/* Link to blog post */}
+            {dest.blogSlug && (
+              <Fade bottom duration={700} delay={160}>
+                <div className="dest-blog-cta">
+                  <Link
+                    to={`/blogs/${dest.blogSlug}`}
+                    className="dest-read-story-btn"
+                    style={{
+                      backgroundColor: country.accentColor,
+                      borderColor: country.accentColor,
+                    }}
+                    data-testid="dest-blog-link"
+                  >
+                    ✍ Read the Full Story
+                  </Link>
+                </div>
+              </Fade>
+            )}
+          </div>
+        </div>
+      )}
 
       <Footer theme={theme} />
     </div>
