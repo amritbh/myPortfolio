@@ -32,12 +32,11 @@
    ══════════════════════════════════════════════════════════════════════ */
 .dest-detail-hero {
   position: relative;
-  min-height: 45vh; /* Reduced from 70vh to remove awkward top gap */
   display: flex;
   align-items: flex-end;
   background-size: cover;
   background-position: center 40%;
-  padding: 100px 2rem 3rem; /* Reduced padding slightly */
+  padding: 40px 2rem 3rem; /* Tight top padding, no more min-height void */
 }
 
 .dest-detail-hero-overlay {
@@ -323,8 +322,7 @@
 /* Mobile */
 @media (max-width: 600px) {
   .dest-detail-hero {
-    min-height: 40vh;
-    padding: 100px 1.25rem 2.5rem;
+    padding: 30px 1.25rem 2.5rem;
   }
 
   .dest-detail-title {
