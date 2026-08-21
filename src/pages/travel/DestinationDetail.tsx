@@ -196,7 +196,6 @@ const DestinationDetail: React.FC<DestinationDetailProps> = ({
                 className="dest-detail-highlight"
                 style={{
                   color: country.accentColor,
-                  borderLeftColor: country.accentColor,
                 }}
                 data-testid="dest-highlight"
               >
