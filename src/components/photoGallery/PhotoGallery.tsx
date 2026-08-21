@@ -108,7 +108,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
               aria-label="Previous photo"
               data-testid="carousel-prev"
             >
-              ‹
+              <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 18L2 10L10 2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
             <button
               type="button"
@@ -117,7 +119,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
               aria-label="Next photo"
               data-testid="carousel-next"
             >
-              ›
+              <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 2L10 10L2 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
           </>
         )}

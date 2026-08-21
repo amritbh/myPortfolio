@@ -159,14 +159,15 @@ describe("TravelPage — Nepal Destinations", () => {
     });
   });
 
-  it("renders Coming Soon badges for all unpublished Nepal destinations", () => {
+  it("renders a View Details button for all Nepal destinations (no separate Coming Soon badge)", () => {
     renderWithRouter(<TravelPage theme={mockTheme as any} />);
-    const nepalDests = travelData.countries[0].destinations.filter(
-      (d) => d.blogSlug === null
-    );
-    const badges = screen.getAllByText("Coming Soon");
-    // At least all Nepal unpublished + mission section badge
-    expect(badges.length).toBeGreaterThanOrEqual(nepalDests.length);
+    // Every destination now has a View Details button via data-testid
+    const nepalDests = travelData.countries[0].destinations;
+    nepalDests.forEach((dest) => {
+      expect(
+        screen.getByTestId(`view-details-${dest.id}`)
+      ).toBeInTheDocument();
+    });
   });
 });
 
