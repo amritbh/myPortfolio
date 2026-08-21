@@ -1,0 +1,117 @@
+.elevation-profile-container {
+  position: relative;
+  width: 100%;
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+  overflow: visible;
+}
+
+.elevation-profile-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+/* Tooltip overlay styling */
+.elevation-tooltip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background: rgba(10, 15, 30, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: #fff;
+  font-family: "Google Sans Regular", "Inter", sans-serif;
+  transform: translate(-50%, -120%);
+  min-width: 140px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.2s ease, transform 0.1s ease-out;
+  opacity: 0;
+  z-index: 10;
+}
+
+.elevation-tooltip.visible {
+  opacity: 1;
+}
+
+.tooltip-day {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.tooltip-camp {
+  font-size: 1.1rem;
+  font-family: "Google Sans Bold", "Inter", sans-serif;
+  margin-bottom: 4px;
+}
+
+.tooltip-altitude {
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+.tooltip-note {
+  font-size: 0.85rem;
+  font-style: italic;
+  opacity: 0.9;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 6px;
+  margin-top: 6px;
+}
+
+/* D3 styling */
+.elevation-area {
+  transition: fill 0.3s ease;
+}
+
+.elevation-line {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.elevation-point {
+  stroke: #0a0f1e;
+  stroke-width: 2;
+  transition: r 0.2s ease, stroke-width 0.2s ease;
+  cursor: pointer;
+}
+
+.elevation-point:hover {
+  r: 6;
+  stroke-width: 3;
+}
+
+.elevation-axis text {
+  font-family: "Google Sans Regular", "Inter", sans-serif;
+  font-size: 11px;
+}
+
+.elevation-axis path,
+.elevation-axis line {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+
+.elevation-grid line {
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-dasharray: 4, 4;
+}
+
+.elevation-grid path {
+  display: none;
+}
+
+.altitude-annotation {
+  font-family: "Google Sans Regular", "Inter", sans-serif;
+  font-size: 10px;
+  fill: rgba(255, 255, 255, 0.4);
+}
