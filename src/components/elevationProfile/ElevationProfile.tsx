@@ -33,9 +33,9 @@ const ElevationProfile: React.FC<ElevationProfileProps> = ({ data, accentColor, 
     d3.select(svgRef.current).selectAll("*").remove();
 
     // Chart dimensions
-    const margin = { top: 40, right: 20, bottom: 40, left: 50 };
+    const margin = { top: 40, right: 20, bottom: 90, left: 80 };
     const width = 800 - margin.left - margin.right;
-    const height = 300 - margin.top - margin.bottom;
+    const height = 350 - margin.top - margin.bottom;
 
     const svg = d3
       .select(svgRef.current)
@@ -120,11 +120,18 @@ const ElevationProfile: React.FC<ElevationProfileProps> = ({ data, accentColor, 
       .call(
         d3
           .axisBottom(xScale)
-          .ticks(data.length)
-          .tickFormat((d) => `Day ${d}`)
+          .tickValues(data.map(d => d.day))
+          .tickFormat((d) => {
+            const point = data.find((p) => p.day === Number(d));
+            return point ? `Day ${d} — ${point.campName}` : `Day ${d}`;
+          })
       )
       .selectAll("text")
-      .style("fill", theme?.secondaryText || "rgba(255,255,255,0.7)");
+      .style("fill", theme?.secondaryText || "rgba(255,255,255,0.7)")
+      .style("text-anchor", "end")
+      .attr("dx", "-0.8em")
+      .attr("dy", "0.15em")
+      .attr("transform", "rotate(-45)");
 
     // Y Axis (Grid lines only)
     svg
