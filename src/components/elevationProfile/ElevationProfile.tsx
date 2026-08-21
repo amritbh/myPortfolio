@@ -35,7 +35,7 @@ const ElevationProfile: React.FC<ElevationProfileProps> = ({ data, accentColor, 
     // Chart dimensions
     const margin = { top: 40, right: 20, bottom: 90, left: 80 };
     const width = 800 - margin.left - margin.right;
-    const height = 350 - margin.top - margin.bottom;
+    const height = 420 - margin.top - margin.bottom;
 
     const svg = d3
       .select(svgRef.current)

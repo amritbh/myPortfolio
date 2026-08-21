@@ -213,7 +213,7 @@
   align-self: start;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
 }
 
 /* Quick facts card */
@@ -221,7 +221,7 @@
 .dest-related-card {
   border-radius: 16px;
   border: 1px solid;
-  padding: 1.5rem;
+  padding: 1.25rem;
 }
 
 .dest-stats-card-title {
@@ -240,7 +240,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.6rem;
 }
 
 .dest-stats-item {
