@@ -504,23 +504,48 @@
   border-color: var(--travel-accent);
 }
 
-.view-details-btn {
-  display: block;
-  width: 100%;
-  text-align: center;
-  font-size: 0.88rem;
-  font-weight: 700;
-  padding: 0.6rem 1rem;
-  border-radius: 10px;
-  border: none;
-  text-decoration: none;
-  margin-top: 0.75rem;
-  letter-spacing: 0.04em;
-  transition: filter 0.2s ease, transform 0.18s ease;
+/* ── Card action row ─────────────────────────────────────────────────── */
+.dest-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+  align-items: center;
 }
 
-.view-details-btn:hover {
-  filter: brightness(1.15);
+.dest-action-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.5rem 0.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: filter 0.18s ease, transform 0.15s ease, background 0.18s ease;
+  white-space: nowrap;
+}
+
+.dest-action-btn:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+/* Primary: solid filled */
+.dest-action-primary {
+  border: none;
+}
+
+/* Secondary: ghost outline */
+.dest-action-secondary {
+  background: transparent;
+  border: 1px solid;
+}
+
+.dest-action-secondary:hover {
+  filter: none;
+  background: rgba(128, 128, 128, 0.08);
   transform: translateY(-1px);
 }
 

@@ -385,20 +385,30 @@ const TravelPage: React.FC<TravelPageProps> = ({
             <PhotoGallery destinationId={dest.id} columns={3} />
           )}
 
-          {/* Single CTA — View Details always leads to the detail page */}
-          <Link
-            to={`/travel/${activeCountryId}/${dest.id}`}
-            className="view-details-btn"
-            style={{
-              backgroundColor: accentColor,
-              borderColor: accentColor,
-              color: "#fff",
-            }}
-            onClick={(e) => e.stopPropagation()}
-            data-testid={`view-details-${dest.id}`}
-          >
-            {dest.blogSlug ? "Read Story →" : "View Details →"}
-          </Link>
+          {/* Card action row */}
+          <div className="dest-card-actions">
+            <Link
+              to={`/travel/${activeCountryId}/${dest.id}`}
+              className={`dest-action-btn dest-action-primary`}
+              style={{ backgroundColor: accentColor, color: "#fff" }}
+              onClick={(e) => e.stopPropagation()}
+              data-testid={`view-details-${dest.id}`}
+            >
+              View Details
+            </Link>
+            {dest.blogSlug ? (
+              <a
+                href={`/blogs/${dest.blogSlug}`}
+                className="dest-action-btn dest-action-secondary"
+                style={{ borderColor: accentColor, color: accentColor }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                Read Story
+              </a>
+            ) : !dest.hasGallery ? (
+              <span className="coming-soon-badge">Coming Soon</span>
+            ) : null}
+          </div>
         </div>
       </Fade>
     );
