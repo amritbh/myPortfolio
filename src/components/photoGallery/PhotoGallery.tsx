@@ -6,9 +6,10 @@ interface PhotoGalleryProps {
   destinationId: string;
   columns?: number;
   maxVisible?: number;
+  detailMode?: boolean; // disables pop-out hover; nav arrows always visible
 }
 
-const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
+const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, detailMode = false }) => {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -69,7 +70,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
   };
 
   return (
-    <div className="photo-gallery">
+    <div className={`photo-gallery${detailMode ? " gallery-detail-mode" : ""}`}>
       <div 
         className="gallery-carousel-wrapper"
         onMouseEnter={() => setIsHovered(true)}
@@ -108,7 +109,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
               aria-label="Previous photo"
               data-testid="carousel-prev"
             >
-              ‹
+              <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 18L2 10L10 2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
             <button
               type="button"
@@ -117,7 +120,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
               aria-label="Next photo"
               data-testid="carousel-next"
             >
-              ›
+              <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 2L10 10L2 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
           </>
         )}

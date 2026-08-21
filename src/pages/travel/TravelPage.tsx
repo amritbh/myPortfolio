@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import "./Travel.css";
 import { travelData } from "../../portfolio";
 import type { CountryEntry, DestinationEntry } from "../../portfolio";
@@ -262,27 +262,25 @@ const TravelPage: React.FC<TravelPageProps> = ({
       <Fade bottom duration={600} delay={index * 70} key={dest.id}>
         <div
           id={`dest-${dest.id}`}
-          className={`destination-card dest-type-${dest.type} ${dest.blogSlug ? "clickable-card" : ""}`}
+          className={`destination-card dest-type-${dest.type} clickable-card`}
           style={
             {
               backgroundColor: theme.headerColor,
               borderColor: theme.highlight,
               "--travel-accent": accentColor,
-              cursor: dest.blogSlug ? "pointer" : "default",
+              cursor: "pointer",
             } as React.CSSProperties
           }
           role="article"
           aria-label={dest.name}
-          tabIndex={dest.blogSlug ? 0 : undefined}
+          tabIndex={0}
           onClick={() => {
-            if (dest.blogSlug) {
-              history.push(`/blogs/${dest.blogSlug}`);
-            }
+            history.push(`/travel/${activeCountryId}/${dest.id}`);
           }}
           onKeyDown={(e) => {
-            if (dest.blogSlug && (e.key === "Enter" || e.key === " ")) {
+            if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
-              history.push(`/blogs/${dest.blogSlug}`);
+              history.push(`/travel/${activeCountryId}/${dest.id}`);
             }
           }}
         >
@@ -385,17 +383,30 @@ const TravelPage: React.FC<TravelPageProps> = ({
             <PhotoGallery destinationId={dest.id} columns={3} />
           )}
 
-          {dest.blogSlug ? (
-            <a
-              href={`/blogs/${dest.blogSlug}`}
-              className="read-story-btn"
-              style={{ color: accentColor, borderColor: accentColor }}
+          {/* Card action row */}
+          <div className="dest-card-actions">
+            <Link
+              to={`/travel/${activeCountryId}/${dest.id}`}
+              className={`dest-action-btn dest-action-primary`}
+              style={{ backgroundColor: accentColor, color: "#fff" }}
+              onClick={(e) => e.stopPropagation()}
+              data-testid={`view-details-${dest.id}`}
             >
-              ✍ Read Story
-            </a>
-          ) : !dest.hasGallery ? (
-            <span className="coming-soon-badge">Coming Soon</span>
-          ) : null}
+              View Details
+            </Link>
+            {dest.blogSlug ? (
+              <a
+                href={`/blogs/${dest.blogSlug}`}
+                className="dest-action-btn dest-action-secondary"
+                style={{ borderColor: accentColor, color: accentColor }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                Read Story
+              </a>
+            ) : !dest.hasGallery ? (
+              <span className="coming-soon-badge">Coming Soon</span>
+            ) : null}
+          </div>
         </div>
       </Fade>
     );

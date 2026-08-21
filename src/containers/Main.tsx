@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Route, Switch, BrowserRouter } from "react-router-dom";
 import Home from "../pages/home/HomeComponent";
 import Splash from "../pages/splash/Splash";
@@ -15,6 +15,11 @@ import Error404 from "../pages/errors/error404/Error";
 import Account from "../pages/account/Account";
 import TravelPage from "../pages/travel/TravelPage";
 import type { Theme, ThemeMode } from "../types";
+
+// Code-split: only loaded when user navigates to a destination detail page
+const DestinationDetail = lazy(
+  () => import("../pages/travel/DestinationDetail")
+);
 
 interface MainProps {
   theme: Theme;
@@ -164,6 +169,20 @@ const Main: React.FC<MainProps> = ({ theme, themeMode, onThemeChange }) => {
           />
         )}
 
+        {/* Destination detail — must come BEFORE /travel to match first */}
+        <Route
+          path="/travel/:countryId/:destinationId"
+          render={(props: any) => (
+            <Suspense fallback={<div style={{ minHeight: "100vh" }} />}>
+              <DestinationDetail
+                {...props}
+                theme={theme}
+                themeMode={themeMode}
+                onThemeChange={onThemeChange}
+              />
+            </Suspense>
+          )}
+        />
         <Route
           path="/travel"
           render={(props: any) => (
