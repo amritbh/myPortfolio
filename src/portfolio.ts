@@ -1106,11 +1106,11 @@ export const travelData = {
           emoji: "⛰️",
           coordinates: [28.5300, 83.8780],
           description:
-            "The iconic trek through rhododendron forests and glacial moraines to the foot of Annapurna I.",
+            "The iconic trek through rhododendron forests and glacial moraines to the foot of Mount Annapurna.",
           elevation: "4,130m",
           duration: "12 days",
           difficulty: "Moderate",
-          highlight: "Standing at the base of Annapurna I at sunrise.",
+          highlight: "Standing at the base of Mount Annapurna at sunrise.",
           blogSlug: "annapurna-base-camp",
           hasGallery: true,
           elevationProfile: [
