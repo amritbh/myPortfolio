@@ -504,6 +504,26 @@
   border-color: var(--travel-accent);
 }
 
+.view-details-btn {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid;
+  text-decoration: none;
+  align-self: flex-start;
+  margin-top: 0.4rem;
+  transition: background 0.2s ease, color 0.2s ease;
+  letter-spacing: 0.02em;
+}
+
+.view-details-btn:hover {
+  background: var(--travel-accent);
+  color: #fff !important;
+  border-color: var(--travel-accent);
+}
+
 /* ── Type-specific card tweaks ──────────────────────────────────────── */
 .dest-type-hike {
   /* slightly lighter opacity on card to distinguish from full treks */

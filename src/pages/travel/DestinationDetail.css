@@ -1,0 +1,332 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Destination Detail Page — DestinationDetail.css
+   Full-screen editorial page for individual travel destinations
+   ══════════════════════════════════════════════════════════════════════ */
+
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap");
+
+/* ── Page shell ─────────────────────────────────────────────────────── */
+.dest-detail-page {
+  min-height: 100vh;
+  font-family: "Outfit", "Google Sans Regular", sans-serif;
+}
+
+/* ── Back link (inside hero) ────────────────────────────────────────── */
+.dest-back-link {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+  transition: color 0.2s;
+}
+.dest-back-link:hover {
+  color: #fff;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════════════════════════════════ */
+.dest-detail-hero {
+  position: relative;
+  min-height: 70vh;
+  display: flex;
+  align-items: flex-end;
+  background-size: cover;
+  background-position: center 40%;
+  padding: 120px 2rem 4rem;
+}
+
+.dest-detail-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 15, 30, 0.3) 0%,
+    rgba(10, 15, 30, 0.65) 50%,
+    rgba(10, 15, 30, 0.92) 100%
+  );
+  pointer-events: none;
+}
+
+.dest-detail-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1120px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Hero meta row: flag + region */
+.dest-hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.dest-hero-flag {
+  font-size: 1.4rem;
+}
+
+.dest-hero-region {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.dest-detail-title {
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  font-weight: 800;
+  color: #f8f9fa;
+  line-height: 1.1;
+  margin: 0 0 2rem;
+}
+
+/* ── Trail stats bar ─────────────────────────────────────────────────── */
+.dest-trail-stats-bar {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding: 1.2rem 1.6rem;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  width: fit-content;
+}
+
+.dest-trail-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 72px;
+}
+
+.dest-trail-stat-icon {
+  font-size: 1.2rem;
+}
+
+.dest-trail-stat-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f8f9fa;
+}
+
+.dest-trail-stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   MAIN CONTENT LAYOUT (two-column on desktop)
+   ══════════════════════════════════════════════════════════════════════ */
+.dest-detail-content {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 3rem;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 3.5rem 2rem 5rem;
+}
+
+/* ── Main (left) ─────────────────────────────────────────────────────── */
+.dest-detail-main {
+  min-width: 0;
+}
+
+.dest-detail-description {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  margin: 0 0 2rem;
+}
+
+.dest-detail-highlight {
+  font-size: 1.25rem;
+  font-style: italic;
+  font-weight: 600;
+  border-left: 4px solid;
+  padding-left: 1.25rem;
+  margin: 0 0 2.5rem;
+  line-height: 1.5;
+}
+
+.dest-section-heading {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 1.2rem;
+}
+
+.dest-gallery-section {
+  margin-bottom: 2.5rem;
+}
+
+/* Blog CTA */
+.dest-blog-cta {
+  margin-top: 2rem;
+}
+
+.dest-read-story-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 10px;
+  color: #fff !important;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.dest-read-story-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-2px);
+}
+
+/* ── Sidebar (right) ─────────────────────────────────────────────────── */
+.dest-detail-sidebar {
+  position: sticky;
+  top: 88px;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Quick facts card */
+.dest-stats-card,
+.dest-related-card {
+  border-radius: 16px;
+  border: 1px solid;
+  padding: 1.5rem;
+}
+
+.dest-stats-card-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 1rem;
+  opacity: 0.6;
+}
+
+.dest-stats-list,
+.dest-related-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.dest-stats-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.dest-stats-label {
+  opacity: 0.6;
+}
+
+.dest-stats-value {
+  font-weight: 600;
+}
+
+/* Related list */
+.dest-related-item {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dest-related-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.dest-related-link:hover {
+  background: rgba(128, 128, 128, 0.1);
+}
+
+.dest-related-emoji {
+  font-size: 1.1rem;
+}
+
+/* Back all link */
+.dest-back-all-link {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.dest-back-all-link:hover {
+  opacity: 0.7;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Tablet */
+@media (max-width: 900px) {
+  .dest-detail-content {
+    grid-template-columns: 1fr;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  .dest-detail-sidebar {
+    position: static;
+    /* Move sidebar below main on mobile */
+    order: 2;
+  }
+
+  .dest-detail-main {
+    order: 1;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .dest-detail-hero {
+    min-height: 60vh;
+    padding: 100px 1.25rem 2.5rem;
+  }
+
+  .dest-detail-title {
+    font-size: 2rem;
+  }
+
+  .dest-trail-stats-bar {
+    gap: 1.25rem;
+    padding: 1rem 1.25rem;
+  }
+
+  .dest-trail-stat {
+    min-width: 60px;
+  }
+
+  .dest-detail-content {
+    padding: 2rem 1.25rem 3rem;
+    gap: 2rem;
+  }
+}

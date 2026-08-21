@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import "./Travel.css";
 import { travelData } from "../../portfolio";
 import type { CountryEntry, DestinationEntry } from "../../portfolio";
@@ -396,6 +396,16 @@ const TravelPage: React.FC<TravelPageProps> = ({
           ) : !dest.hasGallery ? (
             <span className="coming-soon-badge">Coming Soon</span>
           ) : null}
+          {/* View Details link — always present */}
+          <Link
+            to={`/travel/${activeCountryId}/${dest.id}`}
+            className="view-details-btn"
+            style={{ borderColor: accentColor, color: accentColor }}
+            onClick={(e) => e.stopPropagation()}
+            data-testid={`view-details-${dest.id}`}
+          >
+            View Details →
+          </Link>
         </div>
       </Fade>
     );
