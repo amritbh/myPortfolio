@@ -262,27 +262,25 @@ const TravelPage: React.FC<TravelPageProps> = ({
       <Fade bottom duration={600} delay={index * 70} key={dest.id}>
         <div
           id={`dest-${dest.id}`}
-          className={`destination-card dest-type-${dest.type} ${dest.blogSlug ? "clickable-card" : ""}`}
+          className={`destination-card dest-type-${dest.type} clickable-card`}
           style={
             {
               backgroundColor: theme.headerColor,
               borderColor: theme.highlight,
               "--travel-accent": accentColor,
-              cursor: dest.blogSlug ? "pointer" : "default",
+              cursor: "pointer",
             } as React.CSSProperties
           }
           role="article"
           aria-label={dest.name}
-          tabIndex={dest.blogSlug ? 0 : undefined}
+          tabIndex={0}
           onClick={() => {
-            if (dest.blogSlug) {
-              history.push(`/blogs/${dest.blogSlug}`);
-            }
+            history.push(`/travel/${activeCountryId}/${dest.id}`);
           }}
           onKeyDown={(e) => {
-            if (dest.blogSlug && (e.key === "Enter" || e.key === " ")) {
+            if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
-              history.push(`/blogs/${dest.blogSlug}`);
+              history.push(`/travel/${activeCountryId}/${dest.id}`);
             }
           }}
         >
