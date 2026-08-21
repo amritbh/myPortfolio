@@ -1045,20 +1045,28 @@ export interface GalleryImage {
   type?: "image" | "video";
 }
 
+export interface ElevationPoint {
+  day: number;
+  altitude: number;  // meters
+  campName: string;
+  note?: string;
+}
+
 export interface DestinationEntry {
   id: string;
   name: string;
-  type: DestinationType;
+  type: "trek" | "hike" | "city" | "road-trip" | "nature" | "moto";
   region: string;
   emoji: string;
   description: string;
   blogSlug: string | null;
-  coordinates?: [number, number]; // [lat, lng]
   elevation?: string;
   duration?: string;
-  difficulty?: DestinationDifficulty;
+  difficulty?: "Easy" | "Moderate" | "Challenging" | "Extreme";
   highlight?: string;
-  hasGallery?: boolean;  // Will fetch from S3 manifest if true
+  hasGallery?: boolean;
+  coordinates?: [number, number]; // [lat, lng]
+  elevationProfile?: ElevationPoint[];
 }
 
 export interface CountryEntry {
@@ -1098,13 +1106,27 @@ export const travelData = {
           emoji: "⛰️",
           coordinates: [28.5300, 83.8780],
           description:
-            "The iconic trek through rhododendron forests and glacial moraines to the foot of Annapurna I.",
+            "The iconic trek through rhododendron forests and glacial moraines to the foot of Mount Annapurna.",
           elevation: "4,130m",
           duration: "12 days",
           difficulty: "Moderate",
-          highlight: "Standing at the base of Annapurna I at sunrise.",
+          highlight: "Standing at the base of Mount Annapurna at sunrise.",
           blogSlug: "annapurna-base-camp",
           hasGallery: true,
+          elevationProfile: [
+            { day: 1,  altitude: 1070, campName: "Nayapul" },
+            { day: 2,  altitude: 1520, campName: "Tikhedhunga" },
+            { day: 3,  altitude: 2310, campName: "Ghorepani" },
+            { day: 4,  altitude: 3210, campName: "Poon Hill", note: "Sunrise viewpoint" },
+            { day: 5,  altitude: 2650, campName: "Tadapani" },
+            { day: 6,  altitude: 2380, campName: "Chhomrong" },
+            { day: 7,  altitude: 2920, campName: "Bamboo" },
+            { day: 8,  altitude: 3230, campName: "Dovan" },
+            { day: 9,  altitude: 3700, campName: "Deurali" },
+            { day: 10, altitude: 4130, campName: "ABC", note: "Base Camp!" },
+            { day: 11, altitude: 2920, campName: "Bamboo" },
+            { day: 12, altitude: 1070, campName: "Nayapul", note: "Trek complete" },
+          ]
         },
         {
           id: "tilicho-lake",

@@ -4,6 +4,7 @@ import { Fade } from "react-reveal";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import PhotoGallery from "../../components/photoGallery/PhotoGallery";
+import ElevationProfile from "../../components/elevationProfile/ElevationProfile";
 import { travelData } from "../../portfolio";
 import type { Theme, ThemeMode } from "../../types";
 import "./DestinationDetail.css";
@@ -195,7 +196,6 @@ const DestinationDetail: React.FC<DestinationDetailProps> = ({
                 className="dest-detail-highlight"
                 style={{
                   color: country.accentColor,
-                  borderLeftColor: country.accentColor,
                 }}
                 data-testid="dest-highlight"
               >
@@ -204,7 +204,16 @@ const DestinationDetail: React.FC<DestinationDetailProps> = ({
             </Fade>
           )}
 
-          {/* Link to blog post — moved below gallery at full width */}
+          {/* Elevation Profile (Sits in the main column under the description) */}
+          {dest.elevationProfile && dest.elevationProfile.length > 0 && (
+            <Fade bottom duration={800} delay={150}>
+              <ElevationProfile
+                data={dest.elevationProfile}
+                accentColor={country.accentColor}
+                theme={theme}
+              />
+            </Fade>
+          )}
         </main>
 
         {/* RIGHT: sidebar */}
