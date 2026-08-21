@@ -6,9 +6,10 @@ interface PhotoGalleryProps {
   destinationId: string;
   columns?: number;
   maxVisible?: number;
+  detailMode?: boolean; // disables pop-out hover; nav arrows always visible
 }
 
-const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
+const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId, detailMode = false }) => {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -69,7 +70,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ destinationId }) => {
   };
 
   return (
-    <div className="photo-gallery">
+    <div className={`photo-gallery${detailMode ? " gallery-detail-mode" : ""}`}>
       <div 
         className="gallery-carousel-wrapper"
         onMouseEnter={() => setIsHovered(true)}

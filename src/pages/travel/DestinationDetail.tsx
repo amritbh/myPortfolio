@@ -219,7 +219,7 @@ const DestinationDetail: React.FC<DestinationDetailProps> = ({
                   Gallery
                 </h2>
                 <Suspense fallback={null}>
-                  <PhotoGallery destinationId={dest.id} />
+                  <PhotoGallery destinationId={dest.id} detailMode={true} />
                 </Suspense>
               </section>
             </Fade>
