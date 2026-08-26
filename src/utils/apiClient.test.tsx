@@ -729,7 +729,7 @@ describe("apiClient API unreachable", () => {
       ok: true,
       json: async () => ({ message: "Subscribed successfully!" }),
     });
-    const res = await apiClient.subscribeToNewsletter("test@example.com");
+    const res = await apiClient.subscribeToNewsletter("test@example.com", "mock-token");
     expect(res.success).toBe(true);
   });
 
@@ -738,13 +738,13 @@ describe("apiClient API unreachable", () => {
       ok: false,
       json: async () => ({ error: "Failed to subscribe" }),
     });
-    const res = await apiClient.subscribeToNewsletter("test@example.com");
+    const res = await apiClient.subscribeToNewsletter("test@example.com", "mock-token");
     expect(res.success).toBe(false);
   });
 
   it("subscribeToNewsletter network error", async () => {
     (global.fetch as any).mockRejectedValueOnce(new Error("Network Error"));
-    const res = await apiClient.subscribeToNewsletter("test@example.com");
+    const res = await apiClient.subscribeToNewsletter("test@example.com", "mock-token");
     expect(res.success).toBe(false);
   });
 });

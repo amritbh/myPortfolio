@@ -1234,7 +1234,8 @@ def test_update_account_profile_missing_fields(setup_dynamodb):
     # It doesn't error on missing fields, it updates them to whatever they are in the body.
 
 @patch('app.send_email')
-def test_subscribe_success(mock_send_email, setup_dynamodb, monkeypatch):
+@patch('app.verify_hcaptcha', return_value=True)
+def test_subscribe_success(mock_verify_hcaptcha, mock_send_email, setup_dynamodb, monkeypatch):
     import app
     
     # Needs a mock subscribers table
@@ -1250,7 +1251,7 @@ def test_subscribe_success(mock_send_email, setup_dynamodb, monkeypatch):
     event = {
         'rawPath': '/subscribe',
         'requestContext': {'http': {'method': 'POST'}},
-        'body': json.dumps({'email': 'test@example.com'})
+        'body': json.dumps({'email': 'test@example.com', 'captchaToken': 'mock'})
     }
     response = app.lambda_handler(event, None)
     
@@ -1269,23 +1270,25 @@ def test_subscribe_success(mock_send_email, setup_dynamodb, monkeypatch):
     assert item is not None
     assert item['email'] == 'test@example.com'
 
-def test_subscribe_missing_email(setup_dynamodb):
+@patch('app.verify_hcaptcha', return_value=True)
+def test_subscribe_missing_email(mock_verify, setup_dynamodb):
     import app
     event = {
         'rawPath': '/subscribe',
         'requestContext': {'http': {'method': 'POST'}},
-        'body': json.dumps({})
+        'body': json.dumps({'captchaToken': 'mock'})
     }
     response = app.lambda_handler(event, None)
     assert response['statusCode'] == 400
     assert 'Valid email is required' in json.loads(response['body'])['error']
 
-def test_subscribe_invalid_email(setup_dynamodb):
+@patch('app.verify_hcaptcha', return_value=True)
+def test_subscribe_invalid_email(mock_verify, setup_dynamodb):
     import app
     event = {
         'rawPath': '/subscribe',
         'requestContext': {'http': {'method': 'POST'}},
-        'body': json.dumps({'email': 'notanemail'})
+        'body': json.dumps({'email': 'notanemail', 'captchaToken': 'mock'})
     }
     response = app.lambda_handler(event, None)
     assert response['statusCode'] == 400

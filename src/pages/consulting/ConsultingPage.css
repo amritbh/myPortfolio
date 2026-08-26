@@ -1,0 +1,405 @@
+/* ============================================================
+   Consulting Page — /consulting
+   ============================================================ */
+
+.consulting-page {
+  min-height: 100vh;
+}
+
+/* Hero */
+.consulting-hero {
+  text-align: center;
+  padding: 32px 5% 32px;
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.consulting-hero-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 5px 16px;
+}
+
+.consulting-hero-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.consulting-hero-subtitle {
+  font-size: 1.08rem;
+  line-height: 1.75;
+  max-width: 620px;
+  margin: 0;
+  opacity: 0.85;
+}
+
+.consulting-hero-cta {
+  display: inline-block;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  margin-top: 8px;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.consulting-hero-cta:hover {
+  opacity: 0.88;
+  transform: translateY(-2px);
+}
+
+/* Shared section layout */
+.consulting-services-section,
+.consulting-for-section,
+.consulting-faq-section,
+.consulting-waitlist-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 5%;
+}
+
+.consulting-section-title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 12px;
+  letter-spacing: -0.02em;
+}
+
+.consulting-section-sub {
+  text-align: center;
+  font-size: 1rem;
+  margin: 0 0 40px;
+  opacity: 0.8;
+}
+
+/* Services Grid */
+.consulting-services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.consulting-service-card {
+  border: 1px solid;
+  border-radius: 18px;
+  padding: 32px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.consulting-service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+}
+
+.consulting-svc-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.consulting-svc-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 3px 10px;
+  width: fit-content;
+}
+
+.consulting-svc-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.consulting-svc-desc {
+  font-size: 0.93rem;
+  line-height: 1.68;
+  margin: 0;
+  opacity: 0.85;
+}
+
+.consulting-svc-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.consulting-meta-pill {
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+
+.consulting-svc-best-for {
+  font-size: 0.86rem;
+  margin: 0;
+  line-height: 1.55;
+  opacity: 0.8;
+}
+
+/* Personas */
+.consulting-personas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 36px;
+}
+
+.consulting-persona-card {
+  border: 1px solid;
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.consulting-persona-card:hover {
+  transform: translateY(-3px);
+}
+
+.consulting-persona-icon {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.consulting-persona-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.consulting-persona-card p {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  margin: 0;
+  opacity: 0.82;
+}
+
+/* FAQ */
+.consulting-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 36px;
+}
+
+.consulting-faq-item {
+  border: 1px solid;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.consulting-faq-item.open {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.consulting-faq-question {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 18px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.consulting-faq-chevron {
+  font-size: 1.4rem;
+  font-weight: 400;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.consulting-faq-answer {
+  padding: 0 24px 20px;
+  font-size: 0.93rem;
+  line-height: 1.72;
+  margin: 0;
+  opacity: 0.85;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Waitlist Form */
+.consulting-waitlist-card {
+  border: 1px solid;
+  border-radius: 24px;
+  padding: 52px 48px;
+  text-align: center;
+}
+
+.consulting-waitlist-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.consulting-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.consulting-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.consulting-input-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.consulting-input-group input,
+.consulting-input-group textarea {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid;
+  font-size: 0.95rem;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.consulting-input-group input:focus,
+.consulting-input-group textarea:focus {
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+}
+
+.consulting-form-error {
+  font-size: 0.85rem;
+  color: #d9534f;
+  margin: 0;
+  text-align: center;
+}
+
+.consulting-captcha-wrapper {
+  margin: 12px auto;
+  display: flex;
+  justify-content: center;
+}
+
+.consulting-submit-btn {
+  padding: 14px 28px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  align-self: center;
+}
+
+.consulting-submit-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-2px);
+}
+
+.consulting-form-note {
+  font-size: 0.82rem;
+  text-align: center;
+  margin: 0;
+  opacity: 0.65;
+}
+
+/* Success */
+.consulting-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.consulting-success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #2ea04326;
+  color: #3fb950;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.consulting-success h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.consulting-success p {
+  font-size: 1rem;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 420px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .consulting-hero {
+    padding: 24px 6% 24px;
+  }
+
+  .consulting-waitlist-card {
+    padding: 36px 20px;
+  }
+
+  .consulting-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .consulting-hero-title {
+    font-size: 1.8rem;
+  }
+}

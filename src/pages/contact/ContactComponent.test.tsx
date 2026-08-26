@@ -88,7 +88,7 @@ describe("ContactComponent", () => {
 
   test("renders hCaptcha widget", () => {
     render(<ContactComponent theme={mockTheme} />);
-    expect(screen.getByTestId("hcaptcha-widget")).toBeInTheDocument();
+    expect(screen.getAllByTestId("hcaptcha-widget")[0]).toBeInTheDocument();
   });
 
   test("honeypot field is present in DOM but not visible to users", () => {
@@ -157,7 +157,7 @@ describe("ContactComponent", () => {
     });
 
     // Complete the CAPTCHA
-    fireEvent.click(screen.getByTestId("hcaptcha-verify-btn"));
+    fireEvent.click(screen.getAllByTestId("hcaptcha-verify-btn")[0]);
 
     const submitBtn = screen.getByRole("button", { name: /send message/i });
     fireEvent.click(submitBtn);
@@ -200,7 +200,7 @@ describe("ContactComponent", () => {
     });
 
     // Complete the CAPTCHA
-    fireEvent.click(screen.getByTestId("hcaptcha-verify-btn"));
+    fireEvent.click(screen.getAllByTestId("hcaptcha-verify-btn")[0]);
 
     const submitBtn = screen.getByRole("button", { name: /send message/i });
     fireEvent.click(submitBtn);
@@ -232,7 +232,7 @@ describe("ContactComponent", () => {
     fireEvent.change(honeypot!, { target: { value: "http://spamsite.com" } });
 
     // Complete captcha and submit
-    fireEvent.click(screen.getByTestId("hcaptcha-verify-btn"));
+    fireEvent.click(screen.getAllByTestId("hcaptcha-verify-btn")[0]);
     fireEvent.click(screen.getByRole("button", { name: /send message/i }));
 
     // Should appear to succeed (silent drop) but NOT call axios

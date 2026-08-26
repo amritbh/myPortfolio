@@ -172,6 +172,20 @@ const Header: React.FC<HeaderProps> = ({
               <li>
                 {/* @ts-ignore */}
                 <NavLink
+                  to="/consulting"
+                  activeStyle={{ WebkitTextStroke: "0.5px currentColor" }}
+                  style={{ color: theme.text }}
+                  onMouseEnter={(event: any) =>
+                    onMouseEnter(event, theme.highlight)
+                  }
+                  onMouseOut={(event: any) => onMouseOut(event)}
+                >
+                  Consulting
+                </NavLink>
+              </li>
+              <li>
+                {/* @ts-ignore */}
+                <NavLink
                   to="/travel"
                   activeStyle={{ WebkitTextStroke: "0.5px currentColor" }}
                   style={{ color: theme.text }}

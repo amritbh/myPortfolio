@@ -714,14 +714,14 @@ export const updateAccountProfile = async (name, address, phoneNumber) => {
   }
 };
 
-export const subscribeToNewsletter = async (email) => {
+export const subscribeToNewsletter = async (email: string, captchaToken: string) => {
   if (!API_URL) return { success: true, message: "Mock subscription successful." };
 
   try {
     const response = await fetch(`${API_URL}/subscribe`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, captchaToken }),
     });
 
     const data = await response.json();

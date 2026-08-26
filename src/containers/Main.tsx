@@ -21,6 +21,11 @@ const DestinationDetail = lazy(
   () => import("../pages/travel/DestinationDetail")
 );
 
+// Code-split: consulting page
+const ConsultingPage = lazy(
+  () => import("../pages/consulting/ConsultingPage")
+);
+
 interface MainProps {
   theme: Theme;
   themeMode: ThemeMode;
@@ -203,6 +208,19 @@ const Main: React.FC<MainProps> = ({ theme, themeMode, onThemeChange }) => {
               themeMode={themeMode}
               onThemeChange={onThemeChange}
             />
+          )}
+        />
+        <Route
+          path="/consulting"
+          render={(props: any) => (
+            <Suspense fallback={<div style={{ minHeight: "100vh" }} />}>
+              <ConsultingPage
+                {...props}
+                theme={theme}
+                themeMode={themeMode}
+                onThemeChange={onThemeChange}
+              />
+            </Suspense>
           )}
         />
         <Route

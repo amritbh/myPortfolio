@@ -4,6 +4,7 @@ import Greeting from "../../containers/greeting/Greeting";
 import Skills from "../../containers/skills/Skills";
 import FeaturedBlogs from "../../containers/featuredBlogs/FeaturedBlogs";
 import TravelSection from "../../containers/travelSection/TravelSection";
+import WorkWithMe from "../../containers/workWithMe/WorkWithMe";
 import Footer from "../../components/footer/Footer";
 import TopButton from "../../components/topButton/TopButton";
 import type { Theme, ThemeMode } from "../../types";
@@ -25,6 +26,7 @@ const Home: React.FC<HomeProps> = ({ theme, themeMode, onThemeChange }) => {
       <Greeting theme={theme} />
       <FeaturedBlogs theme={theme} />
       <Skills theme={theme} />
+      <WorkWithMe theme={theme} />
       <TravelSection theme={theme} />
       <Footer theme={theme} />
       <TopButton theme={theme} />
