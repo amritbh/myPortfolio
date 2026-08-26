@@ -131,10 +131,10 @@ describe("ConsultingPage", () => {
       target: { value: "test@example.com" },
     });
     
-    // Verify CAPTCHA
-    fireEvent.click(screen.getByTestId("hcaptcha-verify-btn"));
+    // Verify CAPTCHA (click the first one)
+    fireEvent.click(screen.getAllByTestId("hcaptcha-verify-btn")[0]);
     
-    fireEvent.click(screen.getByRole("button", { name: /join waitlist/i }));
+    fireEvent.click(screen.getAllByRole("button", { name: /join waitlist/i })[0]);
     expect(await screen.findByTestId("consulting-success-message")).toBeInTheDocument();
   });
 });
