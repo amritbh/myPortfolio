@@ -1398,6 +1398,85 @@ export const travelData = {
   ],
 };
 
+// Consulting Waitlist
+export const consulting = {
+  status: "waitlist" as "waitlist" | "open" | "closed",
+  tagline: "Cloud Architecture, DevOps/SRE and Agentic AI Consulting",
+  pitch:
+    "10+ years building production cloud systems across HP, Walmart, PB Group, and WorldLink. 7+ years on AWS, 5+ years on Azure, and 3+ years on GCP. Expert in DevOps/SRE with GitHub Actions, Terraform IaC, and building and deploying Agentic AI systems on AWS. I help engineering teams ship faster, scale smarter, and leverage AI in real production environments.",
+  waitlistNote:
+    "Currently building my waitlist. Spots open when my schedule allows.",
+  services: [
+    {
+      id: "architecture-review",
+      title: "Architecture Review",
+      icon: "🏗️",
+      description:
+        "60-minute deep dive into your AWS architecture. Get specific, actionable recommendations on cost, scalability, and security.",
+      duration: "60 min",
+      bestFor: "Startups and teams before a major scaling event",
+    },
+    {
+      id: "terraform-audit",
+      title: "Terraform and IaC Audit",
+      icon: "🔧",
+      description:
+        "Full review of your Terraform codebase — module structure, state management, DRY patterns, and DevOps/SRE integration.",
+      duration: "90 min",
+      bestFor: "Teams migrating from ClickOps or cleaning up legacy IaC",
+    },
+    {
+      id: "cicd-devops",
+      title: "DevOps/SRE Pipeline Review",
+      icon: "⚙️",
+      description:
+        "End-to-end review of your GitHub Actions pipelines, deployment workflows, and SRE/DevOps practices. Get actionable recommendations on speed, security scanning, test coverage gates, and AWS deployment strategies.",
+      duration: "60 min",
+      bestFor: "Teams with slow, brittle, or insecure DevOps/SRE pipelines",
+    },
+    {
+      id: "agentic-ai",
+      title: "Agentic AI Systems on AWS",
+      icon: "🤖",
+      description:
+        "Design and deployment guidance for Agentic AI systems on AWS — multi-agent architectures, LLM orchestration (Bedrock, OpenAI, Claude), RAG pipelines, and serverless AI backends. From prototype to production.",
+      duration: "90 min",
+      bestFor: "Engineering teams building their first AI agent or scaling an existing one",
+    },
+    {
+      id: "career-coaching",
+      title: "Cloud Career Coaching",
+      icon: "🚀",
+      description:
+        "Guidance on breaking into cloud engineering, AWS certifications, and building a technical portfolio that gets interviews.",
+      duration: "60 min",
+      bestFor: "Engineers transitioning into cloud or DevOps roles",
+    },
+  ],
+  faq: [
+    {
+      q: "When will spots open?",
+      a: "I am actively building my waitlist and will notify subscribers when availability opens. Join below to be first.",
+    },
+    {
+      q: "What time zones do you work in?",
+      a: "I am based in Oregon (Pacific Time) and can accommodate most US time zones and some international slots.",
+    },
+    {
+      q: "Do you offer ongoing retainers?",
+      a: "Yes, for select clients. This will be discussed after an initial session.",
+    },
+    {
+      q: "Can you help us build an AI agent from scratch?",
+      a: "Yes. I have hands-on experience designing and deploying Agentic AI systems on AWS using Bedrock, Lambda, and vector databases. Sessions can cover architecture design, model selection, RAG pipeline setup, or production deployment.",
+    },
+    {
+      q: "What should I bring to a session?",
+      a: "Architecture diagrams, your current Terraform or CI/CD setup, or specific questions you want answered. The more context, the more value you get.",
+    },
+  ],
+};
+
 export {
   settings,
   seo,

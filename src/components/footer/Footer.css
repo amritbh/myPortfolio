@@ -83,6 +83,12 @@
   transform: translateY(0);
 }
 
+.footer-captcha-wrapper {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
 .footer-newsletter-confirm {
   font-size: 0.95rem;
   color: #2ea043;

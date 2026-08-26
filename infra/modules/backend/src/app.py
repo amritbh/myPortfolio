@@ -775,6 +775,11 @@ def subscribe_handler(event):
     try:
         body = json.loads(event.get('body', '{}'))
         email = body.get('email', '').strip()
+        captcha_token = body.get('captchaToken', '')
+        
+        if not verify_hcaptcha(captcha_token):
+            print(f'Subscribe blocked: invalid/missing hCaptcha token from {email}')
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Invalid captcha'})}
         
         if not email or '@' not in email:
             return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Valid email is required'})}

@@ -4,6 +4,11 @@ import { greeting } from "../../portfolio";
 import { Link } from "react-router-dom";
 import type { Theme } from "../../types";
 import { subscribeToNewsletter } from "../../utils/apiClient";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
+
+const HCAPTCHA_SITE_KEY =
+  import.meta.env.VITE_HCAPTCHA_SITE_KEY ||
+  "10000000-ffff-ffff-ffff-000000000001";
 
 const SOCIAL_LINKS = [
   {
@@ -64,21 +69,34 @@ const NewsletterForm: React.FC<{ theme?: Theme }> = ({ theme }) => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaError, setCaptchaError] = useState("");
+  const captchaRef = React.useRef<HCaptcha>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
     
+    if (!captchaToken) {
+      setCaptchaError("Please complete the CAPTCHA challenge.");
+      return;
+    }
+    
     setLoading(true);
     setError("");
+    setCaptchaError("");
     
-    const result = await subscribeToNewsletter(email);
+    const result = await subscribeToNewsletter(email, captchaToken);
     
     if (result.success) {
       setSubmitted(true);
       setEmail("");
+      setCaptchaToken(null);
+      captchaRef.current?.resetCaptcha();
     } else {
       setError(result.error || "Something went wrong. Please try again.");
+      setCaptchaToken(null);
+      captchaRef.current?.resetCaptcha();
     }
     
     setLoading(false);
@@ -130,9 +148,35 @@ const NewsletterForm: React.FC<{ theme?: Theme }> = ({ theme }) => {
           {loading ? "..." : "Subscribe"}
         </button>
       </div>
+      
+      <div className="footer-captcha-wrapper">
+        <HCaptcha
+          ref={captchaRef}
+          sitekey={HCAPTCHA_SITE_KEY}
+          onVerify={(token) => {
+            setCaptchaToken(token);
+            setCaptchaError("");
+          }}
+          onExpire={() => {
+            setCaptchaToken(null);
+            setCaptchaError("CAPTCHA expired. Please verify again.");
+          }}
+          onError={() => {
+            setCaptchaToken(null);
+            setCaptchaError("CAPTCHA error. Please try again.");
+          }}
+          theme={theme ? "dark" : "light"}
+        />
+      </div>
+
       {error && (
         <span className="footer-newsletter-error">
           {error}
+        </span>
+      )}
+      {captchaError && (
+        <span className="footer-newsletter-error">
+          {captchaError}
         </span>
       )}
     </form>

@@ -1,10 +1,32 @@
 // @ts-nocheck
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import Footer from "./Footer";
 import * as apiClient from "../../utils/apiClient";
 import { vi } from "vitest";
+
+// Mock @hcaptcha/react-hcaptcha
+vi.mock("@hcaptcha/react-hcaptcha", () => {
+  const HCaptchaMock = React.forwardRef((props: any, ref: any) => {
+    React.useImperativeHandle(ref, () => ({
+      resetCaptcha: vi.fn(),
+    }));
+    return (
+      <div data-testid="hcaptcha-widget">
+        <button
+          type="button"
+          data-testid="hcaptcha-verify-btn"
+          onClick={() => props.onVerify && props.onVerify("mock-captcha-token")}
+        >
+          Verify CAPTCHA
+        </button>
+      </div>
+    );
+  });
+  HCaptchaMock.displayName = "HCaptcha";
+  return { default: HCaptchaMock };
+});
 
 const mockTheme = {
   body: "#ffffff",
@@ -27,7 +49,7 @@ describe("Footer Component", () => {
 
   it("renders the email input and Subscribe button", () => {
     renderWithRouter(<Footer theme={mockTheme} />);
-    expect(screen.getByLabelText("Email address")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/your@email.com/i)).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /Subscribe/i })
     ).toBeInTheDocument();
@@ -36,9 +58,25 @@ describe("Footer Component", () => {
   it("shows confirmation message after submitting with a valid email", async () => {
     vi.spyOn(apiClient, "subscribeToNewsletter").mockResolvedValueOnce({ success: true });
     renderWithRouter(<Footer theme={mockTheme} />);
-    const input = screen.getByLabelText("Email address");
-    fireEvent.change(input, { target: { value: "test@example.com" } });
-    fireEvent.click(screen.getByRole("button", { name: /Subscribe/i }));
+    
+    const emailInput = screen.getByPlaceholderText(/your@email.com/i);
+    const subscribeBtn = screen.getByRole("button", { name: /subscribe/i });
+
+    // Type email
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    
+    // Verify CAPTCHA
+    fireEvent.click(screen.getByTestId("hcaptcha-verify-btn"));
+    
+    // Submit
+    fireEvent.click(subscribeBtn);
+
+    await waitFor(() => {
+      expect(apiClient.subscribeToNewsletter).toHaveBeenCalledWith(
+        "test@example.com",
+        "mock-captcha-token"
+      );
+    });
     expect(await screen.findByText(/Thanks! You'll be notified/i)).toBeInTheDocument();
   });
 
@@ -53,10 +91,17 @@ describe("Footer Component", () => {
   it("shows error message if API fails", async () => {
     vi.spyOn(apiClient, "subscribeToNewsletter").mockResolvedValueOnce({ success: false, error: "Custom mock error" });
     renderWithRouter(<Footer theme={mockTheme} />);
-    const input = screen.getByLabelText("Email address");
-    fireEvent.change(input, { target: { value: "error@example.com" } });
-    fireEvent.click(screen.getByRole("button", { name: /Subscribe/i }));
-    expect(await screen.findByText(/Custom mock error/i)).toBeInTheDocument();
+    
+    const emailInput = screen.getByPlaceholderText(/your@email.com/i);
+    const subscribeBtn = screen.getByRole("button", { name: /subscribe/i });
+
+    fireEvent.change(emailInput, { target: { value: "fail@example.com" } });
+    fireEvent.click(screen.getByTestId("hcaptcha-verify-btn"));
+    fireEvent.click(subscribeBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Custom mock error/i)).toBeInTheDocument();
+    });
   });
 
   it("renders all 4 quick links", () => {
